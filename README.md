@@ -3,7 +3,7 @@ Arduino Library for the BY8001-16P/BY8301-16P Audio Module.
 
 **BY8X01-16P-Arduino v1.0**
 
-Library to control a BY8001-16P or BY83001-16P audio module from an Arduino board. 
+Library to control a BY8001-16P or BY83001-16P audio module from an Arduino board.  
 Licensed under the non-restrictive MIT license.
 
 Created by NachtRaveVL, August 1st, 2016.
