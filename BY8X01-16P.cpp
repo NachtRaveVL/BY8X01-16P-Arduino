@@ -426,7 +426,7 @@ void BY8X0116P::getCurrentTrackFilename(char *buffer, int maxLength) {
             *buffer++ = '.';
     }
 
-    if (maxLength > 0)
+    if (maxLength-- > 0)
         *buffer = '\0';
 }
 
@@ -807,36 +807,36 @@ bool BY8X0116P::cleanResponse() {
 
             while (*respScan) {
                 // Standby responses
-                if (strncmp(respScan, "OKIDLE", strlen("OKIDLE")) == 0) {
-                    respScan += strlen("OKIDLE");
+                if (strncmp(respScan, "OKIDLE", 6) == 0) {
+                    respScan += 6;
                     _isStandingBy = true;
                 }
-                else if (strncmp(respScan, "MP3OKNO FILE", strlen("MP3OKNO FILE")) == 0) {
-                    respScan += strlen("MP3OKNO FILE");
+                else if (strncmp(respScan, "MP3OKNO FILE", 12) == 0) {
+                    respScan += 12;
                     _isStandingBy = false;
                     _isCardInserted = false;
                 }
-                else if (strncmp(respScan, "MP3OKOK", strlen("MP3OKOK")) == 0) {
-                    respScan += strlen("MP3OKOK");
+                else if (strncmp(respScan, "MP3OKOK", 7) == 0) {
+                    respScan += 7;
                     _isStandingBy = false;
                     _isCardInserted = true;
                 }
                 // Reset responses
-                else if (strncmp(respScan, "MP3", strlen("MP3")) == 0) {
-                    respScan += strlen("MP3");
+                else if (strncmp(respScan, "MP3", 3) == 0) {
+                    respScan += 3;
                     _isResetting = false;
                 }
                 // TFC responses
-                else if (strncmp(respScan, "NO FILE", strlen("NO FILE")) == 0) {
-                    respScan += strlen("NO FILE");
+                else if (strncmp(respScan, "NO FILE", 7) == 0) {
+                    respScan += 7;
                     _isCardInserted = false;
                 }
                 // N/A responses
-                else if (strncmp(respScan, "EEPROM ONLINE", strlen("EEPROM ONLINE")) == 0) {
-                    respScan += strlen("EEPROM ONLINE");
+                else if (strncmp(respScan, "EEPROM ONLINE", 13) == 0) {
+                    respScan += 13;
                 }
-                else if (strncmp(respScan, "key_SWITCH:07", strlen("key_SWITCH:07")) == 0) {
-                    respScan += strlen("key_SWITCH:07");
+                else if (strncmp(respScan, "key_SWITCH:07", 13) == 0) {
+                    respScan += 13;
                 }
                 else if (strncmp(respScan, "STOP", 4) == 0) {
                     respScan += 4;
