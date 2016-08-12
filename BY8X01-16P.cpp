@@ -22,7 +22,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-    BY8X01-16P-Arduino - Version 1.0
+    BY8X01-16P-Arduino - Version 1.0.1
 */
 
 #include "BY8X01-16P.h"
@@ -668,8 +668,21 @@ void BY8X0116P::writeRequest(byte *cmdBuffer, bool cleanRspLn) {
         checkCode = checkCode ^ cmdBuffer[i];
     cmdBuffer[length] = checkCode;
 
+    ++_isBlockingRspLn;
+
     if (cleanRspLn || _stream->available() > 8)
         cleanResponse();
+    else { // Allows time for last command to be properly processed
+        unsigned long endTime = _lastReqTime + BY8X0116P_READ_DELAY;
+
+        while (millis() < endTime) {
+#ifdef BY8X0116P_USE_SCHEDULER
+            Scheduler.yield();
+#else
+            delay(1);
+#endif
+        }
+    }
 
 #ifdef BY8X0116P_DEBUG_OUTPUT
     Serial.print("  BY8X0116P::writeRequest Cmd: 0x");
@@ -687,6 +700,8 @@ void BY8X0116P::writeRequest(byte *cmdBuffer, bool cleanRspLn) {
 
     _stream->write(cmdBuffer, length + 2);
     _lastReqTime = millis();
+
+    --_isBlockingRspLn;
 }
 
 word BY8X0116P::receiveCommand(byte cmdID) {
