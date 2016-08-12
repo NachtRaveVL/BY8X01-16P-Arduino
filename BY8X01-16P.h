@@ -22,7 +22,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-    BY8X01-16P-Arduino - Version 1.0.1
+    BY8X01-16P-Arduino - Version 1.0.2
 */
 
 #ifndef BY8X0116P_H
@@ -211,6 +211,7 @@ private:
     unsigned long _lastClnTime; // Timestamp of last cleanup call
 
     bool _isBusy();
+    bool _waitBusySignal(int timeout = 0);
     bool _isPlaybackActive();
     bool _waitPlaybackFinished(int timeout = 0);
     
@@ -226,8 +227,14 @@ private:
 
     int readResponse(char *respBuffer, int expectedLength, int maxLength);
 
+    void waitRequest();
     bool waitResponse();
+    
     bool cleanResponse();
+    void waitClean(int timeout = 0);
 };
+
+// Delays an amount of time, calling Scheduler yield if enabled (timeout in ms).
+extern void delayTimeout(int timeout);
 
 #endif

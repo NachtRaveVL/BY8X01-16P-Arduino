@@ -22,7 +22,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-    BY8X01-16P-Arduino - Version 1.0.1
+    BY8X01-16P-Arduino - Version 1.0.2
 */
 
 #include "BY8X01-16P.h"
@@ -70,6 +70,7 @@
 #define BY8X0116P_READ_DELAY            130 // Delay for receive operations, in ms
 #define BY8X0116P_CLEAN_DELAY           2500 // Delay between cleanup routine, in ms
 #define BY8X0116P_RESET_TIMEOUT         2800 // Timeout before another reset command made, in ms
+#define BY8X0116P_GEN_CMD_TIMEOUT       5000 // Timeout for commands to be processed
 
 BY8X0116P::BY8X0116P(Stream& stream, byte busyPin, byte busyActiveOn) {
     _stream = &stream;
@@ -122,8 +123,12 @@ void BY8X0116P::stop(bool blocking) {
         ++_isBlockingRspLn;
 
         sendCommand(BY8X0116P_CMD_STOP);
-        while (!cleanResponse());
-        _waitPlaybackFinished();
+        waitRequest();
+
+        if (_busyPin)
+            _waitBusySignal(BY8X0116P_GEN_CMD_TIMEOUT);
+        else
+            _waitPlaybackFinished(BY8X0116P_GEN_CMD_TIMEOUT);
 
         --_isBlockingRspLn;
     }
@@ -461,10 +466,16 @@ bool BY8X0116P::isBusy() {
 }
 
 bool BY8X0116P::_isBusy() {
-    if (millis() < _lastReqTime + BY8X0116P_READ_DELAY + BY8X0116P_READ_DELAY)
-        cleanResponse();
+    if (_busyPin) {
+        if (digitalRead(_busyPin) == _busyActiveOn)
+            return true;
+        else {
+            waitRequest();
+            return digitalRead(_busyPin) == _busyActiveOn;
+        }
+    }
 
-    return _busyPin && digitalRead(_busyPin) == _busyActiveOn;
+    return false;
 }
 
 bool BY8X0116P::waitBusySignal(int timeout) {
@@ -473,6 +484,10 @@ bool BY8X0116P::waitBusySignal(int timeout) {
     Serial.println(timeout);
 #endif
 
+    return _waitBusySignal();
+}
+
+bool BY8X0116P::_waitBusySignal(int timeout) {
     if (!_isBusy()) return false;
 
     unsigned long endTime = millis() + (unsigned long)timeout;
@@ -540,7 +555,7 @@ void BY8X0116P::toggleStandBy(bool blocking) {
         ++_isBlockingRspLn;
 
         sendCommand(BY8X0116P_CMD_TGL_STANDBY);
-        while (!cleanResponse());
+        waitClean(BY8X0116P_GEN_CMD_TIMEOUT);
 
         --_isBlockingRspLn;
     }
@@ -613,10 +628,10 @@ bool BY8X0116P::isCardInserted() {
         ++_isBlockingRspLn;
 
         sendCommand(BY8X0116P_CMD_TGL_STANDBY);
-        while (!cleanResponse());
+        waitClean(BY8X0116P_GEN_CMD_TIMEOUT);
 
         sendCommand(BY8X0116P_CMD_TGL_STANDBY);
-        while (!cleanResponse());
+        waitClean(BY8X0116P_GEN_CMD_TIMEOUT);
 
         --_isBlockingRspLn;
 
@@ -672,17 +687,8 @@ void BY8X0116P::writeRequest(byte *cmdBuffer, bool cleanRspLn) {
 
     if (cleanRspLn || _stream->available() > 8)
         cleanResponse();
-    else { // Allows time for last command to be properly processed
-        unsigned long endTime = _lastReqTime + BY8X0116P_READ_DELAY;
-
-        while (millis() < endTime) {
-#ifdef BY8X0116P_USE_SCHEDULER
-            Scheduler.yield();
-#else
-            delay(1);
-#endif
-        }
-    }
+    else // Allow time for last command to be properly processed
+        waitRequest();
 
 #ifdef BY8X0116P_DEBUG_OUTPUT
     Serial.print("  BY8X0116P::writeRequest Cmd: 0x");
@@ -779,6 +785,30 @@ int BY8X0116P::readResponse(char *respBuffer, int expectedLength, int maxLength)
     return bytesRead;
 }
 
+void delayTimeout(int timeout) {
+    unsigned long endTime = millis() + timeout;
+
+    while (millis() < endTime) {
+#ifdef BY8X0116P_USE_SCHEDULER
+        Scheduler.yield();
+#else
+        delay(1);
+#endif
+    }
+}
+
+void BY8X0116P::waitRequest() {
+    unsigned long endTime = _lastReqTime + BY8X0116P_READ_DELAY;
+
+    while (millis() < endTime) {
+#ifdef BY8X0116P_USE_SCHEDULER
+        Scheduler.yield();
+#else
+        delay(1);
+#endif
+    }
+}
+
 bool BY8X0116P::waitResponse() {
     int available = _stream->available();
     unsigned long endTime = max(millis(), _lastReqTime + BY8X0116P_READ_DELAY) + BY8X0116P_READ_DELAY;
@@ -871,4 +901,10 @@ bool BY8X0116P::cleanResponse() {
 
     _isCleaningRspLn = false;
     return false;
+}
+
+void BY8X0116P::waitClean(int timeout) {
+    unsigned long endTime = millis() + timeout;
+
+    while (!cleanResponse() && (timeout <= 0 || millis() < endTime));
 }
