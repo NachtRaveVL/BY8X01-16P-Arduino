@@ -22,7 +22,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-    BY8X01-16P-Arduino - Version 1.0.2
+    BY8X01-16P-Arduino - Version 1.0.3
 */
 
 #include "BY8X01-16P.h"
@@ -71,6 +71,7 @@
 #define BY8X0116P_CLEAN_DELAY           2500 // Delay between cleanup routine, in ms
 #define BY8X0116P_RESET_TIMEOUT         2800 // Timeout before another reset command made, in ms
 #define BY8X0116P_GEN_CMD_TIMEOUT       5000 // Timeout for commands to be processed
+#define BY8X0116P_BUSY_DEBOUNCE_TIME    20 // Time to spend debouncing busy input line
 
 BY8X0116P::BY8X0116P(Stream& stream, byte busyPin, byte busyActiveOn) {
     _stream = &stream;
@@ -465,14 +466,34 @@ bool BY8X0116P::isBusy() {
     return _isBusy();
 }
 
+bool debouncedDigitalRead(byte pin, bool activeOn, int sampleTime, int sampleRate) {
+    unsigned long endTime = millis() + (unsigned long)sampleTime;
+    int activeCount = 0;
+    int inactiveCount = 0;
+
+    sampleRate = 1000 / sampleRate;
+    
+    while (millis() < endTime) {
+        if (digitalRead(pin) == activeOn)
+            ++activeCount;
+        else
+            ++inactiveCount;
+
+        delayMicroseconds(sampleRate);
+    }
+
+    return activeCount >= inactiveCount;
+}
+
 bool BY8X0116P::_isBusy() {
     if (_busyPin) {
-        if (digitalRead(_busyPin) == _busyActiveOn)
-            return true;
-        else {
-            waitRequest();
-            return digitalRead(_busyPin) == _busyActiveOn;
-        }
+        waitRequest();
+
+        return debouncedDigitalRead(_busyPin, _busyActiveOn, BY8X0116P_BUSY_DEBOUNCE_TIME
+#if defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_SAMD)
+            , 4
+#endif
+            );
     }
 
     return false;
@@ -845,7 +866,15 @@ bool BY8X0116P::cleanResponse() {
         if (respLength) {
 #ifdef BY8X0116P_DEBUG_OUTPUT
             Serial.print("  BY8X0116P::cleanResponse Line: ");
-            Serial.println(respBuffer);
+            for (int i = 0; i < respLength; ++i) {
+                if (respBuffer[i] >= ' ')
+                    Serial.print(respBuffer[i]);
+                else {
+                    Serial.print("\\x");
+                    Serial.print((int)respBuffer[i], HEX);
+                }
+            }
+            Serial.println("");
 #endif
 
             char *respScan = &respBuffer[0];
@@ -877,11 +906,11 @@ bool BY8X0116P::cleanResponse() {
                     _isCardInserted = false;
                 }
                 // N/A responses
-                else if (strncmp(respScan, "EEPROM ONLINE", 13) == 0) {
+                else if (strncmp(respScan, "EEPROM ONLINE", 13) == 0 || strncmp(respScan, "key_SWITCH:07", 13) == 0) {
                     respScan += 13;
                 }
-                else if (strncmp(respScan, "key_SWITCH:07", 13) == 0) {
-                    respScan += 13;
+                else if (strncmp(respScan, "key_ABC SWITCH:07", 17) == 0) {
+                    respScan += 17;
                 }
                 else if (strncmp(respScan, "STOP", 4) == 0) {
                     respScan += 4;

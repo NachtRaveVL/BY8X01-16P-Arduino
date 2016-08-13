@@ -22,7 +22,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-    BY8X01-16P-Arduino - Version 1.0.2
+    BY8X01-16P-Arduino - Version 1.0.3
 */
 
 #ifndef BY8X0116P_H
@@ -236,5 +236,8 @@ private:
 
 // Delays an amount of time, calling Scheduler yield if enabled (timeout in ms).
 extern void delayTimeout(int timeout);
+
+// Reads a digital input line, sampling over delay, to determine on/off status (sampleTime in ms, sampleRate in samples per ms).
+extern bool debouncedDigitalRead(byte pin, bool activeOn = HIGH, int sampleTime = 20, int sampleRate = 1);
 
 #endif
