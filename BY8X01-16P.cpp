@@ -489,11 +489,15 @@ bool BY8X0116P::_isBusy() {
     if (_busyPin) {
         waitRequest();
 
+#ifdef BY8X0116P_DISABLE_DEBOUNCING
+        return digitalRead(_busyPin) == _busyActiveOn;
+#else
         return debouncedDigitalRead(_busyPin, _busyActiveOn, BY8X0116P_BUSY_DEBOUNCE_TIME
 #if defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_SAMD)
             , 4
 #endif
             );
+#endif
     }
 
     return false;
