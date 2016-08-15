@@ -22,7 +22,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-    BY8X01-16P-Arduino - Version 1.0.3
+    BY8X01-16P-Arduino - Version 1.0.4
 */
 
 #include "BY8X01-16P.h"
@@ -96,7 +96,7 @@ void BY8X0116P::init() {
 }
 
 void BY8X0116P::play() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::play");
 #endif
 
@@ -104,7 +104,7 @@ void BY8X0116P::play() {
 }
 
 void BY8X0116P::pause() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::pause");
 #endif
 
@@ -112,7 +112,7 @@ void BY8X0116P::pause() {
 }
 
 void BY8X0116P::stop(bool blocking) {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::stop blocking: ");
     Serial.println(blocking);
 #endif
@@ -138,7 +138,7 @@ void BY8X0116P::stop(bool blocking) {
 void BY8X0116P::playFileIndex(uint16_t fileIndex) {
     fileIndex = (uint16_t)constrain(fileIndex, 0x0001, 0xFFFF);
 
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::playFileIndex fileIndex: ");
     Serial.println(fileIndex);
 #endif
@@ -150,7 +150,7 @@ void BY8X0116P::playFolderFileIndex(uint8_t folderIndex, uint8_t fileIndex) {
     folderIndex = (uint8_t)constrain(folderIndex, 0, 99);
     fileIndex = (uint8_t)constrain(fileIndex, 0x01, 0xFF);
 
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::playFolderFileIndex folderIndex: ");
     Serial.print(folderIndex);
     Serial.print(", fileIndex: ");
@@ -161,7 +161,7 @@ void BY8X0116P::playFolderFileIndex(uint8_t folderIndex, uint8_t fileIndex) {
 }
 
 void BY8X0116P::fastForward() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::fastForward");
 #endif
 
@@ -169,7 +169,7 @@ void BY8X0116P::fastForward() {
 }
 
 void BY8X0116P::fastRewind() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::fastRewind");
 #endif
 
@@ -177,7 +177,7 @@ void BY8X0116P::fastRewind() {
 }
 
 void BY8X0116P::nextTrack() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::nextTrack");
 #endif
 
@@ -185,7 +185,7 @@ void BY8X0116P::nextTrack() {
 }
 
 void BY8X0116P::previousTrack() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::previousTrack");
 #endif
 
@@ -193,7 +193,7 @@ void BY8X0116P::previousTrack() {
 }
 
 void BY8X0116P::nextFolder() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::nextFolder");
 #endif
 
@@ -201,7 +201,7 @@ void BY8X0116P::nextFolder() {
 }
 
 void BY8X0116P::previousFolder() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::previousFolder");
 #endif
 
@@ -209,7 +209,7 @@ void BY8X0116P::previousFolder() {
 }
 
 void BY8X0116P::increaseVolume() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::increaseVolume");
 #endif
 
@@ -217,7 +217,7 @@ void BY8X0116P::increaseVolume() {
 }
 
 void BY8X0116P::decreaseVolume() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::decreaseVolume");
 #endif
 
@@ -227,7 +227,7 @@ void BY8X0116P::decreaseVolume() {
 void BY8X0116P::setVolume(int volume) {
     volume = constrain(volume, 0, 30);
 
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::setVolume volume: ");
     Serial.println(volume);
 #endif
@@ -236,7 +236,7 @@ void BY8X0116P::setVolume(int volume) {
 }
 
 int BY8X0116P::getVolume() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::getVolume");
 #endif
 
@@ -244,7 +244,7 @@ int BY8X0116P::getVolume() {
 }
 
 BY8X0116P_PlaybackStatus BY8X0116P::getPlaybackStatus() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::getPlaybackStatus");
 #endif
 
@@ -254,7 +254,7 @@ BY8X0116P_PlaybackStatus BY8X0116P::getPlaybackStatus() {
 void BY8X0116P::setLoopPlaybackMode(BY8X0116P_LoopPlaybackMode pbLoopMode) {
     pbLoopMode = (BY8X0116P_LoopPlaybackMode)constrain((int)pbLoopMode, 0, (int)BY8X0116P_LoopPlaybackMode_Count - 1);
 
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::setLoopPlaybackMode pbLoopMode: ");
     Serial.println(pbLoopMode);
 #endif
@@ -263,7 +263,7 @@ void BY8X0116P::setLoopPlaybackMode(BY8X0116P_LoopPlaybackMode pbLoopMode) {
 }
 
 BY8X0116P_LoopPlaybackMode BY8X0116P::getLoopPlaybackMode() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::getLoopPlaybackMode");
 #endif
 
@@ -273,7 +273,7 @@ BY8X0116P_LoopPlaybackMode BY8X0116P::getLoopPlaybackMode() {
 void BY8X0116P::setEqualizerProfile(BY8X0116P_EqualizerProfile eqProfile) {
     eqProfile = (BY8X0116P_EqualizerProfile)constrain((int)eqProfile, 0, (int)BY8X0116P_EqualizerProfile_Count - 1);
 
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::setEqualizerProfile eqProfile: ");
     Serial.println(eqProfile);
 #endif
@@ -282,7 +282,7 @@ void BY8X0116P::setEqualizerProfile(BY8X0116P_EqualizerProfile eqProfile) {
 }
 
 BY8X0116P_EqualizerProfile BY8X0116P::getEqualizerProfile() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::getEqualizerProfile");
 #endif
 
@@ -290,7 +290,7 @@ BY8X0116P_EqualizerProfile BY8X0116P::getEqualizerProfile() {
 }
 
 uint16_t BY8X0116P::getTotalNumberOfTracks() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::getTotalNumberOfTracks");
 #endif
 
@@ -305,7 +305,7 @@ uint16_t BY8X0116P::getTotalNumberOfTracks() {
 uint16_t BY8X0116P::getTotalNumberOfTracks(BY8X0116P_PlaybackDevice device) {
     device = (BY8X0116P_PlaybackDevice)constrain((int)device, 0, (int)BY8X0116P_PlaybackDevice_Count - 1);
 
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::getTotalNumberOfTracks device: ");
     Serial.println(device);
 #endif
@@ -319,7 +319,7 @@ uint16_t BY8X0116P::getTotalNumberOfTracks(BY8X0116P_PlaybackDevice device) {
 }
 
 uint16_t BY8X0116P::getNumberOfTracksInCurrentFolder() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::getNumberOfTracksInCurrentFolder");
 #endif
 
@@ -327,7 +327,7 @@ uint16_t BY8X0116P::getNumberOfTracksInCurrentFolder() {
 }
 
 uint16_t BY8X0116P::getCurrentTrackFileIndex() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::getCurrentTrackFileIndex");
 #endif
 
@@ -342,7 +342,7 @@ uint16_t BY8X0116P::getCurrentTrackFileIndex() {
 uint16_t BY8X0116P::getCurrentTrackFileIndex(BY8X0116P_PlaybackDevice device) {
     device = (BY8X0116P_PlaybackDevice)constrain((int)device, 0, (int)BY8X0116P_PlaybackDevice_Count - 1);
 
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::getCurrentTrackFileIndex device: ");
     Serial.println(device);
 #endif
@@ -356,7 +356,7 @@ uint16_t BY8X0116P::getCurrentTrackFileIndex(BY8X0116P_PlaybackDevice device) {
 }
 
 uint16_t BY8X0116P::getCurrentTrackElapsedTime() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::getCurrentTrackElapsedTime");
 #endif
 
@@ -364,7 +364,7 @@ uint16_t BY8X0116P::getCurrentTrackElapsedTime() {
 }
 
 uint16_t BY8X0116P::getCurrentTrackTotalTime() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::getCurrentTrackTotalTime");
 #endif
 
@@ -374,7 +374,7 @@ uint16_t BY8X0116P::getCurrentTrackTotalTime() {
 void BY8X0116P::setPlaybackDevice(BY8X0116P_PlaybackDevice device) {
     device = (BY8X0116P_PlaybackDevice)constrain((int)device, 0, (int)BY8X0116P_PlaybackDevice_Count - 1);
 
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::setPlaybackDevice device: ");
     Serial.println(device);
 #endif
@@ -383,7 +383,7 @@ void BY8X0116P::setPlaybackDevice(BY8X0116P_PlaybackDevice device) {
 }
 
 BY8X0116P_PlaybackDevice BY8X0116P::getPlaybackDevice() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::getPlaybackDevice");
 #endif
 
@@ -393,7 +393,7 @@ BY8X0116P_PlaybackDevice BY8X0116P::getPlaybackDevice() {
 void BY8X0116P::spotPlayFileIndex(uint16_t fileIndex) {
     fileIndex = (uint16_t)constrain(fileIndex, 0x0001, 0xFFFF);
 
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::spotPlayFileIndex fileIndex: ");
     Serial.println(fileIndex);
 #endif
@@ -405,7 +405,7 @@ void BY8X0116P::spotPlayFolderFileIndex(uint8_t folderIndex, uint8_t fileIndex) 
     folderIndex = (uint8_t)constrain(folderIndex, 0, 99);
     fileIndex = (uint8_t)constrain(fileIndex, 0x01, 0xFF);
 
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::spotPlayFolderFileIndex folderIndex: ");
     Serial.print(folderIndex);
     Serial.print(", fileIndex: ");
@@ -418,7 +418,7 @@ void BY8X0116P::spotPlayFolderFileIndex(uint8_t folderIndex, uint8_t fileIndex) 
 void BY8X0116P::getCurrentTrackFilename(char *buffer, int maxLength) {
     if (!buffer || maxLength < 12) return;
 
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::getCurrentTrackFilename");
 #endif
 
@@ -439,7 +439,7 @@ void BY8X0116P::getCurrentTrackFilename(char *buffer, int maxLength) {
 void BY8X0116P::getFirmwareVersion(char *buffer, int maxLength) {
     if (!buffer || maxLength < 6) return;
 
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::getFirmwareVersion");
 #endif
 
@@ -459,7 +459,7 @@ void BY8X0116P::getFirmwareVersion(char *buffer, int maxLength) {
 }
 
 bool BY8X0116P::isBusy() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::isBusy");
 #endif
 
@@ -505,7 +505,7 @@ bool BY8X0116P::_isBusy() {
 }
 
 bool BY8X0116P::waitBusySignal(int timeout) {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::waitBusySignal timeout: ");
     Serial.println(timeout);
 #endif
@@ -530,7 +530,7 @@ bool BY8X0116P::_waitBusySignal(int timeout) {
 }
 
 bool BY8X0116P::isPlaybackActive() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::isPlaybackActive");
 #endif
 
@@ -542,7 +542,7 @@ bool BY8X0116P::_isPlaybackActive() {
 }
 
 bool BY8X0116P::waitPlaybackFinished(int timeout) {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::waitPlaybackFinished timeout: ");
     Serial.println(timeout);
 #endif
@@ -567,7 +567,7 @@ bool BY8X0116P::_waitPlaybackFinished(int timeout) {
 }
 
 void BY8X0116P::toggleStandBy(bool blocking) {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::toggleStandBy isStandingBy: ");
     Serial.println(_isStandingBy);
 #endif
@@ -588,7 +588,7 @@ void BY8X0116P::toggleStandBy(bool blocking) {
 }
 
 bool BY8X0116P::isStandingBy() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::isStandingBy");
 #endif
     
@@ -601,7 +601,7 @@ bool BY8X0116P::isStandingBy() {
 void BY8X0116P::reset(bool blocking) {
     if (_isResetting) return;
 
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::reset blocking: ");
     Serial.println(blocking);
 #endif
@@ -635,7 +635,7 @@ void BY8X0116P::reset(bool blocking) {
 }
 
 bool BY8X0116P::isResetting() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::isResetting");
 #endif
 
@@ -646,7 +646,7 @@ bool BY8X0116P::isResetting() {
 }
 
 bool BY8X0116P::isCardInserted() {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::isCardInserted");
 #endif
 
@@ -673,7 +673,7 @@ bool BY8X0116P::isCardInserted() {
 
 void BY8X0116P::cleanupRoutine() {
     if (!_isBlockingRspLn && !_isCleaningRspLn && _stream->available() && millis() >= _lastClnTime + BY8X0116P_CLEAN_DELAY) {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
         Serial.println("BY8X0116P::cleanupRoutine");
 #endif
 
@@ -716,7 +716,7 @@ void BY8X0116P::writeRequest(uint8_t *cmdBuffer, bool cleanRspLn) {
     else // Allow time for last command to be properly processed
         waitRequest();
 
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("  BY8X0116P::writeRequest Cmd: 0x");
     Serial.print(cmdBuffer[2], HEX);
     for (int i = 3; i < length; ++i) {
@@ -795,7 +795,7 @@ int BY8X0116P::readResponse(char *respBuffer, int expectedLength, int maxLength)
     if (maxLength-- > 0)
         respBuffer[bytesRead] == '\0';
 
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("  BY8X0116P::readResponse Rsp: ");
     for (int i = 0; i < bytesRead; ++i) {
         if (respBuffer[i] >= ' ')
@@ -857,7 +857,7 @@ bool BY8X0116P::cleanResponse() {
         respBuffer[respLength] = '\0';
 
         if (respLength) {
-#ifdef BY8X0116P_DEBUG_OUTPUT
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
             Serial.print("  BY8X0116P::cleanResponse Line: ");
             for (int i = 0; i < respLength; ++i) {
                 if (respBuffer[i] >= ' ')

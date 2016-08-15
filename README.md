@@ -1,7 +1,7 @@
 # BY8X01-16P-Arduino
 Arduino Library for the BY8001-16P/BY8301-16P Audio Module.
 
-**BY8X01-16P-Arduino v1.0.3**
+**BY8X01-16P-Arduino v1.0.4**
 
 Library to control a BY8001-16P or BY83001-16P audio module from an Arduino board.  
 Licensed under the non-restrictive MIT license.
@@ -13,14 +13,14 @@ Created by NachtRaveVL, August 1st, 2016.
 There are several defines inside of the library's header file that allows for more fine-tuned control.
 
 ```Arduino
-// Uncomment this define to disable usage of Scheduler.h on SAM/SAMD architecures.
-//#define BY8X0116P_DISABLE_SCHEDULER     1
+// Uncomment this define to disable usage of the Scheduler library on SAM/SAMD architecures.
+#define BY8X0116P_DISABLE_SCHEDULER         1   // https://github.com/arduino-libraries/Scheduler
 
 // Uncomment this define to enable debouncing of the input line on isBusy() calls.
-//#define BY8X0116P_ENABLE_DEBOUNCING     1
+#define BY8X0116P_ENABLE_DEBOUNCING         1
 
 // Uncomment this define to enable debug output
-//#define BY8X0116P_DEBUG_OUTPUT          1
+#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
 ```
 
 ## Hookup Instructions
