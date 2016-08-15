@@ -31,41 +31,41 @@
 #define BY8X0116P_USE_SCHEDULER         1
 #endif
 
-#define BY8X0116P_CMD_PLAY              0x01
-#define BY8X0116P_CMD_PAUSE             0x02
-#define BY8X0116P_CMD_NEXT_TRACK        0x03
-#define BY8X0116P_CMD_PREV_TRACK        0x04
-#define BY8X0116P_CMD_INC_VOLUME        0x05
-#define BY8X0116P_CMD_DEC_VOLUME        0x06
-#define BY8X0116P_CMD_TGL_STANDBY       0x07 // Toggles between standby/normal, when in standby 10mA current draw
-#define BY8X0116P_CMD_RESET             0x09
-#define BY8X0116P_CMD_FAST_FORWARD      0x0A
-#define BY8X0116P_CMD_FAST_REWIND       0x0B
-#define BY8X0116P_CMD_STOP              0x0E
-#define BY8X0116P_CMD_SET_VOLUME        0x31 // level 0-30 (power failure retains setting)
-#define BY8X0116P_CMD_SET_EQ_PROFILE    0x32 // profile 0-5 (none, Pop, Rock, Jazz, Classic, Bass) (power failure retains setting)
-#define BY8X0116P_CMD_SET_LOOP_MODE     0x33 // mode 0-4 (all, folder, single, random, disabled) (power failure restores to 4)
-#define BY8X0116P_CMD_SWITCH_FOLDER     0x34 // folder 0-1 (previous, next)
-#define BY8X0116P_CMD_SWITCH_DEVICE     0x35 // device 0-1 (U-Disk, TF card)
-#define BY8X0116P_CMD_PLAY_INDEX        0x41 // index 1-65535 (combination play 10 track queue)
-#define BY8X0116P_CMD_PLAY_FOLDER       0x42 // folder 0-99, index 1-255
-#define BY8X0116P_CMD_SPOT_PB_INDEX     0x43 // index 1-65535 (Interrupts current play to play another, then resume play) (TF device not supported)
-#define BY8X0116P_CMD_SPOT_PB_FOLDER    0x44 // folder 0-99, index 1-255 (Interrupts current play to play another, then resume play) (TF device not supported)
+#define BY8X0116P_CMD_PLAY              (byte)0x01
+#define BY8X0116P_CMD_PAUSE             (byte)0x02
+#define BY8X0116P_CMD_NEXT_TRACK        (byte)0x03
+#define BY8X0116P_CMD_PREV_TRACK        (byte)0x04
+#define BY8X0116P_CMD_INC_VOLUME        (byte)0x05
+#define BY8X0116P_CMD_DEC_VOLUME        (byte)0x06
+#define BY8X0116P_CMD_TGL_STANDBY       (byte)0x07 // Toggles between standby/normal, when in standby 10mA current draw
+#define BY8X0116P_CMD_RESET             (byte)0x09
+#define BY8X0116P_CMD_FAST_FORWARD      (byte)0x0A
+#define BY8X0116P_CMD_FAST_REWIND       (byte)0x0B
+#define BY8X0116P_CMD_STOP              (byte)0x0E
+#define BY8X0116P_CMD_SET_VOLUME        (byte)0x31 // level 0-30 (power failure retains setting)
+#define BY8X0116P_CMD_SET_EQ_PROFILE    (byte)0x32 // profile 0-5 (none, Pop, Rock, Jazz, Classic, Bass) (power failure retains setting)
+#define BY8X0116P_CMD_SET_LOOP_MODE     (byte)0x33 // mode 0-4 (all, folder, single, random, disabled) (power failure restores to 4)
+#define BY8X0116P_CMD_SWITCH_FOLDER     (byte)0x34 // folder 0-1 (previous, next)
+#define BY8X0116P_CMD_SWITCH_DEVICE     (byte)0x35 // device 0-1 (U-Disk, TF card)
+#define BY8X0116P_CMD_PLAY_INDEX        (byte)0x41 // index 1-65535 (combination play 10 track queue)
+#define BY8X0116P_CMD_PLAY_FOLDER       (byte)0x42 // folder 0-99, index 1-255
+#define BY8X0116P_CMD_SPOT_PB_INDEX     (byte)0x43 // index 1-65535 (Interrupts current play to play another, then resume play) (TF device not supported)
+#define BY8X0116P_CMD_SPOT_PB_FOLDER    (byte)0x44 // folder 0-99, index 1-255 (Interrupts current play to play another, then resume play) (TF device not supported)
 
-#define BY8X0116P_QRY_PB_STATUS         0x10 // 0-4 (stopped / playback / paused/suspended / fast-fwd / rewind)
-#define BY8X0116P_QRY_VOLUME            0x11 // 0-30
-#define BY8X0116P_QRY_EQ_PROFILE        0x12 // 0-5 (none, Pop, Rock, Jazz, Classic, Bass)
-#define BY8X0116P_QRY_LOOP_MODE         0x13 // 0-4 (all, folder, single, random, disabled)
-#define BY8X0116P_QRY_FIRMWARE_VER      0x14 // 0-65535
-#define BY8X0116P_QRY_NUM_TRACKS_TFC    0x15 // 0-65535 (total number of track files on TF card)
-#define BY8X0116P_QRY_NUM_TRACKS_USB    0x16 // 0-65535 (total number of track files on USB flash drive)
-#define BY8X0116P_QRY_PLAYBACK_DEVICE   0x18 // 0-1 (U-Disk, SD)
-#define BY8X0116P_QRY_CURR_TRACK_TFC    0x19 // 0-65535 
-#define BY8X0116P_QRY_CURR_TRACK_USB    0x1A // 0-65535
-#define BY8X0116P_QRY_ELAPSED_PB_TIME   0x1C // 0-65535 (in seconds)
-#define BY8X0116P_QRY_TOTAL_PB_TIME     0x1D // 0-65535 (in seconds)
-#define BY8X0116P_QRY_CURR_FILENAME     0x1E // YYYYYYYYZZZ
-#define BY8X0116P_QRY_NUM_TRACKS_FOLDER 0x1F // 0-65535
+#define BY8X0116P_QRY_PB_STATUS         (byte)0x10 // 0-4 (stopped / playback / paused/suspended / fast-fwd / rewind)
+#define BY8X0116P_QRY_VOLUME            (byte)0x11 // 0-30
+#define BY8X0116P_QRY_EQ_PROFILE        (byte)0x12 // 0-5 (none, Pop, Rock, Jazz, Classic, Bass)
+#define BY8X0116P_QRY_LOOP_MODE         (byte)0x13 // 0-4 (all, folder, single, random, disabled)
+#define BY8X0116P_QRY_FIRMWARE_VER      (byte)0x14 // 0-65535
+#define BY8X0116P_QRY_NUM_TRACKS_TFC    (byte)0x15 // 0-65535 (total number of track files on TF card)
+#define BY8X0116P_QRY_NUM_TRACKS_USB    (byte)0x16 // 0-65535 (total number of track files on USB flash drive)
+#define BY8X0116P_QRY_PLAYBACK_DEVICE   (byte)0x18 // 0-1 (U-Disk, SD)
+#define BY8X0116P_QRY_CURR_TRACK_TFC    (byte)0x19 // 0-65535 
+#define BY8X0116P_QRY_CURR_TRACK_USB    (byte)0x1A // 0-65535
+#define BY8X0116P_QRY_ELAPSED_PB_TIME   (byte)0x1C // 0-65535 (in seconds)
+#define BY8X0116P_QRY_TOTAL_PB_TIME     (byte)0x1D // 0-65535 (in seconds)
+#define BY8X0116P_QRY_CURR_FILENAME     (byte)0x1E // YYYYYYYYZZZ
+#define BY8X0116P_QRY_NUM_TRACKS_FOLDER (byte)0x1F // 0-65535
 
 #define BY8X0116P_READ_DELAY            130 // Delay for receive operations, in ms
 #define BY8X0116P_CLEAN_DELAY           2500 // Delay between cleanup routine, in ms
@@ -466,7 +466,7 @@ bool BY8X0116P::isBusy() {
     return _isBusy();
 }
 
-bool debouncedDigitalRead(byte pin, bool activeOn, int sampleTime, int sampleRate) {
+bool debouncedDigitalRead(byte pin, byte activeOn, int sampleTime, int sampleRate) {
     unsigned long endTime = millis() + (unsigned long)sampleTime;
     int activeCount = 0;
     int inactiveCount = 0;

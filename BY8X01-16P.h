@@ -89,13 +89,12 @@ typedef enum {
     BY8X0116P_PlaybackDevice_Count
 } BY8X0116P_PlaybackDevice;
 
-class BY8X0116P
-{
+class BY8X0116P {
 public:
     // May use any instance of Stream for serial comms, including SoftwareSerial,
     // HardwareSerial, etc. Only supported baud rate is 9600 and mode SERIAL_8N1.
     // May skip usage of busy pin, but isBusy() will always respond false if so.
-    // May also set usage of busy pin being active-high or active-low.
+    // May also set usage of busy pin being either active-high or active-low.
 #ifdef HAVE_HWSERIAL1
     BY8X0116P(Stream& stream = Serial1, byte busyPin = 0, byte busyActiveOn = HIGH);
 #else
@@ -237,10 +236,10 @@ private:
     void waitClean(int timeout = 0);
 };
 
+// Reads a digital input line, sampling over delay, to determine on/off status (sampleTime in ms, sampleRate in samples per ms).
+extern bool debouncedDigitalRead(byte pin, byte activeOn = HIGH, int sampleTime = 20, int sampleRate = 1);
+
 // Delays an amount of time, calling Scheduler yield if enabled (timeout in ms).
 extern void delayTimeout(int timeout);
-
-// Reads a digital input line, sampling over delay, to determine on/off status (sampleTime in ms, sampleRate in samples per ms).
-extern bool debouncedDigitalRead(byte pin, bool activeOn = HIGH, int sampleTime = 20, int sampleRate = 1);
 
 #endif
