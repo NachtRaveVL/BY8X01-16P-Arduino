@@ -36,7 +36,7 @@
 // Uncomment this define to enable debouncing of the input line on isBusy() calls.
 #define BY8X0116P_ENABLE_DEBOUNCING         1
 
-// Uncomment this define to enable debug output
+// Uncomment this define to enable debug output.
 #define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
 
 // Hookup Instructions
