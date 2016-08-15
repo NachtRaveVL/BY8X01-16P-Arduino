@@ -179,7 +179,7 @@ public:
     // Busy line signal (true when device is playing anything)
     bool isBusy(); // Requires busyPin connection
     // Blocking call that waits until busy signal disables (timeout in ms, 0 = no timeout)
-    bool waitBusySignal(int timeout = 0); // Requires busyPin connection
+    bool waitBusy(int timeout = 0); // Requires busyPin connection
 
     // Playback active status (true when playback status is not stopped)
     bool isPlaybackActive();
@@ -213,7 +213,7 @@ private:
     unsigned long _lastClnTime; // Timestamp of last cleanup call
 
     bool _isBusy();
-    bool _waitBusySignal(int timeout = 0);
+    bool _waitBusy(int timeout = 0);
     bool _isPlaybackActive();
     bool _waitPlaybackFinished(int timeout = 0);
     

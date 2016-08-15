@@ -127,7 +127,7 @@ void BY8X0116P::stop(bool blocking) {
         waitRequest();
 
         if (_busyPin)
-            _waitBusySignal(BY8X0116P_GEN_CMD_TIMEOUT);
+            _waitBusy(BY8X0116P_GEN_CMD_TIMEOUT);
         else
             _waitPlaybackFinished(BY8X0116P_GEN_CMD_TIMEOUT);
 
@@ -504,16 +504,16 @@ bool BY8X0116P::_isBusy() {
     return false;
 }
 
-bool BY8X0116P::waitBusySignal(int timeout) {
+bool BY8X0116P::waitBusy(int timeout) {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::waitBusySignal timeout: ");
+    Serial.print("BY8X0116P::waitBusy timeout: ");
     Serial.println(timeout);
 #endif
 
-    return _waitBusySignal();
+    return _waitBusy();
 }
 
-bool BY8X0116P::_waitBusySignal(int timeout) {
+bool BY8X0116P::_waitBusy(int timeout) {
     if (!_isBusy()) return false;
 
     unsigned long endTime = millis() + (unsigned long)timeout;
