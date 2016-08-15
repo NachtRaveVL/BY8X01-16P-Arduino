@@ -40,13 +40,12 @@
 #define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
 
 // Hookup Instructions
-// Make sure to flip RX/TX lines when plugging into device from MCU. If running
-// a 5v Arduino board, put a 1k Ohm resistor between the MCU's TX and device's
-// RX pin (not required if on a 3.3v device). Also, remove A, B, and C resistors
-// on device (factory default is a resistor on A and C, while B is left open),
-// which puts the device into the recommended 1-1-1 mode used for MCU serial
-// control. Busy pin returns a 2.8v signal when playback is active, and is
-// optional for library usage.
+// Make sure to flip RX/TX lines when plugging into device from MCU. If running a 5v
+// Arduino board, put a 1k Ohm resistor between the MCU's TX and device's RX pin (not
+// required if on a 3.3v device). Also, remove A, B, and C resistors on device (factory
+// default is a resistor on A and C, while B is left open), which puts the device into
+// the recommended 1-1-1 mode used for MCU serial control. Busy pin returns a 2.8v signal
+// when playback is active, and is optional for library usage.
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>
@@ -91,10 +90,10 @@ typedef enum {
 
 class BY8X0116P {
 public:
-    // May use any instance of Stream for serial comms, including SoftwareSerial,
-    // HardwareSerial, etc. Only supported baud rate is 9600 and mode SERIAL_8N1.
-    // May skip usage of busy pin, but isBusy() will always respond false if so.
-    // May also set usage of busy pin being either active-high or active-low.
+    // May use any instance of Stream for serial communication, including SoftwareSerial,
+    // HardwareSerial, etc. The only supported baud rate is 9600 and mode SERIAL_8N1. May
+    // skip usage of busy pin, but isBusy() will always respond false if so. May also set
+    // usage of busy pin being either active-high or active-low.
 #ifdef HAVE_HWSERIAL1
     BY8X0116P(Stream& stream = Serial1, uint8_t busyPin = 0, uint8_t busyActiveOn = HIGH);
 #else
