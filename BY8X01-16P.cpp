@@ -489,7 +489,7 @@ bool BY8X0116P::_isBusy() {
     if (_busyPin) {
         waitRequest();
 
-#ifdef BY8X0116P_DISABLE_DEBOUNCING
+#ifndef BY8X0116P_ENABLE_DEBOUNCING
         return digitalRead(_busyPin) == _busyActiveOn;
 #else
         return debouncedDigitalRead(_busyPin, _busyActiveOn, BY8X0116P_BUSY_DEBOUNCE_TIME

@@ -33,8 +33,8 @@
 // Uncomment this define to disable usage of Scheduler.h on SAM/SAMD architecures.
 //#define BY8X0116P_DISABLE_SCHEDULER     1
 
-// Uncomment this define to disable debouncing the input line on isBusy() calls.
-//#define BY8X0116P_DISABLE_DEBOUNCING    1
+// Uncomment this define to enable debouncing of the input line on isBusy() calls.
+//#define BY8X0116P_ENABLE_DEBOUNCING     1
 
 // Uncomment this define to enable debug output
 //#define BY8X0116P_DEBUG_OUTPUT          1
