@@ -96,11 +96,12 @@ public:
     // May skip usage of busy pin, but isBusy() will always respond false if so.
     // May also set usage of busy pin being either active-high or active-low.
 #ifdef HAVE_HWSERIAL1
-    BY8X0116P(Stream& stream = Serial1, byte busyPin = 0, byte busyActiveOn = HIGH);
+    BY8X0116P(Stream& stream = Serial1, uint8_t busyPin = 0, uint8_t busyActiveOn = HIGH);
 #else
-    BY8X0116P(Stream& stream, byte busyPin = 0, byte busyActiveOn = HIGH);
+    BY8X0116P(Stream& stream, uint8_t busyPin = 0, uint8_t busyActiveOn = HIGH);
 #endif
 
+    // Called in setup()
     void init();
 
     // Playback control
@@ -113,12 +114,12 @@ public:
     // 10 songs. Index is prescribed by FAT file system. Index order is generally in the
     // order that the files were copied to the flash drive, but not guaranteed. Indexing
     // runs across all files in every subfolder. A file sorter software program (such as
-    // “DriveSort” or “FAT32 Sorter”) should be used if specific file index order for
+    // "DriveSort" or "FAT32 Sorter") should be used if specific file index order for
     // playback is required.
-    void playFileIndex(word fileIndex); // fileIndex 1-65535
+    void playFileIndex(uint16_t fileIndex); // fileIndex 1-65535
     // playFolderFileIndex requires that folders be named "00" through "99" and the files
     // inside of them be named "001" through "255".
-    void playFolderFileIndex(byte folderIndex, byte fileIndex); // folderIndex 0-99, fileIndex 1-255
+    void playFolderFileIndex(uint8_t folderIndex, uint8_t fileIndex); // folderIndex 0-99, fileIndex 1-255
 
     // Track fast-f/r control
     void fastForward();
@@ -148,27 +149,27 @@ public:
     BY8X0116P_EqualizerProfile getEqualizerProfile();
 
     // Total number of tracks
-    word getTotalNumberOfTracks();
-    word getTotalNumberOfTracks(BY8X0116P_PlaybackDevice device);
+    uint16_t getTotalNumberOfTracks();
+    uint16_t getTotalNumberOfTracks(BY8X0116P_PlaybackDevice device);
 
     // Number of tracks in current folder (unavailable on firmware fw0001)
-    word getNumberOfTracksInCurrentFolder();
+    uint16_t getNumberOfTracksInCurrentFolder();
 
     // Current track file index (unavailable on firmware fw0001)
-    word getCurrentTrackFileIndex();
-    word getCurrentTrackFileIndex(BY8X0116P_PlaybackDevice device);
+    uint16_t getCurrentTrackFileIndex();
+    uint16_t getCurrentTrackFileIndex(BY8X0116P_PlaybackDevice device);
 
     // Current track elapsed/total time
-    word getCurrentTrackElapsedTime();
-    word getCurrentTrackTotalTime();
+    uint16_t getCurrentTrackElapsedTime();
+    uint16_t getCurrentTrackTotalTime();
 
     // Playback device control
     void setPlaybackDevice(BY8X0116P_PlaybackDevice device);
     BY8X0116P_PlaybackDevice getPlaybackDevice();
 
     // Spot insertion play (USB playback device only) - pauses current track and resumes it after playing spot track
-    void spotPlayFileIndex(word fileIndex); // fileIndex 1-65535, see notes for playFileIndex
-    void spotPlayFolderFileIndex(byte folderIndex, byte fileIndex); // folderIndex 0-99, fileIndex 1-255, see notes for playFolderFileIndex
+    void spotPlayFileIndex(uint16_t fileIndex); // fileIndex 1-65535, see notes for playFileIndex
+    void spotPlayFolderFileIndex(uint8_t folderIndex, uint8_t fileIndex); // folderIndex 0-99, fileIndex 1-255, see notes for playFolderFileIndex
     
     // Gets current track's filename in short 8.3 format
     void getCurrentTrackFilename(char *buffer, int maxLength = 12); // maxLength must at least be 12
@@ -202,8 +203,8 @@ public:
 
 private:
     Stream *_stream;            // Stream/Serial class to use (default: Serial1, if available)
-    byte _busyPin;              // Busy pin to use for playback tracking (default: disabled/0)
-    byte _busyActiveOn;         // Busy pin is active on HIGH or LOW (default: HIGH)
+    uint8_t _busyPin;           // Busy pin to use for playback tracking (default: disabled/0)
+    uint8_t _busyActiveOn;      // Busy pin is active on HIGH or LOW (default: HIGH)
     int8_t _isBlockingRspLn;    // Tracks if response line should be blocked by other routines
     bool _isCleaningRspLn;      // Tracks if code is already inside of clean response line routine
     bool _isStandingBy;         // Tracks if device is in standby mode
@@ -217,15 +218,15 @@ private:
     bool _isPlaybackActive();
     bool _waitPlaybackFinished(int timeout = 0);
     
-    void sendCommand(byte cmdID);
-    void sendCommand(byte cmdID, byte param);
-    void sendCommand(byte cmdID, word param);
-    void sendCommand(byte cmdID, byte param1, byte param2);
+    void sendCommand(uint8_t cmdID);
+    void sendCommand(uint8_t cmdID, uint8_t param);
+    void sendCommand(uint8_t cmdID, uint16_t param);
+    void sendCommand(uint8_t cmdID, uint8_t param1, uint8_t param2);
 
-    void writeRequest(byte *cmdBuffer, bool cleanRspLn = false);
+    void writeRequest(uint8_t *cmdBuffer, bool cleanRspLn = false);
 
-    word receiveCommand(byte cmdID);
-    int receiveCommand(byte cmdID, int expectedLength, char *respBuffer, int maxLength);
+    uint16_t receiveCommand(uint8_t cmdID);
+    int receiveCommand(uint8_t cmdID, int expectedLength, char *respBuffer, int maxLength);
 
     int readResponse(char *respBuffer, int expectedLength, int maxLength);
 
@@ -235,11 +236,5 @@ private:
     bool cleanResponse();
     void waitClean(int timeout = 0);
 };
-
-// Reads a digital input line, sampling over delay, to determine on/off status (sampleTime in ms, sampleRate in samples per ms).
-extern bool debouncedDigitalRead(byte pin, byte activeOn = HIGH, int sampleTime = 20, int sampleRate = 1);
-
-// Delays an amount of time, calling Scheduler yield if enabled (timeout in ms).
-extern void delayTimeout(int timeout);
 
 #endif
