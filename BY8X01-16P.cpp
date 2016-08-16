@@ -87,6 +87,13 @@ BY8X0116P::BY8X0116P(Stream& stream, uint8_t busyPin, uint8_t busyActiveOn) {
 }
 
 void BY8X0116P::init() {
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
+    Serial.print("BY8X0116P::init busyPin: ");
+    Serial.print(_busyPin);
+    Serial.print(", busyActiveOn: ");
+    Serial.println(_busyActiveOn);
+#endif
+
     if (_busyPin) {
         pinMode(_busyPin, INPUT);
         
