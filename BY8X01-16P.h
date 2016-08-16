@@ -225,9 +225,9 @@ private:
     void writeRequest(uint8_t *cmdBuffer, bool cleanRspLn = false);
 
     uint16_t receiveCommand(uint8_t cmdID);
-    int receiveCommand(uint8_t cmdID, int expectedLength, char *respBuffer, int maxLength);
+    int receiveCommand(uint8_t cmdID, char *respBuffer, int respLength, int maxLength);
 
-    int readResponse(char *respBuffer, int expectedLength, int maxLength);
+    int readResponse(char *respBuffer, int respLength, int maxLength);
 
     void waitRequest();
     bool waitResponse();

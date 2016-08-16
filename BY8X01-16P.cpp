@@ -423,7 +423,7 @@ void BY8X0116P::getCurrentTrackFilename(char *buffer, int maxLength) {
 #endif
 
     char innerBuffer[11];
-    int bytesRead = receiveCommand(BY8X0116P_QRY_CURR_FILENAME, 15, innerBuffer, 11); // Returns "OKXXXXXXXXYYY\r\n" or "XXXXXXXXYYY\r\nOK"
+    int bytesRead = receiveCommand(BY8X0116P_QRY_CURR_FILENAME, innerBuffer, 15, 11); // Returns "OKXXXXXXXXYYY\r\n" or "XXXXXXXXYYY\r\nOK"
 
     for (int i = 0; i < bytesRead && maxLength-- > 0; ++i) {
         *buffer++ = innerBuffer[i];
@@ -444,7 +444,7 @@ void BY8X0116P::getFirmwareVersion(char *buffer, int maxLength) {
 #endif
 
     char innerBuffer[4];
-    int bytesRead = receiveCommand(BY8X0116P_QRY_FIRMWARE_VER, 8, innerBuffer, 4); // Returns "VVVV\r\nOK" or "VV\r\nOK"
+    int bytesRead = receiveCommand(BY8X0116P_QRY_FIRMWARE_VER, innerBuffer, 8, 4); // Returns "VVVV\r\nOK" or "VV\r\nOK"
 
     if (maxLength-- > 0)
         *buffer++ = 'f';
@@ -752,27 +752,27 @@ uint16_t BY8X0116P::receiveCommand(uint8_t cmdID) {
     return retVal;
 }
 
-int BY8X0116P::receiveCommand(uint8_t cmdID, int expectedLength, char *respBuffer, int maxLength) {
+int BY8X0116P::receiveCommand(uint8_t cmdID, char *respBuffer, int respLength, int maxLength) {
     ++_isBlockingRspLn;
 
     uint8_t cmdBuffer[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
     writeRequest(cmdBuffer, true);
 
-    int retVal = readResponse(respBuffer, expectedLength, maxLength);
+    int retVal = readResponse(respBuffer, respLength, maxLength);
 
     --_isBlockingRspLn;
 
     return retVal;
 }
 
-int BY8X0116P::readResponse(char *respBuffer, int expectedLength, int maxLength) {
+int BY8X0116P::readResponse(char *respBuffer, int respLength, int maxLength) {
     int bytesRead = 0;
 
     if (waitResponse()) {
         int lastChar = -1;
 
-        while (_stream->available() && expectedLength > 0) {
-            char currChar = _stream->read(); --expectedLength;
+        while (_stream->available() && respLength > 0) {
+            char currChar = _stream->read(); --respLength;
 
             if (lastChar != -1) {
                 if ((lastChar == 'O' && currChar == 'K') ||
