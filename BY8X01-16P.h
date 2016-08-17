@@ -31,13 +31,13 @@
 // Library Setup
 
 // Uncomment this define to disable usage of the Scheduler library on SAM/SAMD architecures.
-#define BY8X0116P_DISABLE_SCHEDULER         1   // https://github.com/arduino-libraries/Scheduler
+//#define BY8X0116P_DISABLE_SCHEDULER         1   // https://github.com/arduino-libraries/Scheduler
 
 // Uncomment this define to enable debouncing of the input line on isBusy() calls.
-#define BY8X0116P_ENABLE_DEBOUNCING         1
+//#define BY8X0116P_ENABLE_DEBOUNCING         1
 
 // Uncomment this define to enable debug output.
-#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
+//#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
 
 // Hookup Instructions
 // Make sure to flip RX/TX lines when plugging into device from MCU. If running a 5v
