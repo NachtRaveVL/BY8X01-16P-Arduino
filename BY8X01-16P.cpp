@@ -22,7 +22,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-    BY8X01-16P-Arduino - Version 1.0.4
+    BY8X01-16P-Arduino - Version 1.0.5
 */
 
 #include "BY8X01-16P.h"
@@ -100,6 +100,14 @@ void BY8X0116P::init() {
         // Enables pull-up resistor if busy signal is active-low, otherwise disables
         digitalWrite(_busyPin, _busyActiveOn == HIGH ? LOW : HIGH);
     }
+}
+
+uint8_t BY8X0116P::getBusyPin() {
+    return _busyPin;
+}
+
+uint8_t BY8X0116P::getBusyActiveOn() {
+    return _busyActiveOn;
 }
 
 void BY8X0116P::play() {
@@ -431,9 +439,13 @@ void BY8X0116P::getCurrentTrackFilename(char *buffer, int maxLength) {
 
     char innerBuffer[11];
     int bytesRead = receiveCommand(BY8X0116P_QRY_CURR_FILENAME, innerBuffer, 15, 11); // Returns "OKXXXXXXXXYYY\r\n" or "XXXXXXXXYYY\r\nOK"
+    
+    for (int i = 7; i >= 0 && innerBuffer[i] == ' '; --i)
+        innerBuffer[i] = '\0';
 
-    for (int i = 0; i < bytesRead && maxLength-- > 0; ++i) {
-        *buffer++ = innerBuffer[i];
+    for (int i = 0; i < bytesRead && maxLength > 0; ++i) {
+        if (innerBuffer[i] && maxLength-- > 0)
+            *buffer++ = innerBuffer[i];
 
         if (i == 7 && maxLength-- > 0)
             *buffer++ = '.';
@@ -688,6 +700,134 @@ void BY8X0116P::cleanupRoutine() {
     }
 }
 
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
+
+void BY8X0116P::printModuleInfo() {
+    char buffer[16];
+
+    Serial.println("\r\n ~~~ BY8X0116P Module Info ~~~");
+
+    Serial.println("\r\nBusy Pin:");
+    if (_busyPin) {
+        Serial.print("D");
+        Serial.print(_busyPin);
+        Serial.print(_busyActiveOn ? " (active-high)" : " (active-low)");
+    }
+    else
+        Serial.println("Not configured");
+
+    Serial.println("\r\nState:");
+    Serial.print("  Standing By: ");
+    Serial.print(_isStandingBy ? "true" : "false");
+    Serial.print(", Resetting: ");
+    Serial.print(_isResetting ? "true" : "false");
+    Serial.print(", Card Inserted: ");
+    Serial.println(_isCardInserted ? "true" : "false");
+
+    Serial.println("\r\nTimers:");
+    Serial.print("  Current Time: ");
+    Serial.print(millis());
+    Serial.print(" ms, Last Request: ");
+    Serial.print(_lastReqTime);
+    Serial.print("ms, Last Clean: ");
+    Serial.print(_lastClnTime);
+    Serial.println(" ms");
+
+    Serial.println("\r\nFirmware Version:");
+    getFirmwareVersion(buffer, 16);
+    Serial.println(buffer);
+
+    Serial.println("\r\nTotal Number Of Tracks:");
+    Serial.println(getTotalNumberOfTracks());
+
+    Serial.println("\r\nCurrent Track File Index:");
+    Serial.println(getCurrentTrackFileIndex());
+
+    Serial.println("\r\nCurrent Track Filename:");
+    getCurrentTrackFilename(buffer, 16);
+    Serial.println(buffer);
+
+    Serial.println("\r\nCurrent Track Elapsed Time:");
+    Serial.println(getCurrentTrackElapsedTime());
+
+    Serial.println("\r\nCurrent Track Total Time:");
+    Serial.println(getCurrentTrackTotalTime());
+
+    Serial.println("\r\nPlayback Status:");
+    BY8X0116P_PlaybackStatus playbackStatus = getPlaybackStatus();
+    Serial.print(playbackStatus);
+    Serial.print(": ");
+    switch (playbackStatus) {
+        case BY8X0116P_PlaybackStatus_Stopped:
+            Serial.println("BY8X0116P_PlaybackStatus_Stopped"); break;
+        case BY8X0116P_PlaybackStatus_Playing:
+            Serial.println("BY8X0116P_PlaybackStatus_Playing"); break;
+        case BY8X0116P_PlaybackStatus_Paused:
+            Serial.println("BY8X0116P_PlaybackStatus_Paused"); break;
+        case BY8X0116P_PlaybackStatus_FastForwarding:
+            Serial.println("BY8X0116P_PlaybackStatus_FastForwarding"); break;
+        case BY8X0116P_PlaybackStatus_FastRewinding:
+            Serial.println("BY8X0116P_PlaybackStatus_FastRewinding"); break;
+        default:
+            break;
+    }
+
+    Serial.println("\r\nLoop Playback Mode:");
+    BY8X0116P_LoopPlaybackMode playbackMode = getLoopPlaybackMode();
+    Serial.print(playbackMode);
+    Serial.print(": ");
+    switch (playbackMode) {
+        case BY8X0116P_LoopPlaybackMode_All:
+            Serial.println("BY8X0116P_LoopPlaybackMode_All"); break;
+        case BY8X0116P_LoopPlaybackMode_Folder:
+            Serial.println("BY8X0116P_LoopPlaybackMode_Folder"); break;
+        case BY8X0116P_LoopPlaybackMode_Single:
+            Serial.println("BY8X0116P_LoopPlaybackMode_Single"); break;
+        case BY8X0116P_LoopPlaybackMode_Random:
+            Serial.println("BY8X0116P_LoopPlaybackMode_Random"); break;
+        case BY8X0116P_LoopPlaybackMode_Disabled:
+            Serial.println("BY8X0116P_LoopPlaybackMode_Disabled"); break;
+        default:
+            break;
+    }
+
+    Serial.println("\r\nEqualizer Profile:");
+    BY8X0116P_EqualizerProfile eqProfile = getEqualizerProfile();
+    Serial.print(eqProfile);
+    Serial.print(": ");
+    switch (eqProfile) {
+        case BY8X0116P_EqualizerProfile_None:
+            Serial.println("BY8X0116P_EqualizerProfile_None"); break;
+        case BY8X0116P_EqualizerProfile_Pop:
+            Serial.println("BY8X0116P_EqualizerProfile_Pop"); break;
+        case BY8X0116P_EqualizerProfile_Rock:
+            Serial.println("BY8X0116P_EqualizerProfile_Rock"); break;
+        case BY8X0116P_EqualizerProfile_Jazz:
+            Serial.println("BY8X0116P_EqualizerProfile_Jazz"); break;
+        case BY8X0116P_EqualizerProfile_Classic:
+            Serial.println("BY8X0116P_EqualizerProfile_Classic"); break;
+        case BY8X0116P_EqualizerProfile_Bass:
+            Serial.println("BY8X0116P_EqualizerProfile_Bass"); break;
+        default:
+            break;
+    }
+
+    Serial.println("\r\nPlayback Device:");
+    BY8X0116P_PlaybackDevice pbDevice = getPlaybackDevice();
+    Serial.print(pbDevice);
+    Serial.print(": ");
+    switch (pbDevice) {
+        case BY8X0116P_PlaybackDevice_USB:
+            Serial.println("BY8X0116P_PlaybackDevice_USB"); break;
+        case BY8X0116P_PlaybackDevice_MicroSD:
+            Serial.println("BY8X0116P_PlaybackDevice_MicroSD"); break;
+        default:
+            break;
+    }
+}
+
+#endif
+
 void BY8X0116P::sendCommand(uint8_t cmdID) {
     uint8_t cmdBuffer[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
     writeRequest(cmdBuffer);
@@ -706,6 +846,35 @@ void BY8X0116P::sendCommand(uint8_t cmdID, uint16_t param) {
 void BY8X0116P::sendCommand(uint8_t cmdID, uint8_t param1, uint8_t param2) {
     uint8_t cmdBuffer[] = { 0x7E, 0x05, cmdID, param1, param2, 0x00, 0xEF };
     writeRequest(cmdBuffer);
+}
+
+uint16_t BY8X0116P::receiveCommand(uint8_t cmdID) {
+    ++_isBlockingRspLn;
+
+    uint8_t cmdBuffer[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
+    writeRequest(cmdBuffer, true);
+
+    char respBuffer[5];
+    readResponse(respBuffer, 8, 5);
+
+    uint16_t retVal = strtol(respBuffer, NULL, 16);
+
+    --_isBlockingRspLn;
+
+    return retVal;
+}
+
+int BY8X0116P::receiveCommand(uint8_t cmdID, char *respBuffer, int respLength, int maxLength) {
+    ++_isBlockingRspLn;
+
+    uint8_t cmdBuffer[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
+    writeRequest(cmdBuffer, true);
+
+    int retVal = readResponse(respBuffer, respLength, maxLength);
+
+    --_isBlockingRspLn;
+
+    return retVal;
 }
 
 void BY8X0116P::writeRequest(uint8_t *cmdBuffer, bool cleanRspLn) {
@@ -741,35 +910,6 @@ void BY8X0116P::writeRequest(uint8_t *cmdBuffer, bool cleanRspLn) {
     _lastReqTime = millis();
 
     --_isBlockingRspLn;
-}
-
-uint16_t BY8X0116P::receiveCommand(uint8_t cmdID) {
-    ++_isBlockingRspLn;
-
-    uint8_t cmdBuffer[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
-    writeRequest(cmdBuffer, true);
-
-    char respBuffer[5];
-    readResponse(respBuffer, 8, 5);
-
-    uint16_t retVal = strtol(respBuffer, NULL, 16);
-
-    --_isBlockingRspLn;
-
-    return retVal;
-}
-
-int BY8X0116P::receiveCommand(uint8_t cmdID, char *respBuffer, int respLength, int maxLength) {
-    ++_isBlockingRspLn;
-
-    uint8_t cmdBuffer[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
-    writeRequest(cmdBuffer, true);
-
-    int retVal = readResponse(respBuffer, respLength, maxLength);
-
-    --_isBlockingRspLn;
-
-    return retVal;
 }
 
 int BY8X0116P::readResponse(char *respBuffer, int respLength, int maxLength) {

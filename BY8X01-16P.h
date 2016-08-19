@@ -22,7 +22,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-    BY8X01-16P-Arduino - Version 1.0.4
+    BY8X01-16P-Arduino - Version 1.0.5
 */
 
 #ifndef BY8X0116P_H
@@ -60,6 +60,7 @@ typedef enum {
     BY8X0116P_PlaybackStatus_Paused,
     BY8X0116P_PlaybackStatus_FastForwarding,
     BY8X0116P_PlaybackStatus_FastRewinding,
+
     BY8X0116P_PlaybackStatus_Count
 } BY8X0116P_PlaybackStatus;
 
@@ -69,6 +70,7 @@ typedef enum {
     BY8X0116P_LoopPlaybackMode_Single,
     BY8X0116P_LoopPlaybackMode_Random,
     BY8X0116P_LoopPlaybackMode_Disabled,
+
     BY8X0116P_LoopPlaybackMode_Count
 } BY8X0116P_LoopPlaybackMode;
 
@@ -79,12 +81,14 @@ typedef enum {
     BY8X0116P_EqualizerProfile_Jazz,
     BY8X0116P_EqualizerProfile_Classic,
     BY8X0116P_EqualizerProfile_Bass,
+
     BY8X0116P_EqualizerProfile_Count
 } BY8X0116P_EqualizerProfile;
 
 typedef enum {
     BY8X0116P_PlaybackDevice_USB,
     BY8X0116P_PlaybackDevice_MicroSD,
+
     BY8X0116P_PlaybackDevice_Count
 } BY8X0116P_PlaybackDevice;
 
@@ -102,6 +106,9 @@ public:
 
     // Called in setup()
     void init();
+
+    uint8_t getBusyPin();
+    uint8_t getBusyActiveOn();
 
     // Playback control
     void play();
@@ -171,10 +178,10 @@ public:
     void spotPlayFolderFileIndex(uint8_t folderIndex, uint8_t fileIndex); // folderIndex 0-99, fileIndex 1-255, see notes for playFolderFileIndex
     
     // Gets current track's filename in short 8.3 format
-    void getCurrentTrackFilename(char *buffer, int maxLength = 12); // maxLength must at least be 12
+    void getCurrentTrackFilename(char *buffer, int maxLength = 12); // maxLength must at least be 12, recommended 13
 
     // Gets module's firmware number in format "fwXX" or "fwXXXX" (format depends on hw revision)
-    void getFirmwareVersion(char *buffer, int maxLength = 6); // maxLength must at least be 6
+    void getFirmwareVersion(char *buffer, int maxLength = 6); // maxLength must at least be 6, recommended 7
 
     // Busy line signal (true when device is playing anything)
     bool isBusy(); // Requires busyPin connection
@@ -200,6 +207,10 @@ public:
     // A response line cleanup routine that can be setup as a scheduled task, to keep state control updated
     void cleanupRoutine();
 
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
+    void printModuleInfo();
+#endif
+
 private:
     Stream *_stream;            // Stream/Serial class to use (default: Serial1, if available)
     uint8_t _busyPin;           // Busy pin to use for playback tracking (default: disabled/0)
@@ -222,11 +233,10 @@ private:
     void sendCommand(uint8_t cmdID, uint16_t param);
     void sendCommand(uint8_t cmdID, uint8_t param1, uint8_t param2);
 
-    void writeRequest(uint8_t *cmdBuffer, bool cleanRspLn = false);
-
     uint16_t receiveCommand(uint8_t cmdID);
     int receiveCommand(uint8_t cmdID, char *respBuffer, int respLength, int maxLength);
 
+    void writeRequest(uint8_t *cmdBuffer, bool cleanRspLn = false);
     int readResponse(char *respBuffer, int respLength, int maxLength);
 
     void waitRequest();
