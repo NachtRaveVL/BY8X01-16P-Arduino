@@ -31,49 +31,49 @@
 #define BY8X0116P_USE_SCHEDULER         1
 #endif
 
-#define BY8X0116P_CMD_PLAY              (uint8_t)0x01
-#define BY8X0116P_CMD_PAUSE             (uint8_t)0x02
-#define BY8X0116P_CMD_NEXT_TRACK        (uint8_t)0x03
-#define BY8X0116P_CMD_PREV_TRACK        (uint8_t)0x04
-#define BY8X0116P_CMD_INC_VOLUME        (uint8_t)0x05
-#define BY8X0116P_CMD_DEC_VOLUME        (uint8_t)0x06
-#define BY8X0116P_CMD_TGL_STANDBY       (uint8_t)0x07 // Toggles between standby/normal, when in standby 10mA current draw
-#define BY8X0116P_CMD_RESET             (uint8_t)0x09
-#define BY8X0116P_CMD_FAST_FORWARD      (uint8_t)0x0A
-#define BY8X0116P_CMD_FAST_REWIND       (uint8_t)0x0B
-#define BY8X0116P_CMD_STOP              (uint8_t)0x0E
-#define BY8X0116P_CMD_SET_VOLUME        (uint8_t)0x31 // level 0-30 (power failure retains setting)
-#define BY8X0116P_CMD_SET_EQ_PROFILE    (uint8_t)0x32 // profile 0-5 (none, Pop, Rock, Jazz, Classic, Bass) (power failure retains setting)
-#define BY8X0116P_CMD_SET_LOOP_MODE     (uint8_t)0x33 // mode 0-4 (all, folder, single, random, disabled) (power failure restores to 4)
-#define BY8X0116P_CMD_SWITCH_FOLDER     (uint8_t)0x34 // folder 0-1 (previous, next)
-#define BY8X0116P_CMD_SWITCH_DEVICE     (uint8_t)0x35 // device 0-1 (U-Disk, TF card)
-#define BY8X0116P_CMD_PLAY_INDEX        (uint8_t)0x41 // index 1-65535 (combination play 10 track queue)
-#define BY8X0116P_CMD_PLAY_FOLDER       (uint8_t)0x42 // folder 0-99, index 1-255
-#define BY8X0116P_CMD_SPOT_PB_INDEX     (uint8_t)0x43 // index 1-65535 (Interrupts current play to play another, then resume play) (TF device not supported)
-#define BY8X0116P_CMD_SPOT_PB_FOLDER    (uint8_t)0x44 // folder 0-99, index 1-255 (Interrupts current play to play another, then resume play) (TF device not supported)
+#define BY8X0116P_CMD_PLAY              (byte)0x01
+#define BY8X0116P_CMD_PAUSE             (byte)0x02
+#define BY8X0116P_CMD_NEXT_TRACK        (byte)0x03
+#define BY8X0116P_CMD_PREV_TRACK        (byte)0x04
+#define BY8X0116P_CMD_INC_VOLUME        (byte)0x05
+#define BY8X0116P_CMD_DEC_VOLUME        (byte)0x06
+#define BY8X0116P_CMD_TGL_STANDBY       (byte)0x07 // toggles between standby/normal, when in standby 10mA current draw
+#define BY8X0116P_CMD_RESET             (byte)0x09
+#define BY8X0116P_CMD_FAST_FORWARD      (byte)0x0A
+#define BY8X0116P_CMD_FAST_REWIND       (byte)0x0B
+#define BY8X0116P_CMD_STOP              (byte)0x0E
+#define BY8X0116P_CMD_SET_VOLUME        (byte)0x31 // level 0-30 (power failure retains setting)
+#define BY8X0116P_CMD_SET_EQ_PROFILE    (byte)0x32 // profile 0-5 (none, Pop, Rock, Jazz, Classic, Bass) (power failure retains setting)
+#define BY8X0116P_CMD_SET_LOOP_MODE     (byte)0x33 // mode 0-4 (all, folder, single, random, disabled) (power failure restores to 4)
+#define BY8X0116P_CMD_SWITCH_FOLDER     (byte)0x34 // folder 0-1 (previous, next)
+#define BY8X0116P_CMD_SWITCH_DEVICE     (byte)0x35 // device 0-1 (U-Disk, TF card)
+#define BY8X0116P_CMD_PLAY_INDEX        (byte)0x41 // index 1-65535 (combination play 10 track queue)
+#define BY8X0116P_CMD_PLAY_FOLDER       (byte)0x42 // folder 0-99, index 1-255
+#define BY8X0116P_CMD_SPOT_PB_INDEX     (byte)0x43 // index 1-65535 (Interrupts current play to play another, then resume play) (TF device not supported)
+#define BY8X0116P_CMD_SPOT_PB_FOLDER    (byte)0x44 // folder 0-99, index 1-255 (Interrupts current play to play another, then resume play) (TF device not supported)
 
-#define BY8X0116P_QRY_PB_STATUS         (uint8_t)0x10 // 0-4 (stopped / playback / paused/suspended / fast-fwd / rewind)
-#define BY8X0116P_QRY_VOLUME            (uint8_t)0x11 // 0-30
-#define BY8X0116P_QRY_EQ_PROFILE        (uint8_t)0x12 // 0-5 (none, Pop, Rock, Jazz, Classic, Bass)
-#define BY8X0116P_QRY_LOOP_MODE         (uint8_t)0x13 // 0-4 (all, folder, single, random, disabled)
-#define BY8X0116P_QRY_FIRMWARE_VER      (uint8_t)0x14 // 0-65535
-#define BY8X0116P_QRY_NUM_TRACKS_TFC    (uint8_t)0x15 // 0-65535 (total number of track files on TF card)
-#define BY8X0116P_QRY_NUM_TRACKS_USB    (uint8_t)0x16 // 0-65535 (total number of track files on USB flash drive)
-#define BY8X0116P_QRY_PLAYBACK_DEVICE   (uint8_t)0x18 // 0-1 (U-Disk, SD)
-#define BY8X0116P_QRY_CURR_TRACK_TFC    (uint8_t)0x19 // 0-65535 
-#define BY8X0116P_QRY_CURR_TRACK_USB    (uint8_t)0x1A // 0-65535
-#define BY8X0116P_QRY_ELAPSED_PB_TIME   (uint8_t)0x1C // 0-65535 (in seconds)
-#define BY8X0116P_QRY_TOTAL_PB_TIME     (uint8_t)0x1D // 0-65535 (in seconds)
-#define BY8X0116P_QRY_CURR_FILENAME     (uint8_t)0x1E // YYYYYYYYZZZ
-#define BY8X0116P_QRY_NUM_TRACKS_FOLDER (uint8_t)0x1F // 0-65535
+#define BY8X0116P_QRY_PB_STATUS         (byte)0x10 // 0-4 (stopped / playback / paused/suspended / fast-fwd / rewind)
+#define BY8X0116P_QRY_VOLUME            (byte)0x11 // 0-30
+#define BY8X0116P_QRY_EQ_PROFILE        (byte)0x12 // 0-5 (none, Pop, Rock, Jazz, Classic, Bass)
+#define BY8X0116P_QRY_LOOP_MODE         (byte)0x13 // 0-4 (all, folder, single, random, disabled)
+#define BY8X0116P_QRY_FIRMWARE_VER      (byte)0x14 // 0-65535
+#define BY8X0116P_QRY_NUM_TRACKS_TFC    (byte)0x15 // 0-65535 (total number of track files on TF card)
+#define BY8X0116P_QRY_NUM_TRACKS_USB    (byte)0x16 // 0-65535 (total number of track files on USB flash drive)
+#define BY8X0116P_QRY_PLAYBACK_DEVICE   (byte)0x18 // 0-1 (U-Disk, SD)
+#define BY8X0116P_QRY_CURR_TRACK_TFC    (byte)0x19 // 0-65535 
+#define BY8X0116P_QRY_CURR_TRACK_USB    (byte)0x1A // 0-65535
+#define BY8X0116P_QRY_ELAPSED_PB_TIME   (byte)0x1C // 0-65535 (in seconds)
+#define BY8X0116P_QRY_TOTAL_PB_TIME     (byte)0x1D // 0-65535 (in seconds)
+#define BY8X0116P_QRY_CURR_FILENAME     (byte)0x1E // YYYYYYYYZZZ
+#define BY8X0116P_QRY_NUM_TRACKS_FOLDER (byte)0x1F // 0-65535
 
-#define BY8X0116P_READ_DELAY            130 // Delay for receive operations, in ms
-#define BY8X0116P_CLEAN_DELAY           2500 // Delay between cleanup routine, in ms
-#define BY8X0116P_RESET_TIMEOUT         2800 // Timeout before another reset command made, in ms
-#define BY8X0116P_GEN_CMD_TIMEOUT       5000 // Timeout for commands to be processed
-#define BY8X0116P_BUSY_DEBOUNCE_TIME    20 // Time to spend debouncing busy input line
+#define BY8X0116P_READ_DELAY            130     // Delay for receive operations, in ms
+#define BY8X0116P_CLEAN_DELAY           2500    // Delay between cleanup routine, in ms
+#define BY8X0116P_RESET_TIMEOUT         2800    // Timeout before another reset command made, in ms
+#define BY8X0116P_GEN_CMD_TIMEOUT       5000    // Timeout for commands to be processed
+#define BY8X0116P_BUSY_DEBOUNCE_TIME    20      // Time to spend debouncing busy input line
 
-BY8X0116P::BY8X0116P(Stream& stream, uint8_t busyPin, uint8_t busyActiveOn) {
+BY8X0116P::BY8X0116P(Stream& stream, byte busyPin, byte busyActiveOn) {
     _stream = &stream;
     _busyPin = busyPin;
     _busyActiveOn = busyActiveOn;
@@ -102,11 +102,11 @@ void BY8X0116P::init() {
     }
 }
 
-uint8_t BY8X0116P::getBusyPin() {
+byte BY8X0116P::getBusyPin() {
     return _busyPin;
 }
 
-uint8_t BY8X0116P::getBusyActiveOn() {
+byte BY8X0116P::getBusyActiveOn() {
     return _busyActiveOn;
 }
 
@@ -161,9 +161,9 @@ void BY8X0116P::playFileIndex(uint16_t fileIndex) {
     sendCommand(BY8X0116P_CMD_PLAY_INDEX, fileIndex);
 }
 
-void BY8X0116P::playFolderFileIndex(uint8_t folderIndex, uint8_t fileIndex) {
-    folderIndex = (uint8_t)constrain(folderIndex, 0, 99);
-    fileIndex = (uint8_t)constrain(fileIndex, 0x01, 0xFF);
+void BY8X0116P::playFolderFileIndex(byte folderIndex, byte fileIndex) {
+    folderIndex = (byte)constrain(folderIndex, 0, 99);
+    fileIndex = (byte)constrain(fileIndex, 0x01, 0xFF);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::playFolderFileIndex folderIndex: ");
@@ -212,7 +212,7 @@ void BY8X0116P::nextFolder() {
     Serial.println("BY8X0116P::nextFolder");
 #endif
 
-    sendCommand(BY8X0116P_CMD_SWITCH_FOLDER, (uint8_t)0x01);
+    sendCommand(BY8X0116P_CMD_SWITCH_FOLDER, (byte)0x01);
 }
 
 void BY8X0116P::previousFolder() {
@@ -220,7 +220,7 @@ void BY8X0116P::previousFolder() {
     Serial.println("BY8X0116P::previousFolder");
 #endif
 
-    sendCommand(BY8X0116P_CMD_SWITCH_FOLDER, (uint8_t)0x00);
+    sendCommand(BY8X0116P_CMD_SWITCH_FOLDER, (byte)0x00);
 }
 
 void BY8X0116P::increaseVolume() {
@@ -247,7 +247,7 @@ void BY8X0116P::setVolume(int volume) {
     Serial.println(volume);
 #endif
 
-    sendCommand(BY8X0116P_CMD_SET_VOLUME, (uint8_t)volume);
+    sendCommand(BY8X0116P_CMD_SET_VOLUME, (byte)volume);
 }
 
 int BY8X0116P::getVolume() {
@@ -274,7 +274,7 @@ void BY8X0116P::setLoopPlaybackMode(BY8X0116P_LoopPlaybackMode pbLoopMode) {
     Serial.println(pbLoopMode);
 #endif
 
-    sendCommand(BY8X0116P_CMD_SET_LOOP_MODE, (uint8_t)pbLoopMode);
+    sendCommand(BY8X0116P_CMD_SET_LOOP_MODE, (byte)pbLoopMode);
 }
 
 BY8X0116P_LoopPlaybackMode BY8X0116P::getLoopPlaybackMode() {
@@ -293,7 +293,7 @@ void BY8X0116P::setEqualizerProfile(BY8X0116P_EqualizerProfile eqProfile) {
     Serial.println(eqProfile);
 #endif
 
-    sendCommand(BY8X0116P_CMD_SET_EQ_PROFILE, (uint8_t)eqProfile);
+    sendCommand(BY8X0116P_CMD_SET_EQ_PROFILE, (byte)eqProfile);
 }
 
 BY8X0116P_EqualizerProfile BY8X0116P::getEqualizerProfile() {
@@ -394,7 +394,7 @@ void BY8X0116P::setPlaybackDevice(BY8X0116P_PlaybackDevice device) {
     Serial.println(device);
 #endif
 
-    sendCommand(BY8X0116P_CMD_SWITCH_DEVICE, (uint8_t)device);
+    sendCommand(BY8X0116P_CMD_SWITCH_DEVICE, (byte)device);
 }
 
 BY8X0116P_PlaybackDevice BY8X0116P::getPlaybackDevice() {
@@ -416,9 +416,9 @@ void BY8X0116P::spotPlayFileIndex(uint16_t fileIndex) {
     sendCommand(BY8X0116P_CMD_SPOT_PB_INDEX, fileIndex);
 }
 
-void BY8X0116P::spotPlayFolderFileIndex(uint8_t folderIndex, uint8_t fileIndex) {
-    folderIndex = (uint8_t)constrain(folderIndex, 0, 99);
-    fileIndex = (uint8_t)constrain(fileIndex, 0x01, 0xFF);
+void BY8X0116P::spotPlayFolderFileIndex(byte folderIndex, byte fileIndex) {
+    folderIndex = (byte)constrain(folderIndex, 0, 99);
+    fileIndex = (byte)constrain(fileIndex, 0x01, 0xFF);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::spotPlayFolderFileIndex folderIndex: ");
@@ -485,7 +485,7 @@ bool BY8X0116P::isBusy() {
     return _isBusy();
 }
 
-static bool debouncedDigitalRead(uint8_t pin, uint8_t activeOn, int sampleTime, int sampleRate) {
+static bool debouncedDigitalRead(byte pin, byte activeOn, int sampleTime, int sampleRate) {
     unsigned long endTime = millis() + (unsigned long)sampleTime;
     int activeCount = 0;
     int inactiveCount = 0;
@@ -700,158 +700,30 @@ void BY8X0116P::cleanupRoutine() {
     }
 }
 
-#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-
-void BY8X0116P::printModuleInfo() {
-    char buffer[16];
-
-    Serial.println("\r\n ~~~ BY8X0116P Module Info ~~~");
-
-    Serial.println("\r\nBusy Pin:");
-    if (_busyPin) {
-        Serial.print("D");
-        Serial.print(_busyPin);
-        Serial.print(_busyActiveOn ? " (active-high)" : " (active-low)");
-    }
-    else
-        Serial.println("Not configured");
-
-    Serial.println("\r\nState:");
-    Serial.print("  Standing By: ");
-    Serial.print(_isStandingBy ? "true" : "false");
-    Serial.print(", Resetting: ");
-    Serial.print(_isResetting ? "true" : "false");
-    Serial.print(", Card Inserted: ");
-    Serial.println(_isCardInserted ? "true" : "false");
-
-    Serial.println("\r\nTimers:");
-    Serial.print("  Current Time: ");
-    Serial.print(millis());
-    Serial.print(" ms, Last Request: ");
-    Serial.print(_lastReqTime);
-    Serial.print("ms, Last Clean: ");
-    Serial.print(_lastClnTime);
-    Serial.println(" ms");
-
-    Serial.println("\r\nFirmware Version:");
-    getFirmwareVersion(buffer, 16);
-    Serial.println(buffer);
-
-    Serial.println("\r\nTotal Number Of Tracks:");
-    Serial.println(getTotalNumberOfTracks());
-
-    Serial.println("\r\nCurrent Track File Index:");
-    Serial.println(getCurrentTrackFileIndex());
-
-    Serial.println("\r\nCurrent Track Filename:");
-    getCurrentTrackFilename(buffer, 16);
-    Serial.println(buffer);
-
-    Serial.println("\r\nCurrent Track Elapsed Time:");
-    Serial.println(getCurrentTrackElapsedTime());
-
-    Serial.println("\r\nCurrent Track Total Time:");
-    Serial.println(getCurrentTrackTotalTime());
-
-    Serial.println("\r\nPlayback Status:");
-    BY8X0116P_PlaybackStatus playbackStatus = getPlaybackStatus();
-    Serial.print(playbackStatus);
-    Serial.print(": ");
-    switch (playbackStatus) {
-        case BY8X0116P_PlaybackStatus_Stopped:
-            Serial.println("BY8X0116P_PlaybackStatus_Stopped"); break;
-        case BY8X0116P_PlaybackStatus_Playing:
-            Serial.println("BY8X0116P_PlaybackStatus_Playing"); break;
-        case BY8X0116P_PlaybackStatus_Paused:
-            Serial.println("BY8X0116P_PlaybackStatus_Paused"); break;
-        case BY8X0116P_PlaybackStatus_FastForwarding:
-            Serial.println("BY8X0116P_PlaybackStatus_FastForwarding"); break;
-        case BY8X0116P_PlaybackStatus_FastRewinding:
-            Serial.println("BY8X0116P_PlaybackStatus_FastRewinding"); break;
-        default:
-            Serial.println(""); break;
-    }
-
-    Serial.println("\r\nLoop Playback Mode:");
-    BY8X0116P_LoopPlaybackMode playbackMode = getLoopPlaybackMode();
-    Serial.print(playbackMode);
-    Serial.print(": ");
-    switch (playbackMode) {
-        case BY8X0116P_LoopPlaybackMode_All:
-            Serial.println("BY8X0116P_LoopPlaybackMode_All"); break;
-        case BY8X0116P_LoopPlaybackMode_Folder:
-            Serial.println("BY8X0116P_LoopPlaybackMode_Folder"); break;
-        case BY8X0116P_LoopPlaybackMode_Single:
-            Serial.println("BY8X0116P_LoopPlaybackMode_Single"); break;
-        case BY8X0116P_LoopPlaybackMode_Random:
-            Serial.println("BY8X0116P_LoopPlaybackMode_Random"); break;
-        case BY8X0116P_LoopPlaybackMode_Disabled:
-            Serial.println("BY8X0116P_LoopPlaybackMode_Disabled"); break;
-        default:
-            Serial.println(""); break;
-    }
-
-    Serial.println("\r\nEqualizer Profile:");
-    BY8X0116P_EqualizerProfile eqProfile = getEqualizerProfile();
-    Serial.print(eqProfile);
-    Serial.print(": ");
-    switch (eqProfile) {
-        case BY8X0116P_EqualizerProfile_None:
-            Serial.println("BY8X0116P_EqualizerProfile_None"); break;
-        case BY8X0116P_EqualizerProfile_Pop:
-            Serial.println("BY8X0116P_EqualizerProfile_Pop"); break;
-        case BY8X0116P_EqualizerProfile_Rock:
-            Serial.println("BY8X0116P_EqualizerProfile_Rock"); break;
-        case BY8X0116P_EqualizerProfile_Jazz:
-            Serial.println("BY8X0116P_EqualizerProfile_Jazz"); break;
-        case BY8X0116P_EqualizerProfile_Classic:
-            Serial.println("BY8X0116P_EqualizerProfile_Classic"); break;
-        case BY8X0116P_EqualizerProfile_Bass:
-            Serial.println("BY8X0116P_EqualizerProfile_Bass"); break;
-        default:
-            Serial.println(""); break;
-    }
-
-    Serial.println("\r\nPlayback Device:");
-    BY8X0116P_PlaybackDevice pbDevice = getPlaybackDevice();
-    Serial.print(pbDevice);
-    Serial.print(": ");
-    switch (pbDevice) {
-        case BY8X0116P_PlaybackDevice_USB:
-            Serial.println("BY8X0116P_PlaybackDevice_USB"); break;
-        case BY8X0116P_PlaybackDevice_MicroSD:
-            Serial.println("BY8X0116P_PlaybackDevice_MicroSD"); break;
-        default:
-            Serial.println(""); break;
-    }
-}
-
-#endif
-
-void BY8X0116P::sendCommand(uint8_t cmdID) {
-    uint8_t cmdBuffer[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
+void BY8X0116P::sendCommand(byte cmdID) {
+    byte cmdBuffer[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
     writeRequest(cmdBuffer);
 }
 
-void BY8X0116P::sendCommand(uint8_t cmdID, uint8_t param) {
-    uint8_t cmdBuffer[] = { 0x7E, 0x04, cmdID, param, 0x00, 0xEF };
+void BY8X0116P::sendCommand(byte cmdID, byte param) {
+    byte cmdBuffer[] = { 0x7E, 0x04, cmdID, param, 0x00, 0xEF };
     writeRequest(cmdBuffer);
 }
 
-void BY8X0116P::sendCommand(uint8_t cmdID, uint16_t param) {
-    uint8_t cmdBuffer[] = { 0x7E, 0x05, cmdID, highByte(param), lowByte(param), 0x00, 0xEF };
+void BY8X0116P::sendCommand(byte cmdID, uint16_t param) {
+    byte cmdBuffer[] = { 0x7E, 0x05, cmdID, highByte(param), lowByte(param), 0x00, 0xEF };
     writeRequest(cmdBuffer);
 }
 
-void BY8X0116P::sendCommand(uint8_t cmdID, uint8_t param1, uint8_t param2) {
-    uint8_t cmdBuffer[] = { 0x7E, 0x05, cmdID, param1, param2, 0x00, 0xEF };
+void BY8X0116P::sendCommand(byte cmdID, byte param1, byte param2) {
+    byte cmdBuffer[] = { 0x7E, 0x05, cmdID, param1, param2, 0x00, 0xEF };
     writeRequest(cmdBuffer);
 }
 
-uint16_t BY8X0116P::receiveCommand(uint8_t cmdID) {
+uint16_t BY8X0116P::receiveCommand(byte cmdID) {
     ++_isBlockingRspLn;
 
-    uint8_t cmdBuffer[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
+    byte cmdBuffer[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
     writeRequest(cmdBuffer, true);
 
     char respBuffer[5];
@@ -864,10 +736,10 @@ uint16_t BY8X0116P::receiveCommand(uint8_t cmdID) {
     return retVal;
 }
 
-int BY8X0116P::receiveCommand(uint8_t cmdID, char *respBuffer, int respLength, int maxLength) {
+int BY8X0116P::receiveCommand(byte cmdID, char *respBuffer, int respLength, int maxLength) {
     ++_isBlockingRspLn;
 
-    uint8_t cmdBuffer[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
+    byte cmdBuffer[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
     writeRequest(cmdBuffer, true);
 
     int retVal = readResponse(respBuffer, respLength, maxLength);
@@ -877,9 +749,9 @@ int BY8X0116P::receiveCommand(uint8_t cmdID, char *respBuffer, int respLength, i
     return retVal;
 }
 
-void BY8X0116P::writeRequest(uint8_t *cmdBuffer, bool cleanRspLn) {
-    uint8_t length = cmdBuffer[1];
-    uint8_t checkCode = length;
+void BY8X0116P::writeRequest(byte *cmdBuffer, bool cleanRspLn) {
+    byte length = cmdBuffer[1];
+    byte checkCode = length;
 
     for (int i = 2; i < length; ++i)
         checkCode = checkCode ^ cmdBuffer[i];
@@ -1077,3 +949,131 @@ void BY8X0116P::waitClean(int timeout) {
 
     while (!cleanResponse() && (timeout <= 0 || millis() < endTime));
 }
+
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
+
+void BY8X0116P::printModuleInfo() {
+    char buffer[16];
+
+    Serial.println("\r\n ~~~ BY8X0116P Module Info ~~~");
+
+    Serial.println("\r\nBusy Pin:");
+    if (_busyPin) {
+        Serial.print("D");
+        Serial.print(_busyPin);
+        Serial.println(_busyActiveOn ? " (active-high)" : " (active-low)");
+    }
+    else
+        Serial.println("Not configured");
+
+    Serial.println("\r\nState:");
+    Serial.print("  Standing By: ");
+    Serial.print(_isStandingBy ? "true" : "false");
+    Serial.print(", Resetting: ");
+    Serial.print(_isResetting ? "true" : "false");
+    Serial.print(", Card Inserted: ");
+    Serial.println(_isCardInserted ? "true" : "false");
+
+    Serial.println("\r\nTimers:");
+    Serial.print("  Current Time: ");
+    Serial.print(millis());
+    Serial.print(" ms, Last Request: ");
+    Serial.print(_lastReqTime);
+    Serial.print(" ms, Last Clean: ");
+    Serial.print(_lastClnTime);
+    Serial.println(" ms");
+
+    Serial.println("\r\nFirmware Version:");
+    getFirmwareVersion(buffer, 16);
+    Serial.println(buffer);
+
+    Serial.println("\r\nTotal Number Of Tracks:");
+    Serial.println(getTotalNumberOfTracks());
+
+    Serial.println("\r\nCurrent Track File Index:");
+    Serial.println(getCurrentTrackFileIndex());
+
+    Serial.println("\r\nCurrent Track Filename:");
+    getCurrentTrackFilename(buffer, 16);
+    Serial.println(buffer);
+
+    Serial.println("\r\nCurrent Track Elapsed Time:");
+    Serial.println(getCurrentTrackElapsedTime());
+
+    Serial.println("\r\nCurrent Track Total Time:");
+    Serial.println(getCurrentTrackTotalTime());
+
+    Serial.println("\r\nPlayback Status:");
+    BY8X0116P_PlaybackStatus playbackStatus = getPlaybackStatus();
+    Serial.print(playbackStatus);
+    Serial.print(": ");
+    switch (playbackStatus) {
+        case BY8X0116P_PlaybackStatus_Stopped:
+            Serial.println("BY8X0116P_PlaybackStatus_Stopped"); break;
+        case BY8X0116P_PlaybackStatus_Playing:
+            Serial.println("BY8X0116P_PlaybackStatus_Playing"); break;
+        case BY8X0116P_PlaybackStatus_Paused:
+            Serial.println("BY8X0116P_PlaybackStatus_Paused"); break;
+        case BY8X0116P_PlaybackStatus_FastForwarding:
+            Serial.println("BY8X0116P_PlaybackStatus_FastForwarding"); break;
+        case BY8X0116P_PlaybackStatus_FastRewinding:
+            Serial.println("BY8X0116P_PlaybackStatus_FastRewinding"); break;
+        default:
+            Serial.println(""); break;
+    }
+
+    Serial.println("\r\nLoop Playback Mode:");
+    BY8X0116P_LoopPlaybackMode playbackMode = getLoopPlaybackMode();
+    Serial.print(playbackMode);
+    Serial.print(": ");
+    switch (playbackMode) {
+        case BY8X0116P_LoopPlaybackMode_All:
+            Serial.println("BY8X0116P_LoopPlaybackMode_All"); break;
+        case BY8X0116P_LoopPlaybackMode_Folder:
+            Serial.println("BY8X0116P_LoopPlaybackMode_Folder"); break;
+        case BY8X0116P_LoopPlaybackMode_Single:
+            Serial.println("BY8X0116P_LoopPlaybackMode_Single"); break;
+        case BY8X0116P_LoopPlaybackMode_Random:
+            Serial.println("BY8X0116P_LoopPlaybackMode_Random"); break;
+        case BY8X0116P_LoopPlaybackMode_Disabled:
+            Serial.println("BY8X0116P_LoopPlaybackMode_Disabled"); break;
+        default:
+            Serial.println(""); break;
+    }
+
+    Serial.println("\r\nEqualizer Profile:");
+    BY8X0116P_EqualizerProfile eqProfile = getEqualizerProfile();
+    Serial.print(eqProfile);
+    Serial.print(": ");
+    switch (eqProfile) {
+        case BY8X0116P_EqualizerProfile_None:
+            Serial.println("BY8X0116P_EqualizerProfile_None"); break;
+        case BY8X0116P_EqualizerProfile_Pop:
+            Serial.println("BY8X0116P_EqualizerProfile_Pop"); break;
+        case BY8X0116P_EqualizerProfile_Rock:
+            Serial.println("BY8X0116P_EqualizerProfile_Rock"); break;
+        case BY8X0116P_EqualizerProfile_Jazz:
+            Serial.println("BY8X0116P_EqualizerProfile_Jazz"); break;
+        case BY8X0116P_EqualizerProfile_Classic:
+            Serial.println("BY8X0116P_EqualizerProfile_Classic"); break;
+        case BY8X0116P_EqualizerProfile_Bass:
+            Serial.println("BY8X0116P_EqualizerProfile_Bass"); break;
+        default:
+            Serial.println(""); break;
+    }
+
+    Serial.println("\r\nPlayback Device:");
+    BY8X0116P_PlaybackDevice pbDevice = getPlaybackDevice();
+    Serial.print(pbDevice);
+    Serial.print(": ");
+    switch (pbDevice) {
+        case BY8X0116P_PlaybackDevice_USB:
+            Serial.println("BY8X0116P_PlaybackDevice_USB"); break;
+        case BY8X0116P_PlaybackDevice_MicroSD:
+            Serial.println("BY8X0116P_PlaybackDevice_MicroSD"); break;
+        default:
+            Serial.println(""); break;
+    }
+}
+
+#endif

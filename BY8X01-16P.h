@@ -99,16 +99,16 @@ public:
     // skip usage of busy pin, but isBusy() will always respond false if so. May also set
     // usage of busy pin being either active-high or active-low.
 #ifdef HAVE_HWSERIAL1
-    BY8X0116P(Stream& stream = Serial1, uint8_t busyPin = 0, uint8_t busyActiveOn = HIGH);
+    BY8X0116P(Stream& stream = Serial1, byte busyPin = 0, byte busyActiveOn = HIGH);
 #else
-    BY8X0116P(Stream& stream, uint8_t busyPin = 0, uint8_t busyActiveOn = HIGH);
+    BY8X0116P(Stream& stream, byte busyPin = 0, byte busyActiveOn = HIGH);
 #endif
 
     // Called in setup()
     void init();
 
-    uint8_t getBusyPin();
-    uint8_t getBusyActiveOn();
+    byte getBusyPin();
+    byte getBusyActiveOn();
 
     // Playback control
     void play();
@@ -125,7 +125,7 @@ public:
     void playFileIndex(uint16_t fileIndex); // fileIndex 1-65535
     // playFolderFileIndex requires that folders be named "00" through "99" and the files
     // inside of them be named "001" through "255".
-    void playFolderFileIndex(uint8_t folderIndex, uint8_t fileIndex); // folderIndex 0-99, fileIndex 1-255
+    void playFolderFileIndex(byte folderIndex, byte fileIndex); // folderIndex 0-99, fileIndex 1-255
 
     // Track fast-f/r control
     void fastForward();
@@ -175,7 +175,7 @@ public:
 
     // Spot insertion play (USB playback device only) - pauses current track and resumes it after playing spot track
     void spotPlayFileIndex(uint16_t fileIndex); // fileIndex 1-65535, see notes for playFileIndex
-    void spotPlayFolderFileIndex(uint8_t folderIndex, uint8_t fileIndex); // folderIndex 0-99, fileIndex 1-255, see notes for playFolderFileIndex
+    void spotPlayFolderFileIndex(byte folderIndex, byte fileIndex); // folderIndex 0-99, fileIndex 1-255, see notes for playFolderFileIndex
     
     // Gets current track's filename in short 8.3 format
     void getCurrentTrackFilename(char *buffer, int maxLength = 12); // maxLength must at least be 12, recommended 13
@@ -213,8 +213,8 @@ public:
 
 private:
     Stream *_stream;            // Stream/Serial class to use (default: Serial1, if available)
-    uint8_t _busyPin;           // Busy pin to use for playback tracking (default: disabled/0)
-    uint8_t _busyActiveOn;      // Busy pin is active on HIGH or LOW (default: HIGH)
+    byte _busyPin;              // Busy pin to use for playback tracking (default: disabled/0)
+    byte _busyActiveOn;         // Busy pin is active on HIGH or LOW (default: HIGH)
     int8_t _isBlockingRspLn;    // Tracks if response line should be blocked by other routines
     bool _isCleaningRspLn;      // Tracks if code is already inside of clean response line routine
     bool _isStandingBy;         // Tracks if device is in standby mode
@@ -228,15 +228,15 @@ private:
     bool _isPlaybackActive();
     bool _waitPlaybackFinished(int timeout = 0);
     
-    void sendCommand(uint8_t cmdID);
-    void sendCommand(uint8_t cmdID, uint8_t param);
-    void sendCommand(uint8_t cmdID, uint16_t param);
-    void sendCommand(uint8_t cmdID, uint8_t param1, uint8_t param2);
+    void sendCommand(byte cmdID);
+    void sendCommand(byte cmdID, byte param);
+    void sendCommand(byte cmdID, uint16_t param);
+    void sendCommand(byte cmdID, byte param1, byte param2);
 
-    uint16_t receiveCommand(uint8_t cmdID);
-    int receiveCommand(uint8_t cmdID, char *respBuffer, int respLength, int maxLength);
+    uint16_t receiveCommand(byte cmdID);
+    int receiveCommand(byte cmdID, char *respBuffer, int respLength, int maxLength);
 
-    void writeRequest(uint8_t *cmdBuffer, bool cleanRspLn = false);
+    void writeRequest(byte *cmdBuffer, bool cleanRspLn = false);
     int readResponse(char *respBuffer, int respLength, int maxLength);
 
     void waitRequest();
