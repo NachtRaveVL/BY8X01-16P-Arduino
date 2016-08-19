@@ -769,7 +769,7 @@ void BY8X0116P::printModuleInfo() {
         case BY8X0116P_PlaybackStatus_FastRewinding:
             Serial.println("BY8X0116P_PlaybackStatus_FastRewinding"); break;
         default:
-            break;
+            Serial.println(""); break;
     }
 
     Serial.println("\r\nLoop Playback Mode:");
@@ -788,7 +788,7 @@ void BY8X0116P::printModuleInfo() {
         case BY8X0116P_LoopPlaybackMode_Disabled:
             Serial.println("BY8X0116P_LoopPlaybackMode_Disabled"); break;
         default:
-            break;
+            Serial.println(""); break;
     }
 
     Serial.println("\r\nEqualizer Profile:");
@@ -809,7 +809,7 @@ void BY8X0116P::printModuleInfo() {
         case BY8X0116P_EqualizerProfile_Bass:
             Serial.println("BY8X0116P_EqualizerProfile_Bass"); break;
         default:
-            break;
+            Serial.println(""); break;
     }
 
     Serial.println("\r\nPlayback Device:");
@@ -822,7 +822,7 @@ void BY8X0116P::printModuleInfo() {
         case BY8X0116P_PlaybackDevice_MicroSD:
             Serial.println("BY8X0116P_PlaybackDevice_MicroSD"); break;
         default:
-            break;
+            Serial.println(""); break;
     }
 }
 
