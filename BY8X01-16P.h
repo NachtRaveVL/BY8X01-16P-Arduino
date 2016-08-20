@@ -149,7 +149,7 @@ public:
     // Loop playback mode
     void setLoopPlaybackMode(BY8X0116P_LoopPlaybackMode pbLoopMode);
     BY8X0116P_LoopPlaybackMode getLoopPlaybackMode();
-    
+
     // Equalizer profile (retains setting in eeprom)
     void setEqualizerProfile(BY8X0116P_EqualizerProfile eqProfile);
     BY8X0116P_EqualizerProfile getEqualizerProfile();
@@ -176,7 +176,7 @@ public:
     // Spot insertion play (USB playback device only) - pauses current track and resumes it after playing spot track
     void spotPlayFileIndex(uint16_t fileIndex); // fileIndex 1-65535, see notes for playFileIndex
     void spotPlayFolderFileIndex(byte folderIndex, byte fileIndex); // folderIndex 0-99, fileIndex 1-255, see notes for playFolderFileIndex
-    
+
     // Gets current track's filename in short 8.3 format
     void getCurrentTrackFilename(char *buffer, int maxLength = 12); // maxLength must at least be 12, recommended 13
 
@@ -227,21 +227,21 @@ private:
     bool _waitBusy(int timeout = 0);
     bool _isPlaybackActive();
     bool _waitPlaybackFinished(int timeout = 0);
-    
+
     void sendCommand(byte cmdID);
     void sendCommand(byte cmdID, byte param);
     void sendCommand(byte cmdID, uint16_t param);
     void sendCommand(byte cmdID, byte param1, byte param2);
 
     uint16_t receiveCommand(byte cmdID);
-    int receiveCommand(byte cmdID, char *respBuffer, int respLength, int maxLength);
+    int receiveCommand(byte cmdID, char *respData, int respLength, int maxLength);
 
-    void writeRequest(byte *cmdBuffer, bool cleanRspLn = false);
-    int readResponse(char *respBuffer, int respLength, int maxLength);
+    void writeRequest(byte *rqstData, bool cleanRspLn = false);
+    int readResponse(char *respData, int respLength, int maxLength);
 
     void waitRequest();
     bool waitResponse();
-    
+
     bool cleanResponse();
     void waitClean(int timeout = 0);
 };

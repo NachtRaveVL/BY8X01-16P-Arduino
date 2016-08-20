@@ -96,7 +96,7 @@ void BY8X0116P::init() {
 
     if (_busyPin) {
         pinMode(_busyPin, INPUT);
-        
+
         // Enables pull-up resistor if busy signal is active-low, otherwise disables
         digitalWrite(_busyPin, _busyActiveOn == HIGH ? LOW : HIGH);
     }
@@ -439,7 +439,7 @@ void BY8X0116P::getCurrentTrackFilename(char *buffer, int maxLength) {
 
     char innerBuffer[11];
     int bytesRead = receiveCommand(BY8X0116P_QRY_CURR_FILENAME, innerBuffer, 15, 11); // Returns "OKXXXXXXXXYYY\r\n" or "XXXXXXXXYYY\r\nOK"
-    
+
     for (int i = 7; i >= 0 && innerBuffer[i] == ' '; --i)
         innerBuffer[i] = '\0';
 
@@ -491,7 +491,7 @@ static bool debouncedDigitalRead(byte pin, byte activeOn, int sampleTime, int sa
     int inactiveCount = 0;
 
     sampleRate = 1000 / sampleRate;
-    
+
     while (millis() < endTime) {
         if (digitalRead(pin) == activeOn)
             ++activeCount;
@@ -610,7 +610,7 @@ bool BY8X0116P::isStandingBy() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.println("BY8X0116P::isStandingBy");
 #endif
-    
+
     if (millis() < _lastReqTime + BY8X0116P_READ_DELAY + BY8X0116P_READ_DELAY || _stream->available() > 4)
         cleanResponse();
 
@@ -701,61 +701,61 @@ void BY8X0116P::cleanupRoutine() {
 }
 
 void BY8X0116P::sendCommand(byte cmdID) {
-    byte cmdBuffer[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
-    writeRequest(cmdBuffer);
+    byte cmdData[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
+    writeRequest(cmdData);
 }
 
 void BY8X0116P::sendCommand(byte cmdID, byte param) {
-    byte cmdBuffer[] = { 0x7E, 0x04, cmdID, param, 0x00, 0xEF };
-    writeRequest(cmdBuffer);
+    byte cmdData[] = { 0x7E, 0x04, cmdID, param, 0x00, 0xEF };
+    writeRequest(cmdData);
 }
 
 void BY8X0116P::sendCommand(byte cmdID, uint16_t param) {
-    byte cmdBuffer[] = { 0x7E, 0x05, cmdID, highByte(param), lowByte(param), 0x00, 0xEF };
-    writeRequest(cmdBuffer);
+    byte cmdData[] = { 0x7E, 0x05, cmdID, highByte(param), lowByte(param), 0x00, 0xEF };
+    writeRequest(cmdData);
 }
 
 void BY8X0116P::sendCommand(byte cmdID, byte param1, byte param2) {
-    byte cmdBuffer[] = { 0x7E, 0x05, cmdID, param1, param2, 0x00, 0xEF };
-    writeRequest(cmdBuffer);
+    byte cmdData[] = { 0x7E, 0x05, cmdID, param1, param2, 0x00, 0xEF };
+    writeRequest(cmdData);
 }
 
 uint16_t BY8X0116P::receiveCommand(byte cmdID) {
     ++_isBlockingRspLn;
 
-    byte cmdBuffer[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
-    writeRequest(cmdBuffer, true);
+    byte cmdData[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
+    writeRequest(cmdData, true);
 
-    char respBuffer[5];
-    readResponse(respBuffer, 8, 5);
+    char respData[5];
+    readResponse(respData, 8, 5);
 
-    uint16_t retVal = strtol(respBuffer, NULL, 16);
+    uint16_t retVal = strtol(respData, NULL, 16);
 
     --_isBlockingRspLn;
 
     return retVal;
 }
 
-int BY8X0116P::receiveCommand(byte cmdID, char *respBuffer, int respLength, int maxLength) {
+int BY8X0116P::receiveCommand(byte cmdID, char *respData, int respLength, int maxLength) {
     ++_isBlockingRspLn;
 
-    byte cmdBuffer[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
-    writeRequest(cmdBuffer, true);
+    byte cmdData[] = { 0x7E, 0x03, cmdID, 0x00, 0xEF };
+    writeRequest(cmdData, true);
 
-    int retVal = readResponse(respBuffer, respLength, maxLength);
+    int retLen = readResponse(respData, respLength, maxLength);
 
     --_isBlockingRspLn;
 
-    return retVal;
+    return retLen;
 }
 
-void BY8X0116P::writeRequest(byte *cmdBuffer, bool cleanRspLn) {
-    byte length = cmdBuffer[1];
+void BY8X0116P::writeRequest(byte *rqstData, bool cleanRspLn) {
+    byte length = rqstData[1];
     byte checkCode = length;
 
     for (int i = 2; i < length; ++i)
-        checkCode = checkCode ^ cmdBuffer[i];
-    cmdBuffer[length] = checkCode;
+        checkCode = checkCode ^ rqstData[i];
+    rqstData[length] = checkCode;
 
     ++_isBlockingRspLn;
 
@@ -766,25 +766,28 @@ void BY8X0116P::writeRequest(byte *cmdBuffer, bool cleanRspLn) {
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("  BY8X0116P::writeRequest Cmd: 0x");
-    Serial.print(cmdBuffer[2], HEX);
-    for (int i = 3; i < length; ++i) {
-        Serial.print("-0x");
-        Serial.print(cmdBuffer[i], HEX);
+    Serial.print(rqstData[2], HEX);
+    if (length - 2 > 0) {
+        Serial.print(", Prm: ");
+        for (int i = 3; i < length; ++i) {
+            Serial.print(i > 3 ? "-0x" : "0x");
+            Serial.print(rqstData[i], HEX);
+        }
     }
     Serial.print(", Chk: 0x");
-    Serial.println(cmdBuffer[length], HEX);
+    Serial.println(rqstData[length], HEX);
 #endif
 
-    if (cmdBuffer[2] == BY8X0116P_CMD_RESET)
+    if (rqstData[2] == BY8X0116P_CMD_RESET) // Safer to capture state transition here
         _isResetting = true;
 
-    _stream->write(cmdBuffer, length + 2);
+    _stream->write(rqstData, length + 2);
     _lastReqTime = millis();
 
     --_isBlockingRspLn;
 }
 
-int BY8X0116P::readResponse(char *respBuffer, int respLength, int maxLength) {
+int BY8X0116P::readResponse(char *respData, int respLength, int maxLength) {
     int bytesRead = 0;
 
     if (waitResponse()) {
@@ -801,27 +804,29 @@ int BY8X0116P::readResponse(char *respBuffer, int respLength, int maxLength) {
                 }
 
                 if (maxLength-- > 0)
-                    respBuffer[bytesRead++] = lastChar;
+                    respData[bytesRead++] = lastChar;
             }
 
             lastChar = currChar;
         }
 
         if (lastChar != -1 && maxLength-- > 0)
-            respBuffer[bytesRead++] = lastChar;
+            respData[bytesRead++] = lastChar;
     }
 
     if (maxLength-- > 0)
-        respBuffer[bytesRead] == '\0';
+        respData[bytesRead] == '\0';
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("  BY8X0116P::readResponse Rsp: ");
+    Serial.print("  BY8X0116P::readResponse respData[");
+    Serial.print(bytesRead);
+    Serial.print("]: ");
     for (int i = 0; i < bytesRead; ++i) {
-        if (respBuffer[i] >= ' ')
-            Serial.print(respBuffer[i]);
+        if (respData[i] >= ' ')
+            Serial.print(respData[i]);
         else {
             Serial.print("\\x");
-            Serial.print(respBuffer[i], HEX);
+            Serial.print(respData[i], HEX);
         }
     }
     Serial.println("");
@@ -865,31 +870,31 @@ bool BY8X0116P::cleanResponse() {
     _isCleaningRspLn = true;
 
     if (waitResponse()) {
-        char respBuffer[33];
+        char respData[33];
         int respLength = 0;
 
         _lastClnTime = millis();
-        
-        while (_stream->available() && respLength < 32)
-            respBuffer[respLength++] = _stream->read();
 
-        respBuffer[respLength] = '\0';
+        while (_stream->available() && respLength < 32)
+            respData[respLength++] = _stream->read();
+
+        respData[respLength] = '\0';
 
         if (respLength) {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
             Serial.print("  BY8X0116P::cleanResponse Line: ");
             for (int i = 0; i < respLength; ++i) {
-                if (respBuffer[i] >= ' ')
-                    Serial.print(respBuffer[i]);
+                if (respData[i] >= ' ')
+                    Serial.print(respData[i]);
                 else {
                     Serial.print("\\x");
-                    Serial.print((int)respBuffer[i], HEX);
+                    Serial.print(respData[i], HEX);
                 }
             }
             Serial.println("");
 #endif
 
-            char *respScan = &respBuffer[0];
+            char *respScan = &respData[0];
 
             while (*respScan) {
                 // Standby responses
@@ -955,9 +960,9 @@ void BY8X0116P::waitClean(int timeout) {
 void BY8X0116P::printModuleInfo() {
     char buffer[16];
 
-    Serial.println("\r\n ~~~ BY8X0116P Module Info ~~~");
+    Serial.println(""); Serial.println(" ~~~ BY8X0116P Module Info ~~~");
 
-    Serial.println("\r\nBusy Pin:");
+    Serial.println(""); Serial.println("Busy Pin:");
     if (_busyPin) {
         Serial.print("D");
         Serial.print(_busyPin);
@@ -966,7 +971,7 @@ void BY8X0116P::printModuleInfo() {
     else
         Serial.println("Not configured");
 
-    Serial.println("\r\nState:");
+    Serial.println(""); Serial.println("State:");
     Serial.print("  Standing By: ");
     Serial.print(_isStandingBy ? "true" : "false");
     Serial.print(", Resetting: ");
@@ -974,7 +979,7 @@ void BY8X0116P::printModuleInfo() {
     Serial.print(", Card Inserted: ");
     Serial.println(_isCardInserted ? "true" : "false");
 
-    Serial.println("\r\nTimers:");
+    Serial.println(""); Serial.println("Timers:");
     Serial.print("  Current Time: ");
     Serial.print(millis());
     Serial.print(" ms, Last Request: ");
@@ -983,27 +988,27 @@ void BY8X0116P::printModuleInfo() {
     Serial.print(_lastClnTime);
     Serial.println(" ms");
 
-    Serial.println("\r\nFirmware Version:");
+    Serial.println(""); Serial.println("Firmware Version:");
     getFirmwareVersion(buffer, 16);
     Serial.println(buffer);
 
-    Serial.println("\r\nTotal Number Of Tracks:");
+    Serial.println(""); Serial.println("Total Number Of Tracks:");
     Serial.println(getTotalNumberOfTracks());
 
-    Serial.println("\r\nCurrent Track File Index:");
+    Serial.println(""); Serial.println("Current Track File Index:");
     Serial.println(getCurrentTrackFileIndex());
 
-    Serial.println("\r\nCurrent Track Filename:");
+    Serial.println(""); Serial.println("Current Track Filename:");
     getCurrentTrackFilename(buffer, 16);
     Serial.println(buffer);
 
-    Serial.println("\r\nCurrent Track Elapsed Time:");
+    Serial.println(""); Serial.println("Current Track Elapsed Time:");
     Serial.println(getCurrentTrackElapsedTime());
 
-    Serial.println("\r\nCurrent Track Total Time:");
+    Serial.println(""); Serial.println("Current Track Total Time:");
     Serial.println(getCurrentTrackTotalTime());
 
-    Serial.println("\r\nPlayback Status:");
+    Serial.println(""); Serial.println("Playback Status:");
     BY8X0116P_PlaybackStatus playbackStatus = getPlaybackStatus();
     Serial.print(playbackStatus);
     Serial.print(": ");
@@ -1022,7 +1027,7 @@ void BY8X0116P::printModuleInfo() {
             Serial.println(""); break;
     }
 
-    Serial.println("\r\nLoop Playback Mode:");
+    Serial.println(""); Serial.println("Loop Playback Mode:");
     BY8X0116P_LoopPlaybackMode playbackMode = getLoopPlaybackMode();
     Serial.print(playbackMode);
     Serial.print(": ");
@@ -1041,7 +1046,7 @@ void BY8X0116P::printModuleInfo() {
             Serial.println(""); break;
     }
 
-    Serial.println("\r\nEqualizer Profile:");
+    Serial.println(""); Serial.println("Equalizer Profile:");
     BY8X0116P_EqualizerProfile eqProfile = getEqualizerProfile();
     Serial.print(eqProfile);
     Serial.print(": ");
@@ -1062,7 +1067,7 @@ void BY8X0116P::printModuleInfo() {
             Serial.println(""); break;
     }
 
-    Serial.println("\r\nPlayback Device:");
+    Serial.println(""); Serial.println("Playback Device:");
     BY8X0116P_PlaybackDevice pbDevice = getPlaybackDevice();
     Serial.print(pbDevice);
     Serial.print(": ");
