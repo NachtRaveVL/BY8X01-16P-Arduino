@@ -166,6 +166,17 @@ In BY8X01-16P.h:
 #define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
 ```
 
+In main sketch:
+```Arduino
+BY8X0116P audioController;
+
+void setup() {
+    // ...
+
+    audioController.printModuleInfo();
+}
+```
+
 In serial monitor:
 ```
  ~~~ BY8X0116P Module Info ~~~
