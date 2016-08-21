@@ -22,7 +22,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-    BY8X01-16P-Arduino - Version 1.0.5
+    BY8X01-16P-Arduino - Version 1.0.6
 */
 
 #include "BY8X01-16P.h"
@@ -767,7 +767,7 @@ void BY8X0116P::writeRequest(byte *rqstData, bool cleanRspLn) {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("  BY8X0116P::writeRequest Cmd: 0x");
     Serial.print(rqstData[2], HEX);
-    if (length - 2 > 0) {
+    if (length - 3 > 0) {
         Serial.print(", Prm: ");
         for (int i = 3; i < length; ++i) {
             Serial.print(i > 3 ? "-0x" : "0x");
@@ -815,7 +815,7 @@ int BY8X0116P::readResponse(char *respData, int respLength, int maxLength) {
     }
 
     if (maxLength-- > 0)
-        respData[bytesRead] == '\0';
+        respData[bytesRead] = '\0';
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("  BY8X0116P::readResponse respData[");

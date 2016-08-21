@@ -22,7 +22,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-    BY8X01-16P-Arduino - Version 1.0.5
+    BY8X01-16P-Arduino - Version 1.0.6
 */
 
 #ifndef BY8X0116P_H
@@ -45,7 +45,8 @@
 // required if on a 3.3v device). Also, remove A, B, and C resistors on device (factory
 // default is a resistor on A and C, while B is left open), which puts the device into
 // the recommended 1-1-1 mode used for MCU serial control. Busy pin returns a 2.8v signal
-// when playback is active, and is optional for library usage.
+// when playback is active (just enough for 5v boards to register as logic level HIGH),
+// and is optional for library usage.
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>
@@ -117,14 +118,16 @@ public:
 
     // Indexed track play
     // playFileIndex supports combination play, in which multiple calls will queue up to
-    // 10 songs. Index is prescribed by FAT file system. Index order is generally in the
+    // 10 songs. Index is prescribed by the FAT file system, and is generally in the
     // order that the files were copied to the flash drive, but not guaranteed. Indexing
     // runs across all files in every subfolder. A file sorter software program (such as
     // "DriveSort" or "FAT32 Sorter") should be used if specific file index order for
     // playback is required.
     void playFileIndex(uint16_t fileIndex); // fileIndex 1-65535
+
     // playFolderFileIndex requires that folders be named "00" through "99" and the files
-    // inside of them be named "001" through "255".
+    // inside of them be named "001" through "255". This function does not support combination
+    // play, and will adjust the internal current track index.
     void playFolderFileIndex(byte folderIndex, byte fileIndex); // folderIndex 0-99, fileIndex 1-255
 
     // Track fast-f/r control
