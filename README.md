@@ -10,10 +10,13 @@ Created by NachtRaveVL, August 1st, 2016.
 
 This library allows communication with boards running a BY8001-16P or BY8301-16P audio module. It supports the full feature set of the BY8X01-16P chipset such as queued combination playback, indexed folder/file playback, loop playback mode, equalizer profile, spot insertion play, etc.
 
+Dependencies include Scheduler if on a ARM/ARMD architecture (Due, Zero, etc.), but usage can be disabled via library setup defines.
+
 ## Library Setup
 
 There are several defines inside of the library's header file that allows for more fine-tuned control.
 
+In BY8X01-16P.h:
 ```Arduino
 // Uncomment this define to disable usage of the Scheduler library on SAM/SAMD architecures.
 #define BY8X0116P_DISABLE_SCHEDULER         1   // https://github.com/arduino-libraries/Scheduler
@@ -46,7 +49,7 @@ void setup() {
 
     audioController.setVolume(20);  // Sets player volume to 20 (out of 30 max)
 
-    audioController.play();         // Starts playing loaded tracks
+    audioController.play();         // Starts playback of loaded tracks
 }
 
 ```
@@ -67,7 +70,7 @@ void setup() {
 
     audioController.init();         // Initializes module
 
-    audioController.setEqualizerProfile(BY8X0116P_EqualizerProfile_Rock);  // Sets player equalizer profile to Rock
+    audioController.setEqualizerProfile(BY8X0116P_EqualizerProfile_Rock); // Sets player equalizer profile to Rock
 
     audioController.playFileIndex(0); // Queues first file on MicroSD card for playback
     audioController.playFileIndex(1); // Queues second file on MicroSD card for playback
@@ -75,7 +78,7 @@ void setup() {
     audioController.playFileIndex(3); // Queues fourth file on MicroSD card for playback
     audioController.playFileIndex(4); // Queues fifth file on MicroSD card for playback
 
-    audioController.waitPlaybackFinished();     // Blocking call that waits until all songs have completed
+    audioController.waitPlaybackFinished(); // Blocking call that waits until all songs have completed
 
     Serial.println("All done!");
 }
@@ -89,7 +92,8 @@ In this example, folders are named "00" through "99" and files inside them are n
 ```Arduino
 #include "BY8X01-16P.h"
 
-BY8X0116P audioController(Serial1, 22); // Library using Serial1 UART and busy pin input on D22
+const byte busyPin = 22;
+BY8X0116P audioController(Serial1, busyPin); // Library using Serial1 UART and busy pin input D22
 
 void setup() {
     Serial.begin(115200);
@@ -98,7 +102,7 @@ void setup() {
 
     audioController.init();         // Initializes module
 
-    audioController.playFolderFileIndex(0, 1);  // Plays "00\001.mp3"
+    audioController.playFolderFileIndex(0, 1); // Plays "00\001.mp3"
 
     int numTracks = getNumberOfTracksInCurrentFolder(); // Gets number of tracks in current folder
     Serial.println(numTracks);      // Should display number of tracks in the "00" folder
@@ -125,11 +129,45 @@ void setup() {
 
 ```
 
-## Module Info
+### SoftwareSerial Example
 
-If one uncomments the BY8X0116P_ENABLE_DEBUG_OUTPUT define in the header file (thus enabling debug output), a special printModuleInfo() method will become available which will display information about the module itself, including initalized states, register values, current settings, etc. All calls being made will display internal debug information about the structure of the call itself. An example of this output is shown here:
+In this example, we use SoftwareSerial to replicate a hardware serial line.
 
 ```Arduino
+#include "BY8X01-16P.h"
+#include "SoftwareSerial.h"
+
+const byte rxPin = 2;
+const byte txPin = 3;
+SoftwareSerial swSerial(rxPin, txPin); // SoftwareSerial using RX pin D2 and TX pin D3
+
+BY8X0116P audioController(swSerial); // Library using SoftwareSerial and no busy pin hookup
+
+void setup() {
+    pinMode(rxPin, INPUT);          // Must manually setup pin modes for RX/TX pins
+    pinMode(txPin, OUTPUT);
+
+    swSerial.begin(9600);           // swSerial must be started first - only supported UART baud rate is 9600
+
+    audioController.init();         // Initializes module
+
+    audioController.play();         // Starts playback of loaded tracks
+}
+
+```
+
+## Module Info
+
+If one uncomments the BY8X0116P_ENABLE_DEBUG_OUTPUT define in the libraries main header file (thus enabling debug output), a special printModuleInfo() method will become available that will display information about the module itself, including initalized states, register values, current settings, etc. All calls being made will display internal debug information about the structure of the call itself. An example of this output is shown here:
+
+In BY8X01-16P.h:
+```Arduino
+// Uncomment this define to enable debug output.
+#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
+```
+
+In serial monitor:
+```
  ~~~ BY8X0116P Module Info ~~~
 
 Busy Pin:
