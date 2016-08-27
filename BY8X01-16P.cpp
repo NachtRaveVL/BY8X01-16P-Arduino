@@ -871,31 +871,33 @@ bool BY8X0116P::cleanResponse() {
 
     if (waitResponse()) {
         char respData[33];
-        int respLength = 0;
+        char *respLine = &respData[0];
+        int respLength = _stream->available();
 
-        _lastClnTime = millis();
+        if (respLength > 0) {
+            _lastClnTime = millis();
 
-        while (_stream->available() && respLength < 32)
-            respData[respLength++] = _stream->read();
+            if (respLength > 32)
+                respLine = (char *)malloc(respLength + 1);
 
-        respData[respLength] = '\0';
+            for (int i = 0; i < respLength; ++i)
+                respLine[i] = _stream->read();
+            respLine[respLength] = '\0';
 
-        if (respLength) {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
             Serial.print("  BY8X0116P::cleanResponse Line: ");
             for (int i = 0; i < respLength; ++i) {
-                if (respData[i] >= ' ')
-                    Serial.print(respData[i]);
+                if (respLine[i] >= ' ')
+                    Serial.print(respLine[i]);
                 else {
                     Serial.print("\\x");
-                    Serial.print(respData[i], HEX);
+                    Serial.print(respLine[i], HEX);
                 }
             }
             Serial.println("");
 #endif
 
-            char *respScan = &respData[0];
-
+            char *respScan = respLine;
             while (*respScan) {
                 // Standby responses
                 if (strncmp(respScan, "OKIDLE", 6) == 0) {
@@ -939,6 +941,9 @@ bool BY8X0116P::cleanResponse() {
                     ++respScan;
                 }
             }
+
+            if (respLine != &respData[0])
+                free(respLine);
 
             _isCleaningRspLn = false;
             return true;
