@@ -144,6 +144,8 @@ SoftwareSerial swSerial(rxPin, txPin); // SoftwareSerial using RX pin D2 and TX 
 BY8X0116P audioController(swSerial); // Library using SoftwareSerial and no busy pin hookup
 
 void setup() {
+    Serial.begin(115200);
+
     pinMode(rxPin, INPUT);          // Must manually setup pin modes for RX/TX pins
     pinMode(txPin, OUTPUT);
 
@@ -168,13 +170,16 @@ In BY8X01-16P.h:
 
 In main sketch:
 ```Arduino
+#include "BY8X01-16P.h"
+
 BY8X0116P audioController;
 
 void setup() {
-    // ...
+    Serial.begin(115200);
 
     audioController.printModuleInfo();
 }
+
 ```
 
 In serial monitor:
@@ -252,5 +257,6 @@ Playback Device:
 BY8X0116P::getPlaybackDevice
   BY8X0116P::writeRequest Cmd: 0x18, Chk: 0x1B
   BY8X0116P::readResponse respData[4]: 0001
-1: BY8X0116P_PlaybackDevice_MicroSD
+1: BY8X0116P_PlaybackDevice_MicroSD
+
 ```
