@@ -23,3 +23,6 @@ void setup() {
 
     audioController.play();         // Starts playback of loaded tracks
 }
+
+void loop() {
+}

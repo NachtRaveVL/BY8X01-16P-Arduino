@@ -29,3 +29,6 @@ void setup() {
 
     Serial.println("All done!");
 }
+
+void loop() {
+}

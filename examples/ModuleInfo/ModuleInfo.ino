@@ -17,3 +17,6 @@ void setup() {
 
     audioController.printModuleInfo();
 }
+
+void loop() {
+}
