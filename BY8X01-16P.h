@@ -29,6 +29,7 @@
 #define BY8X0116P_H
 
 // Library Setup
+// NOTE: It is recommended to avoid editing library files directly and instead copy these into your own project and uncomment/define, as desired, before the include directive to this library, or through custom build flags.
 
 // Uncomment this define to disable usage of the Scheduler library on SAM/SAMD architecures.
 //#define BY8X0116P_DISABLE_SCHEDULER         1   // https://github.com/arduino-libraries/Scheduler
@@ -40,6 +41,7 @@
 //#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
 
 // Hookup Instructions
+// -PLEASE READ-
 // Make sure to flip RX/TX lines when plugging into device from MCU. If running a 5v
 // Arduino board, put a 1k Ohm resistor between the MCU's TX and device's RX pin (not
 // required if on a 3.3v device). Also, remove A, B, and C resistors on device (factory

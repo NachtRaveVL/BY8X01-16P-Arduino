@@ -16,6 +16,8 @@ Dependencies include Scheduler if on a ARM/ARMD architecture (Due, Zero, etc.), 
 
 There are several defines inside of the library's header file that allows for more fine-tuned control.
 
+It is recommended to avoid editing library files directly and instead copy these into your own project and uncomment/define, as desired, before the include directive to this library, or through custom build flags.
+
 In BY8X01-16P.h:
 ```Arduino
 // Uncomment this define to disable usage of the Scheduler library on SAM/SAMD architecures.
