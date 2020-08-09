@@ -1,9 +1,11 @@
 // BY8X01-16P-Arduino Indexed Playback Example
-// In this example, folders are named "00" through "99" and files inside them are named
-// "001.mp3" (or .wav) through "255.mp3" (or .wav). The folder and file index passed into
-// playFolderFileIndex will play that specific file. Note that combination play here is
-// not supported so waiting between track plays is required. Having a busy pin connected
-// here will allow for tighter timing control between file playbacks.
+// In this example, we use an indexed naming strategy to play files in folders via
+// integer indexes. Folders on the MicroSD card should be named "00" through "99" and
+// audio files inside them named "001.mp3" (or .wav) through "255.mp3" (or .wav). The
+// folder and file index passed into playFolderFileIndex will play that specific audio
+// file. Note that combination play here is not supported so waiting between track plays
+// is required. Having a busy pin connected here will allow for tighter timing control
+// between file playbacks.
 
 #include "BY8X01-16P.h"
 

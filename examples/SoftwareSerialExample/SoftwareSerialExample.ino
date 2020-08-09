@@ -1,7 +1,6 @@
 // BY8X01-16P-Arduino SoftwareSerial Example
 // In this example, we use SoftwareSerial to replicate a hardware serial line.
 
-```Arduino
 #include "BY8X01-16P.h"
 #include "SoftwareSerial.h"
 

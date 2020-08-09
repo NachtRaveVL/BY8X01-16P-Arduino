@@ -39,6 +39,7 @@ Make sure to flip RX/TX lines when plugging into device from MCU. If running a 5
 Below are several examples of library usage.
 
 ### Simple Example
+
 ```Arduino
 #include "BY8X01-16P.h"
 
@@ -58,7 +59,9 @@ void setup() {
 
 ### Combination Playback Example
 
-In this example, files are loaded onto the MicroSD and queued using the special playFileIndex method, which allows up to 10 songs to be queued for playback. Index is prescribed by the FAT file system, and is generally in the order that the files were copied to the flash drive, but not guaranteed. Indexing runs across all files in every subfolder. A file sorter software program (such as "DriveSort" or "FAT32 Sorter") should be used if specific file index order for playback is required.
+In this example, files are loaded onto the MicroSD card and queued using the special playFileIndex method, which allows up to 10 songs to be queued for playback.
+
+Index is prescribed by the FAT file system, and is generally in the order that the files were copied to the flash drive, but not guaranteed. Indexing runs across all files in every subfolder. A file sorter software program (such as "DriveSort" or "FAT32 Sorter") should be used if specific file index order for playback is required.
 
 ```Arduino
 #include "BY8X01-16P.h"
@@ -89,7 +92,9 @@ void setup() {
 
 ### Indexed Playback Example
 
-In this example, folders are named "00" through "99" and files inside them are named "001.mp3" (or .wav) through "255.mp3" (or .wav). The folder and file index passed into playFolderFileIndex will play that specific file. Note that combination play here is not supported so waiting between track plays is required. Having a busy pin connected here will allow for tighter timing control between file playbacks.
+In this example, we use an indexed naming strategy to play files in folders via integer indexes.
+
+Folders on the MicroSD card should be named "00" through "99" and audio files inside them named "001.mp3" (or .wav) through "255.mp3" (or .wav). The folder and file index passed into playFolderFileIndex will play that specific audio file. Note that combination play here is not supported so waiting between track plays is required. Having a busy pin connected here will allow for tighter timing control between file playbacks.
 
 ```Arduino
 #include "BY8X01-16P.h"
@@ -162,16 +167,21 @@ void setup() {
 
 ## Module Info
 
-If one uncomments the BY8X0116P_ENABLE_DEBUG_OUTPUT define in the libraries main header file (thus enabling debug output) the printModuleInfo() method becomes available, which will display information about the module itself, including initalized states, register values, current settings, etc. All calls being made will display internal debug information about the structure of the call itself. An example of this output is shown here:
+In this example, we enable debug output support.
 
-In BY8X01-16P.h:
+If one defines `BY8X0116P_ENABLE_DEBUG_OUTPUT`, such as before the include directive to this library, as a compilation flag, or by directly editing the library headers (not recommended), debug output support will be enabled and the printModuleInfo() method becomes available. Calling this method will display information about the module itself, including initalized states, register values, current settings, etc. All library calls being made will display internal debug information about the structure of the call itself. An example of this output is shown below.
+
+From BY8X01-16P.h:
 ```Arduino
 // Uncomment this define to enable debug output.
-#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
+//#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
 ```
 
 In main sketch:
 ```Arduino
+// Uncomment this define to enable debug output.
+#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
+
 #include "BY8X01-16P.h"
 
 BY8X0116P audioController;

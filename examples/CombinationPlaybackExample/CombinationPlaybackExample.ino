@@ -1,5 +1,5 @@
 // BY8X01-16P-Arduino Combination Playback Example
-// In this example, files are loaded onto the MicroSD and queued using the special
+// In this example, files are loaded onto the MicroSD card and queued using the special
 // playFileIndex method, which allows up to 10 songs to be queued for playback. Index is
 // prescribed by the FAT file system, and is generally in the order that the files were
 // copied to the flash drive, but not guaranteed. Indexing runs across all files in every
