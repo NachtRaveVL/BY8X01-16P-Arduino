@@ -17,6 +17,33 @@
         "type": "git",
         "url": "https://github.com/NachtRaveVL/BY8X01-16P-Arduino.git"
     },
+    "examples": [
+        {
+            "name": "SimpleExample",
+            "base": "examples/SimpleExample",
+            "files": ["SimpleExample.ino"]
+        },
+        {
+            "name": "CombinationPlaybackExample",
+            "base": "examples/CombinationPlaybackExample",
+            "files": ["CombinationPlaybackExample.ino"]
+        },
+        {
+            "name": "IndexedPlaybackExample",
+            "base": "examples/IndexedPlaybackExample",
+            "files": ["IndexedPlaybackExample.ino"]
+        },
+        {
+            "name": "SoftwareSerialExample",
+            "base": "examples/SoftwareSerialExample",
+            "files": ["SoftwareSerialExample.ino"]
+        },
+        {
+            "name": "ModuleInfo",
+            "base": "examples/ModuleInfo",
+            "files": ["ModuleInfo.ino"]
+        }
+    ],
     "frameworks": "arduino",
     "platforms": "*"
 }
