@@ -1,6 +1,6 @@
 {
     "name": "BY8X01-16P-Arduino",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "keywords": "BY8X01-16P, BY8001-16P, BY83001-16P, uart, serial, audio, sound, controller, driver",
     "description": "Library to control a BY8001-16P or BY83001-16P audio module from an Arduino board.",
     "license": "MIT",

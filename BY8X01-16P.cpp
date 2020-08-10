@@ -22,7 +22,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-    BY8X01-16P-Arduino - Version 1.0.6
+    BY8X01-16P-Arduino - Version 1.0.7
 */
 
 #include "BY8X01-16P.h"

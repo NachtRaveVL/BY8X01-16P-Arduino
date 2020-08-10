@@ -1,7 +1,7 @@
 # BY8X01-16P-Arduino
 Arduino Library for the BY8001-16P/BY8301-16P Audio Module.
 
-**BY8X01-16P-Arduino v1.0.6**
+**BY8X01-16P-Arduino v1.0.7**
 
 Library to control a BY8001-16P or BY83001-16P audio module from an Arduino board.  
 Licensed under the non-restrictive MIT license.
@@ -10,13 +10,15 @@ Created by NachtRaveVL, August 1st, 2016.
 
 This library allows communication with boards running a BY8001-16P or BY8301-16P audio module. It supports the full feature set of the BY8X01-16P chipset such as queued combination playback, indexed folder/file playback, loop playback mode, equalizer profile, spot insertion play, etc.
 
-Dependencies include Scheduler if on a ARM/ARMD architecture (Due, Zero, etc.), but usage can be disabled via library setup defines.
+Dependencies include Scheduler if on a ARM/ARMD architecture (Due, Zero, etc.), but usage can be disabled via library setup header defines.
+
+The datasheet for the IC is available from <https://forum.arduino.cc/index.php?action=dlattach;topic=306442.0;attach=129563>.
 
 ## Library Setup
 
-There are several defines inside of the library's header file that allows for more fine-tuned control.
+### Header Defines
 
-It is recommended to avoid editing library files directly and instead copy these into your own project and uncomment/define, as desired, before the include directive to this library, or through custom build flags.
+There are several defines inside of the library's main header file that allow for more fine-tuned control of the library. You may edit and uncomment these lines directly, or supply them as a compilation flag via custom build system. While editing the main header file isn't the most ideal, it is often the easiest way when using the Arduino IDE, as it doesn't support custom build flags. Be aware that editing this header file directly will affect all projects on your system using this library.
 
 In BY8X01-16P.h:
 ```Arduino
@@ -30,9 +32,11 @@ In BY8X01-16P.h:
 //#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
 ```
 
-## Hookup Instructions
+## Hookup Callouts
 
-Make sure to flip RX/TX lines when plugging into device from MCU. If running a 5v Arduino board, put a 1k Ohm resistor between the MCU's TX and device's RX pin (not required if on a 3.3v device). Also, remove A, B, and C resistors on device (factory default is a resistor on A and C, while B is left open), which puts the device into the recommended 1-1-1 mode used for MCU serial control. Busy pin returns a 2.8v signal when playback is active (just enough for 5v boards to register as logic level HIGH), and is optional for library usage.
+### Serial UART
+
+Make sure to flip RX/TX lines when plugging into device from MCU. If running a 5v Arduino board, put a 1k Ohm resistor between the MCU's TX and device's RX pin (not required if on a 3.3v device). Also, remove A, B, and C resistors on device (factory default is a resistor on A and C, while B is left open), which puts the device into the recommended 1-1-1 mode used for MCU serial control. Busy pin is optional to utilize but returns a 2.8v signal when playback is active (just enough for 5v boards to register as logic level HIGH).
 
 ## Example Usage
 
@@ -169,12 +173,12 @@ void setup() {
 
 In this example, we enable debug output support.
 
-If one defines `BY8X0116P_ENABLE_DEBUG_OUTPUT`, such as before the include directive to this library, as a compilation flag, or by directly editing the library headers (not recommended), debug output support will be enabled and the printModuleInfo() method becomes available. Calling this method will display information about the module itself, including initalized states, register values, current settings, etc. All library calls being made will display internal debug information about the structure of the call itself. An example of this output is shown below.
+If one uncomments the line below inside the main header file (or defines it via custom build flag), debug output support will be enabled and the printModuleInfo() method will become available. Calling this method will display information about the module itself, including initalized states, register values, current settings, etc. Additionally, all library calls being made will display internal debug information about the structure of the call itself. An example of this output is shown below.
 
-From BY8X01-16P.h:
+In BY8X01-16P.h:
 ```Arduino
 // Uncomment this define to enable debug output.
-//#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
+#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
 ```
 
 In main sketch:

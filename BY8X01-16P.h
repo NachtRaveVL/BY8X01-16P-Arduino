@@ -22,7 +22,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-    BY8X01-16P-Arduino - Version 1.0.6
+    BY8X01-16P-Arduino - Version 1.0.7
 */
 
 #ifndef BY8X0116P_H
@@ -30,9 +30,9 @@
 
 // Library Setup
 
-// NOTE: It is recommended to avoid editing library files directly and instead copy these
-// into your own project and uncomment/define, as desired, before the include directive
-// to this library, or through custom build flags.
+// NOTE: It is recommended to avoid editing library files directly and instead use custom
+// build flags. While most custom build systems support such, the Arduino IDE does not.
+// Be aware that editing this file directly will affect all projects using this library.
 
 // Uncomment this define to disable usage of the Scheduler library on SAM/SAMD architecures.
 //#define BY8X0116P_DISABLE_SCHEDULER         1   // https://github.com/arduino-libraries/Scheduler
@@ -43,15 +43,15 @@
 // Uncomment this define to enable debug output.
 //#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
 
-// Hookup Instructions
+// Hookup Callout: Serial UART
 // -PLEASE READ-
 // Make sure to flip RX/TX lines when plugging into device from MCU. If running a 5v
 // Arduino board, put a 1k Ohm resistor between the MCU's TX and device's RX pin (not
 // required if on a 3.3v device). Also, remove A, B, and C resistors on device (factory
 // default is a resistor on A and C, while B is left open), which puts the device into
-// the recommended 1-1-1 mode used for MCU serial control. Busy pin returns a 2.8v signal
-// when playback is active (just enough for 5v boards to register as logic level HIGH),
-// and is optional for library usage.
+// the recommended 1-1-1 mode used for MCU serial control. Busy pin is optional to
+// utilize but returns a 2.8v signal when playback is active (just enough for 5v boards
+// to register as logic level HIGH).
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>
