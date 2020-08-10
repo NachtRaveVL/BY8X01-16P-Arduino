@@ -29,7 +29,10 @@
 #define BY8X0116P_H
 
 // Library Setup
-// NOTE: It is recommended to avoid editing library files directly and instead copy these into your own project and uncomment/define, as desired, before the include directive to this library, or through custom build flags.
+
+// NOTE: It is recommended to avoid editing library files directly and instead copy these
+// into your own project and uncomment/define, as desired, before the include directive
+// to this library, or through custom build flags.
 
 // Uncomment this define to disable usage of the Scheduler library on SAM/SAMD architecures.
 //#define BY8X0116P_DISABLE_SCHEDULER         1   // https://github.com/arduino-libraries/Scheduler
