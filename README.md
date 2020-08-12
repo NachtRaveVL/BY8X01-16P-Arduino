@@ -32,6 +32,10 @@ In BY8X01-16P.h:
 //#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
 ```
 
+### Library Initialization
+
+This library doesn't contain any initialization mode flags, however still requires a call to its `init()` function, commonly called inside of the sketch's `setup()` function.
+
 ## Hookup Callouts
 
 ### Serial UART
