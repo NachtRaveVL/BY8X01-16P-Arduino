@@ -1,7 +1,7 @@
 # BY8X01-16P-Arduino
 Arduino Library for the BY8001-16P/BY8301-16P Audio Module.
 
-**BY8X01-16P-Arduino v1.0.7**
+**BY8X01-16P-Arduino v1.0.8**
 
 Library to control a BY8001-16P or BY83001-16P audio module from an Arduino board.  
 Licensed under the non-restrictive MIT license.
@@ -23,18 +23,45 @@ There are several defines inside of the library's main header file that allow fo
 In BY8X01-16P.h:
 ```Arduino
 // Uncomment this define to disable usage of the Scheduler library on SAM/SAMD architecures.
-//#define BY8X0116P_DISABLE_SCHEDULER         1   // https://github.com/arduino-libraries/Scheduler
+//#define BY8X0116P_DISABLE_SCHEDULER             // https://github.com/arduino-libraries/Scheduler
 
 // Uncomment this define to enable debouncing of the input line on isBusy() calls.
-//#define BY8X0116P_ENABLE_DEBOUNCING         1
+//#define BY8X0116P_ENABLE_DEBOUNCING
 
 // Uncomment this define to enable debug output.
-//#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
+//#define BY8X0116P_ENABLE_DEBUG_OUTPUT
 ```
 
 ### Library Initialization
 
-This library doesn't contain any initialization mode flags, however still requires a call to its `init()` function, commonly called inside of the sketch's `setup()` function.
+There are several initialization mode settings exposed through this library that are used for more fine-tuned control.
+
+#### Class Instantiation
+
+The library's class object must first be instantiated, commonly at the top of the sketch where pin setups are defined (or exposed through some other mechanism), which makes a call to the library's class constructor. The constructor allows one to set the busy pin, busy pin active-on mode, and Serial class instance. The default constructor values of the library, if left unspecified, is busy pin `DISABLED`, busy pin active-on mode `HIGH`, and Serial class instance `Serial1` @`9600`bps using mode `SERIAL_8N1`.
+
+From BY8X01-16P.h, in class BY8X0116P:
+```Arduino
+    // Library constructor. Typically called during class instantiation, before setup().
+    // May skip usage of busy pin, but isBusy() will always respond false if so. May also
+    // set usage of busy pin as being either active-high or active-low.
+    // May use any instance of Stream for serial communication, including SoftwareSerial,
+    // HardwareSerial, etc. The only supported baud rate is 9600bps using mode SERIAL_8N1.
+    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, Stream& serial = Serial1);
+
+    // Convenience constructor for custom Serial instance. See main constructor.
+    BY8X0116P(Stream& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
+```
+
+#### Device Initialization
+
+Additionally, a call is expected to be provided to the library class object's `init()` method, commonly called inside of the sketch's `setup()` function. This method also begins the supplied Serial instance.
+
+From BY8X01-16P.h, in class BY8X0116P:
+```Arduino
+    // Initializes module, also begins Serial instance. Typically called in setup().
+    void init();
+```
 
 ## Hookup Callouts
 
@@ -51,16 +78,19 @@ Below are several examples of library usage.
 ```Arduino
 #include "BY8X01-16P.h"
 
-BY8X0116P audioController;          // Library using default Serial1 UART and no busy pin hookup
+BY8X0116P audioController;              // Library using default disabled busy pin hookup, and default Serial1 @9600bps
 
 void setup() {
-    Serial1.begin(9600);            // Serial1 must be started first - only supported UART baud rate is 9600
+    // Library will begin Serial1, so we don't need to begin anything
 
-    audioController.init();         // Initializes module
+    audioController.init();             // Initializes module, also begins Serial1
 
-    audioController.setVolume(20);  // Sets player volume to 20 (out of 30 max)
+    audioController.setVolume(20);      // Sets player volume to 20 (out of 30 max)
 
-    audioController.play();         // Starts playback of loaded tracks
+    audioController.play();             // Starts playback of loaded tracks
+}
+
+void loop() {
 }
 
 ```
@@ -74,14 +104,12 @@ Index is prescribed by the FAT file system, and is generally in the order that t
 ```Arduino
 #include "BY8X01-16P.h"
 
-BY8X0116P audioController;          // Library using default Serial1 UART and no busy pin hookup
+BY8X0116P audioController;              // Library using default disabled busy pin hookup, and default Serial1 @9600bps
 
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(115200);               // Library will begin Serial1, so we just need to begin Serial
 
-    Serial1.begin(9600);            // Serial1 must be started first - only supported UART baud rate is 9600
-
-    audioController.init();         // Initializes module
+    audioController.init();             // Initializes module, also begins Serial1
 
     audioController.setEqualizerProfile(BY8X0116P_EqualizerProfile_Rock); // Sets player equalizer profile to Rock
 
@@ -96,6 +124,9 @@ void setup() {
     Serial.println("All done!");
 }
 
+void loop() {
+}
+
 ```
 
 ### Indexed Playback Example
@@ -108,26 +139,24 @@ Folders on the MicroSD card should be named "00" through "99" and audio files in
 #include "BY8X01-16P.h"
 
 const byte busyPin = 22;
-BY8X0116P audioController(Serial1, busyPin); // Library using Serial1 UART and busy pin input D22
+BY8X0116P audioController(busyPin);     // Library using busy pin input D22, and default Serial1 @9600bps
 
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(115200);               // Library will begin Serial1, so we just need to begin Serial
 
-    Serial1.begin(9600);            // Serial1 must be started first - only supported UART baud rate is 9600
+    audioController.init();             // Initializes module, also begins Serial1
 
-    audioController.init();         // Initializes module
-
-    audioController.playFolderFileIndex(0, 1); // Plays "00\001.mp3"
+    audioController.playFolderFileIndex(0, 1); // Plays "00/001.mp3"
 
     int numTracks = getNumberOfTracksInCurrentFolder(); // Gets number of tracks in current folder
-    Serial.println(numTracks);      // Should display number of tracks in the "00" folder
+    Serial.println(numTracks);          // Should display number of tracks in the "00" folder
 
     char buffer[12];
     audioController.getCurrentTrackFilename(buffer); // Gets current filename (in 8.3 format) and places it into buffer
 
-    Serial.println(buffer);         // Should display "001.mp3"
+    Serial.println(buffer);             // Should display "001.mp3"
 
-    audioController.waitBusy();     // Blocking call that waits until all songs have completed
+    audioController.waitBusy();         // Blocking call that waits until all songs have completed
 
     // Plays all the remaining songs in the entire folder, printing out their file name upon playback
     for (int i = 2; i <= numTracks; ++i) {
@@ -142,6 +171,9 @@ void setup() {
     Serial.println("All done!");
 }
 
+void loop() {
+}
+
 ```
 
 ### SoftwareSerial Example
@@ -154,50 +186,53 @@ In this example, we use SoftwareSerial to replicate a hardware serial line.
 
 const byte rxPin = 2;
 const byte txPin = 3;
-SoftwareSerial swSerial(rxPin, txPin); // SoftwareSerial using RX pin D2 and TX pin D3
+SoftwareSerial swSerial(rxPin, txPin);  // SoftwareSerial using RX pin D2 and TX pin D3
 
-BY8X0116P audioController(swSerial); // Library using SoftwareSerial and no busy pin hookup
+BY8X0116P audioController(swSerial);    // Library using SoftwareSerial @9600bps, and default disabled busy pin hookup
 
 void setup() {
-    Serial.begin(115200);
+    // Library will begin SoftwareSerial, so we don't need to begin anything
 
-    pinMode(rxPin, INPUT);          // Must manually setup pin modes for RX/TX pins
+    pinMode(rxPin, INPUT);              // Must manually set pin modes for RX/TX pins (SoftwareSerial bug)
     pinMode(txPin, OUTPUT);
 
-    swSerial.begin(9600);           // swSerial must be started first - only supported UART baud rate is 9600
+    audioController.init();             // Initializes module, also begins SoftwareSerial
 
-    audioController.init();         // Initializes module
+    audioController.play();             // Starts playback of loaded tracks
+}
 
-    audioController.play();         // Starts playback of loaded tracks
+void loop() {
 }
 
 ```
 
 ## Module Info
 
-In this example, we enable debug output support.
+In this example, we enable debug output support to print out module diagnostic information.
 
 If one uncomments the line below inside the main header file (or defines it via custom build flag), debug output support will be enabled and the printModuleInfo() method will become available. Calling this method will display information about the module itself, including initalized states, register values, current settings, etc. Additionally, all library calls being made will display internal debug information about the structure of the call itself. An example of this output is shown below.
 
 In BY8X01-16P.h:
 ```Arduino
 // Uncomment this define to enable debug output.
-#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
+#define BY8X0116P_ENABLE_DEBUG_OUTPUT
 ```
 
 In main sketch:
 ```Arduino
-// Uncomment this define to enable debug output.
-#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
-
 #include "BY8X01-16P.h"
 
-BY8X0116P audioController;
+BY8X0116P audioController;              // Library using default disabled busy pin hookup, and default Serial1 @9600bps
 
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(115200);               // Library will begin Serial1, so we just need to begin Serial
 
-    audioController.printModuleInfo();
+    audioController.init();             // Initializes module, also begins Serial1
+
+    audioController.printModuleInfo();  // Prints module diagnostic information
+}
+
+void loop() {
 }
 
 ```

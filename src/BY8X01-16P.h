@@ -1,5 +1,5 @@
 /*  Arduino Library for the BY8001-16P/BY8301-16P Audio Module.
-    Copyright (c) 2016 NachtRaveVL      <nachtravevl@gmail.com>
+    Copyright (c) 2016-2020 NachtRaveVL     <nachtravevl@gmail.com>
 
     Permission is hereby granted, free of charge, to any person
     obtaining a copy of this software and associated documentation
@@ -22,7 +22,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-    BY8X01-16P-Arduino - Version 1.0.7
+    BY8X01-16P-Arduino - Version 1.0.8
 */
 
 #ifndef BY8X0116P_H
@@ -35,13 +35,13 @@
 // Be aware that editing this file directly will affect all projects using this library.
 
 // Uncomment this define to disable usage of the Scheduler library on SAM/SAMD architecures.
-//#define BY8X0116P_DISABLE_SCHEDULER         1   // https://github.com/arduino-libraries/Scheduler
+//#define BY8X0116P_DISABLE_SCHEDULER             // https://github.com/arduino-libraries/Scheduler
 
 // Uncomment this define to enable debouncing of the input line on isBusy() calls.
-//#define BY8X0116P_ENABLE_DEBOUNCING         1
+//#define BY8X0116P_ENABLE_DEBOUNCING
 
 // Uncomment this define to enable debug output.
-//#define BY8X0116P_ENABLE_DEBUG_OUTPUT       1
+//#define BY8X0116P_ENABLE_DEBUG_OUTPUT
 
 // Hookup Callout: Serial UART
 // -PLEASE READ-
@@ -58,61 +58,81 @@
 #else
 #include <WProgram.h>
 #endif
+
+#if !defined(BY8X0116P_DISABLE_SCHEDULER) && (defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_SAMD))
+#include "Scheduler.h"
+#define BY8X0116P_USE_SCHEDULER
+#endif
+
 #include <Stream.h>
 
-typedef enum {
-    BY8X0116P_PlaybackStatus_Stopped,
-    BY8X0116P_PlaybackStatus_Playing,
-    BY8X0116P_PlaybackStatus_Paused,
-    BY8X0116P_PlaybackStatus_FastForwarding,
-    BY8X0116P_PlaybackStatus_FastRewinding,
+#ifndef ENABLED
+#define ENABLED                         0x1                 // Enabled define (convenience)
+#endif
+#ifndef DISABLED
+#define DISABLED                        0x0                 // Disabled define (convenience)
+#endif
 
-    BY8X0116P_PlaybackStatus_Count
-} BY8X0116P_PlaybackStatus;
 
-typedef enum {
-    BY8X0116P_LoopPlaybackMode_All,
-    BY8X0116P_LoopPlaybackMode_Folder,
-    BY8X0116P_LoopPlaybackMode_Single,
-    BY8X0116P_LoopPlaybackMode_Random,
-    BY8X0116P_LoopPlaybackMode_Disabled,
+enum BY8X0116P_PlaybackStatus {
+    BY8X0116P_PlaybackStatus_Stopped,           // Playback status stopped
+    BY8X0116P_PlaybackStatus_Playing,           // Playback status playing
+    BY8X0116P_PlaybackStatus_Paused,            // Playback status paused
+    BY8X0116P_PlaybackStatus_FastForwarding,    // Playback status fast-forwarding
+    BY8X0116P_PlaybackStatus_FastRewinding,     // Playback status fast-rewinding
 
-    BY8X0116P_LoopPlaybackMode_Count
-} BY8X0116P_LoopPlaybackMode;
+    BY8X0116P_PlaybackStatus_Count              // Internal use only
+};
 
-typedef enum {
-    BY8X0116P_EqualizerProfile_None,
-    BY8X0116P_EqualizerProfile_Pop,
-    BY8X0116P_EqualizerProfile_Rock,
-    BY8X0116P_EqualizerProfile_Jazz,
-    BY8X0116P_EqualizerProfile_Classic,
-    BY8X0116P_EqualizerProfile_Bass,
+enum BY8X0116P_LoopPlaybackMode {
+    BY8X0116P_LoopPlaybackMode_All,             // Loop playback mode all
+    BY8X0116P_LoopPlaybackMode_Folder,          // Loop playback mode folder
+    BY8X0116P_LoopPlaybackMode_Single,          // Loop playback mode single
+    BY8X0116P_LoopPlaybackMode_Random,          // Loop playback mode random
+    BY8X0116P_LoopPlaybackMode_Disabled,        // Loop playback mode disabled
 
-    BY8X0116P_EqualizerProfile_Count
-} BY8X0116P_EqualizerProfile;
+    BY8X0116P_LoopPlaybackMode_Count            // Internal use only
+};
 
-typedef enum {
-    BY8X0116P_PlaybackDevice_USB,
-    BY8X0116P_PlaybackDevice_MicroSD,
+enum BY8X0116P_EqualizerProfile {
+    BY8X0116P_EqualizerProfile_None,            // Equalizer profile none
+    BY8X0116P_EqualizerProfile_Pop,             // Equalizer profile pop
+    BY8X0116P_EqualizerProfile_Rock,            // Equalizer profile rock
+    BY8X0116P_EqualizerProfile_Jazz,            // Equalizer profile jazz
+    BY8X0116P_EqualizerProfile_Classic,         // Equalizer profile classic
+    BY8X0116P_EqualizerProfile_Bass,            // Equalizer profile bass
 
-    BY8X0116P_PlaybackDevice_Count
-} BY8X0116P_PlaybackDevice;
+    BY8X0116P_EqualizerProfile_Count            // Internal use only
+};
+
+enum BY8X0116P_PlaybackDevice {
+    BY8X0116P_PlaybackDevice_USB,               // Playback device USB
+    BY8X0116P_PlaybackDevice_MicroSD,           // Playback device MicroSD
+
+    BY8X0116P_PlaybackDevice_Count              // Internal use only
+};
+
 
 class BY8X0116P {
 public:
+    // Library constructor. Typically called during class instantiation, before setup().
+    // May skip usage of busy pin, but isBusy() will always respond false if so. May also
+    // set usage of busy pin as being either active-high or active-low.
     // May use any instance of Stream for serial communication, including SoftwareSerial,
-    // HardwareSerial, etc. The only supported baud rate is 9600 and mode SERIAL_8N1. May
-    // skip usage of busy pin, but isBusy() will always respond false if so. May also set
-    // usage of busy pin being either active-high or active-low.
+    // HardwareSerial, etc. The only supported baud rate is 9600bps using mode SERIAL_8N1.
+    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, Stream& serial
 #ifdef HAVE_HWSERIAL1
-    BY8X0116P(Stream& stream = Serial1, byte busyPin = 0, byte busyActiveOn = HIGH);
-#else
-    BY8X0116P(Stream& stream, byte busyPin = 0, byte busyActiveOn = HIGH);
+        = Serial1
 #endif
+    );
 
-    // Called in setup()
+    // Convenience constructor for custom Serial instance. See main constructor.
+    BY8X0116P(Stream& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
+
+    // Initializes module, also begins Serial instance. Typically called in setup().
     void init();
 
+    // Mode accessors
     byte getBusyPin();
     byte getBusyActiveOn();
 
@@ -219,17 +239,18 @@ public:
     void printModuleInfo();
 #endif
 
-private:
-    Stream *_stream;            // Stream/Serial class to use (default: Serial1, if available)
-    byte _busyPin;              // Busy pin to use for playback tracking (default: disabled/0)
-    byte _busyActiveOn;         // Busy pin is active on HIGH or LOW (default: HIGH)
-    int8_t _isBlockingRspLn;    // Tracks if response line should be blocked by other routines
-    bool _isCleaningRspLn;      // Tracks if code is already inside of clean response line routine
-    bool _isStandingBy;         // Tracks if device is in standby mode
-    bool _isResetting;          // Tracks if device is reseting
-    bool _isCardInserted;       // Tracks if MicroSD card is inserted
-    unsigned long _lastReqTime; // Timestamp of last request made
-    unsigned long _lastClnTime; // Timestamp of last cleanup call
+protected:
+    static bool _serialBegan;                               // Global Serial began flag
+    byte _busyPin;                                          // Busy pin to use for playback tracking (default: DISABLED)
+    byte _busyActiveOn;                                     // Busy pin is active on HIGH or LOW (default: HIGH)
+    Stream* _serial;                                        // Serial class instance (unowned) (default: Serial1)
+    int8_t _isBlockingRspLn;                                // Tracks if response line should be blocked by other routines
+    bool _isCleaningRspLn;                                  // Tracks if code is already inside of clean response line routine
+    bool _isStandingBy;                                     // Tracks if device is in standby mode
+    bool _isResetting;                                      // Tracks if device is reseting
+    bool _isCardInserted;                                   // Tracks if MicroSD card is inserted
+    unsigned long _lastReqTime;                             // Timestamp of last request made
+    unsigned long _lastClnTime;                             // Timestamp of last cleanup call
 
     bool _isBusy();
     bool _waitBusy(int timeout = 0);
@@ -252,6 +273,8 @@ private:
 
     bool cleanResponse();
     void waitClean(int timeout = 0);
+
+    void Serial_begin();
 };
 
 #endif

@@ -1,35 +1,10 @@
 /*  Arduino Library for the BY8001-16P/BY8301-16P Audio Module.
-    Copyright (c) 2016 NachtRaveVL      <nachtravevl@gmail.com>
-
-    Permission is hereby granted, free of charge, to any person
-    obtaining a copy of this software and associated documentation
-    files (the "Software"), to deal in the Software without
-    restriction, including without limitation the rights to use,
-    copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the
-    Software is furnished to do so, subject to the following
-    conditions:
-
-    This permission notice shall be included in all copies or
-    substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-    OTHER DEALINGS IN THE SOFTWARE.
-
-    BY8X01-16P-Arduino - Version 1.0.7
+    Copyright (C) 2016 NachtRaveVL      <nachtravevl@gmail.com>
+    Copyright (C) 2012 Kasper Skårhøj   <kasperskaarhoj@gmail.com>
+    BY8X01-16P Main
 */
 
 #include "BY8X01-16P.h"
-#if (defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_SAMD)) && !defined(BY8X0116P_DISABLE_SCHEDULER)
-#include "Scheduler.h"
-#define BY8X0116P_USE_SCHEDULER         1
-#endif
 
 #define BY8X0116P_CMD_PLAY              (byte)0x01
 #define BY8X0116P_CMD_PAUSE             (byte)0x02
@@ -37,54 +12,60 @@
 #define BY8X0116P_CMD_PREV_TRACK        (byte)0x04
 #define BY8X0116P_CMD_INC_VOLUME        (byte)0x05
 #define BY8X0116P_CMD_DEC_VOLUME        (byte)0x06
-#define BY8X0116P_CMD_TGL_STANDBY       (byte)0x07 // toggles between standby/normal, when in standby 10mA current draw
+#define BY8X0116P_CMD_TGL_STANDBY       (byte)0x07          // toggles between standby/normal, when in standby 10mA current draw
 #define BY8X0116P_CMD_RESET             (byte)0x09
 #define BY8X0116P_CMD_FAST_FORWARD      (byte)0x0A
 #define BY8X0116P_CMD_FAST_REWIND       (byte)0x0B
 #define BY8X0116P_CMD_STOP              (byte)0x0E
-#define BY8X0116P_CMD_SET_VOLUME        (byte)0x31 // level 0-30 (power failure retains setting)
-#define BY8X0116P_CMD_SET_EQ_PROFILE    (byte)0x32 // profile 0-5 (none, Pop, Rock, Jazz, Classic, Bass) (power failure retains setting)
-#define BY8X0116P_CMD_SET_LOOP_MODE     (byte)0x33 // mode 0-4 (all, folder, single, random, disabled) (power failure restores to 4)
-#define BY8X0116P_CMD_SWITCH_FOLDER     (byte)0x34 // folder 0-1 (previous, next)
-#define BY8X0116P_CMD_SWITCH_DEVICE     (byte)0x35 // device 0-1 (U-Disk, TF card)
-#define BY8X0116P_CMD_PLAY_INDEX        (byte)0x41 // index 1-65535 (combination play 10 track queue)
-#define BY8X0116P_CMD_PLAY_FOLDER       (byte)0x42 // folder 0-99, index 1-255
-#define BY8X0116P_CMD_SPOT_PB_INDEX     (byte)0x43 // index 1-65535 (Interrupts current play to play another, then resume play) (TF device not supported)
-#define BY8X0116P_CMD_SPOT_PB_FOLDER    (byte)0x44 // folder 0-99, index 1-255 (Interrupts current play to play another, then resume play) (TF device not supported)
+#define BY8X0116P_CMD_SET_VOLUME        (byte)0x31          // level 0-30 (power failure retains setting)
+#define BY8X0116P_CMD_SET_EQ_PROFILE    (byte)0x32          // profile 0-5 (none, Pop, Rock, Jazz, Classic, Bass) (power failure retains setting)
+#define BY8X0116P_CMD_SET_LOOP_MODE     (byte)0x33          // mode 0-4 (all, folder, single, random, disabled) (power failure restores to 4)
+#define BY8X0116P_CMD_SWITCH_FOLDER     (byte)0x34          // folder 0-1 (previous, next)
+#define BY8X0116P_CMD_SWITCH_DEVICE     (byte)0x35          // device 0-1 (U-Disk, TF card)
+#define BY8X0116P_CMD_PLAY_INDEX        (byte)0x41          // index 1-65535 (combination play 10 track queue)
+#define BY8X0116P_CMD_PLAY_FOLDER       (byte)0x42          // folder 0-99, index 1-255
+#define BY8X0116P_CMD_SPOT_PB_INDEX     (byte)0x43          // index 1-65535 (Interrupts current play to play another, then resume play) (TF device not supported)
+#define BY8X0116P_CMD_SPOT_PB_FOLDER    (byte)0x44          // folder 0-99, index 1-255 (Interrupts current play to play another, then resume play) (TF device not supported)
 
-#define BY8X0116P_QRY_PB_STATUS         (byte)0x10 // 0-4 (stopped / playback / paused/suspended / fast-fwd / rewind)
-#define BY8X0116P_QRY_VOLUME            (byte)0x11 // 0-30
-#define BY8X0116P_QRY_EQ_PROFILE        (byte)0x12 // 0-5 (none, Pop, Rock, Jazz, Classic, Bass)
-#define BY8X0116P_QRY_LOOP_MODE         (byte)0x13 // 0-4 (all, folder, single, random, disabled)
-#define BY8X0116P_QRY_FIRMWARE_VER      (byte)0x14 // 0-65535
-#define BY8X0116P_QRY_NUM_TRACKS_TFC    (byte)0x15 // 0-65535 (total number of track files on TF card)
-#define BY8X0116P_QRY_NUM_TRACKS_USB    (byte)0x16 // 0-65535 (total number of track files on USB flash drive)
-#define BY8X0116P_QRY_PLAYBACK_DEVICE   (byte)0x18 // 0-1 (U-Disk, SD)
-#define BY8X0116P_QRY_CURR_TRACK_TFC    (byte)0x19 // 0-65535 
-#define BY8X0116P_QRY_CURR_TRACK_USB    (byte)0x1A // 0-65535
-#define BY8X0116P_QRY_ELAPSED_PB_TIME   (byte)0x1C // 0-65535 (in seconds)
-#define BY8X0116P_QRY_TOTAL_PB_TIME     (byte)0x1D // 0-65535 (in seconds)
-#define BY8X0116P_QRY_CURR_FILENAME     (byte)0x1E // YYYYYYYYZZZ
-#define BY8X0116P_QRY_NUM_TRACKS_FOLDER (byte)0x1F // 0-65535
+#define BY8X0116P_QRY_PB_STATUS         (byte)0x10          // 0-4 (stopped / playback / paused/suspended / fast-fwd / rewind)
+#define BY8X0116P_QRY_VOLUME            (byte)0x11          // 0-30
+#define BY8X0116P_QRY_EQ_PROFILE        (byte)0x12          // 0-5 (none, Pop, Rock, Jazz, Classic, Bass)
+#define BY8X0116P_QRY_LOOP_MODE         (byte)0x13          // 0-4 (all, folder, single, random, disabled)
+#define BY8X0116P_QRY_FIRMWARE_VER      (byte)0x14          // 0-65535
+#define BY8X0116P_QRY_NUM_TRACKS_TFC    (byte)0x15          // 0-65535 (total number of track files on TF card)
+#define BY8X0116P_QRY_NUM_TRACKS_USB    (byte)0x16          // 0-65535 (total number of track files on USB flash drive)
+#define BY8X0116P_QRY_PLAYBACK_DEVICE   (byte)0x18          // 0-1 (U-Disk, SD)
+#define BY8X0116P_QRY_CURR_TRACK_TFC    (byte)0x19          // 0-65535 
+#define BY8X0116P_QRY_CURR_TRACK_USB    (byte)0x1A          // 0-65535
+#define BY8X0116P_QRY_ELAPSED_PB_TIME   (byte)0x1C          // 0-65535 (in seconds)
+#define BY8X0116P_QRY_TOTAL_PB_TIME     (byte)0x1D          // 0-65535 (in seconds)
+#define BY8X0116P_QRY_CURR_FILENAME     (byte)0x1E          // YYYYYYYYZZZ
+#define BY8X0116P_QRY_NUM_TRACKS_FOLDER (byte)0x1F          // 0-65535
 
-#define BY8X0116P_READ_DELAY            130     // Delay for receive operations, in ms
-#define BY8X0116P_CLEAN_DELAY           2500    // Delay between cleanup routine, in ms
-#define BY8X0116P_RESET_TIMEOUT         2800    // Timeout before another reset command made, in ms
-#define BY8X0116P_GEN_CMD_TIMEOUT       5000    // Timeout for commands to be processed
-#define BY8X0116P_BUSY_DEBOUNCE_TIME    20      // Time to spend debouncing busy input line
+#define BY8X0116P_SERIAL_BAUD           9600                // Serial baud rate
+#define BY8X0116P_READ_DELAY            130                 // Delay for receive operations, in ms
+#define BY8X0116P_CLEAN_DELAY           2500                // Delay between cleanup routine, in ms
+#define BY8X0116P_RESET_TIMEOUT         2800                // Timeout before another reset command made, in ms
+#define BY8X0116P_GEN_CMD_TIMEOUT       5000                // Timeout for commands to be processed
+#define BY8X0116P_BUSY_DEBOUNCE_TIME    20                  // Time to spend debouncing busy input line
 
-BY8X0116P::BY8X0116P(Stream& stream, byte busyPin, byte busyActiveOn) {
-    _stream = &stream;
-    _busyPin = busyPin;
-    _busyActiveOn = busyActiveOn;
-    _isBlockingRspLn = 0;
-    _isCleaningRspLn = false;
-    _isStandingBy = false;
-    _isResetting = false;
-    _isCardInserted = true;
-    _lastReqTime = 0;
-    _lastClnTime = 0;
-}
+bool BY8X0116P::_serialBegan = false;
+
+BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, Stream& serial)
+    : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
+      _serial(&serial),
+      _isBlockingRspLn(0), _isCleaningRspLn(false),
+      _isStandingBy(false), _isResetting(false), _isCardInserted(true),
+      _lastReqTime(0), _lastClnTime(0)
+ { }
+
+BY8X0116P::BY8X0116P(Stream& serial, byte busyPin, byte busyActiveOn)
+    : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
+      _serial(&serial),
+      _isBlockingRspLn(0), _isCleaningRspLn(false),
+      _isStandingBy(false), _isResetting(false), _isCardInserted(true),
+      _lastReqTime(0), _lastClnTime(0)
+{ }
 
 void BY8X0116P::init() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
@@ -94,7 +75,9 @@ void BY8X0116P::init() {
     Serial.println(_busyActiveOn);
 #endif
 
-    if (_busyPin) {
+    Serial_begin();
+
+    if (_busyPin != DISABLED) {
         pinMode(_busyPin, INPUT);
 
         // Enables pull-up resistor if busy signal is active-low, otherwise disables
@@ -141,7 +124,7 @@ void BY8X0116P::stop(bool blocking) {
         sendCommand(BY8X0116P_CMD_STOP);
         waitRequest();
 
-        if (_busyPin)
+        if (_busyPin != DISABLED)
             _waitBusy(BY8X0116P_GEN_CMD_TIMEOUT);
         else
             _waitPlaybackFinished(BY8X0116P_GEN_CMD_TIMEOUT);
@@ -505,7 +488,7 @@ static bool debouncedDigitalRead(byte pin, byte activeOn, int sampleTime, int sa
 }
 
 bool BY8X0116P::_isBusy() {
-    if (_busyPin) {
+    if (_busyPin != DISABLED) {
         waitRequest();
 
 #ifndef BY8X0116P_ENABLE_DEBOUNCING
@@ -611,7 +594,7 @@ bool BY8X0116P::isStandingBy() {
     Serial.println("BY8X0116P::isStandingBy");
 #endif
 
-    if (millis() < _lastReqTime + BY8X0116P_READ_DELAY + BY8X0116P_READ_DELAY || _stream->available() > 4)
+    if (millis() < _lastReqTime + BY8X0116P_READ_DELAY + BY8X0116P_READ_DELAY || _serial->available() > 4)
         cleanResponse();
 
     return _isStandingBy;
@@ -658,7 +641,7 @@ bool BY8X0116P::isResetting() {
     Serial.println("BY8X0116P::isResetting");
 #endif
 
-    if (_stream->available() > 2)
+    if (_serial->available() > 2)
         cleanResponse();
 
     return _isResetting;
@@ -683,7 +666,7 @@ bool BY8X0116P::isCardInserted() {
         return _isCardInserted;
     }
     else {
-        if (_stream->available() > 4)
+        if (_serial->available() > 4)
             cleanResponse();
 
         return _isCardInserted;
@@ -691,7 +674,7 @@ bool BY8X0116P::isCardInserted() {
 }
 
 void BY8X0116P::cleanupRoutine() {
-    if (!_isBlockingRspLn && !_isCleaningRspLn && _stream->available() && millis() >= _lastClnTime + BY8X0116P_CLEAN_DELAY) {
+    if (!_isBlockingRspLn && !_isCleaningRspLn && _serial->available() && millis() >= _lastClnTime + BY8X0116P_CLEAN_DELAY) {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
         Serial.println("BY8X0116P::cleanupRoutine");
 #endif
@@ -759,7 +742,7 @@ void BY8X0116P::writeRequest(byte *rqstData, bool cleanRspLn) {
 
     ++_isBlockingRspLn;
 
-    if (cleanRspLn || _stream->available() > 8)
+    if (cleanRspLn || _serial->available() > 8)
         cleanResponse();
     else // Allow time for last command to be properly processed
         waitRequest();
@@ -781,7 +764,7 @@ void BY8X0116P::writeRequest(byte *rqstData, bool cleanRspLn) {
     if (rqstData[2] == BY8X0116P_CMD_RESET) // Safer to capture state transition here
         _isResetting = true;
 
-    _stream->write(rqstData, length + 2);
+    _serial->write(rqstData, length + 2);
     _lastReqTime = millis();
 
     --_isBlockingRspLn;
@@ -793,8 +776,8 @@ int BY8X0116P::readResponse(char *respData, int respLength, int maxLength) {
     if (waitResponse()) {
         int lastChar = -1;
 
-        while (_stream->available() && respLength > 0) {
-            char currChar = _stream->read(); --respLength;
+        while (_serial->available() && respLength > 0) {
+            char currChar = _serial->read(); --respLength;
 
             if (lastChar != -1) {
                 if ((lastChar == 'O' && currChar == 'K') ||
@@ -831,7 +814,7 @@ int BY8X0116P::readResponse(char *respData, int respLength, int maxLength) {
     }
     Serial.println("");
 #endif
-    
+
     return bytesRead;
 }
 
@@ -848,7 +831,7 @@ void BY8X0116P::waitRequest() {
 }
 
 bool BY8X0116P::waitResponse() {
-    int available = _stream->available();
+    int available = _serial->available();
     unsigned long endTime = max(millis(), _lastReqTime + BY8X0116P_READ_DELAY) + BY8X0116P_READ_DELAY;
 
     while (millis() < endTime) {
@@ -857,8 +840,8 @@ bool BY8X0116P::waitResponse() {
 #else
         delay(1);
 #endif
-        if (available != _stream->available()) {
-            available = _stream->available();
+        if (available != _serial->available()) {
+            available = _serial->available();
             endTime = max(millis(), _lastReqTime + BY8X0116P_READ_DELAY) + BY8X0116P_READ_DELAY;
         }
     }
@@ -872,7 +855,7 @@ bool BY8X0116P::cleanResponse() {
     if (waitResponse()) {
         char respData[33];
         char *respLine = &respData[0];
-        int respLength = _stream->available();
+        int respLength = _serial->available();
 
         if (respLength > 0) {
             _lastClnTime = millis();
@@ -881,7 +864,7 @@ bool BY8X0116P::cleanResponse() {
                 respLine = (char *)malloc(respLength + 1);
 
             for (int i = 0; i < respLength; ++i)
-                respLine[i] = _stream->read();
+                respLine[i] = _serial->read();
             respLine[respLength] = '\0';
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
@@ -960,6 +943,13 @@ void BY8X0116P::waitClean(int timeout) {
     while (!cleanResponse() && (timeout <= 0 || millis() < endTime));
 }
 
+void BY8X0116P::Serial_begin() {
+    if (BY8X0116P::_serialBegan) return;
+    BY8X0116P::_serialBegan = true;
+
+    _serial->begin(BY8X0116P_SERIAL_BAUD);
+}
+
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
 
 void BY8X0116P::printModuleInfo() {
@@ -968,7 +958,7 @@ void BY8X0116P::printModuleInfo() {
     Serial.println(""); Serial.println(" ~~~ BY8X0116P Module Info ~~~");
 
     Serial.println(""); Serial.println("Busy Pin:");
-    if (_busyPin) {
+    if (_busyPin != DISABLED) {
         Serial.print("D");
         Serial.print(_busyPin);
         Serial.println(_busyActiveOn ? " (active-high)" : " (active-low)");
