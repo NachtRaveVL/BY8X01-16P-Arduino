@@ -51,7 +51,9 @@
 
 bool BY8X0116P::_serialBegan = false;
 
-BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, Stream& serial)
+#ifndef BY8X0116P_USE_SOFTWARE_SERIAL
+
+BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, HardwareSerial& serial)
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
       _serial(&serial),
       _isBlockingRspLn(0), _isCleaningRspLn(false),
@@ -59,13 +61,25 @@ BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, Stream& serial)
       _lastReqTime(0), _lastClnTime(0)
  { }
 
-BY8X0116P::BY8X0116P(Stream& serial, byte busyPin, byte busyActiveOn)
+BY8X0116P::BY8X0116P(HardwareSerial& serial, byte busyPin, byte busyActiveOn)
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
       _serial(&serial),
       _isBlockingRspLn(0), _isCleaningRspLn(false),
       _isStandingBy(false), _isResetting(false), _isCardInserted(true),
       _lastReqTime(0), _lastClnTime(0)
 { }
+
+#else
+
+BY8X0116P::BY8X0116P(SoftwareSerial& serial, byte busyPin, byte busyActiveOn)
+    : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
+      _serial(&serial),
+      _isBlockingRspLn(0), _isCleaningRspLn(false),
+      _isStandingBy(false), _isResetting(false), _isCardInserted(true),
+      _lastReqTime(0), _lastClnTime(0)
+{ }
+
+#endif // /ifndef BY8X0116P_USE_SOFTWARE_SERIAL
 
 void BY8X0116P::init() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
@@ -78,6 +92,8 @@ void BY8X0116P::init() {
         Serial.print("<disabled>");
     Serial.print(", Serial#: ");
     Serial.print(getSerialInterfaceNumber())
+    Serial.print(", serialBaud: ");
+    Serial.print(getSerialBaud())
     Serial.println("");
 #endif
 
@@ -97,6 +113,10 @@ byte BY8X0116P::getBusyPin() {
 
 byte BY8X0116P::getBusyActiveOn() {
     return _busyActiveOn;
+}
+
+uint32_t BY8X0116P::getSerialBaud() {
+    return BY8X0116P_SERIAL_BAUD;
 }
 
 void BY8X0116P::play() {
@@ -953,12 +973,13 @@ void BY8X0116P::Serial_begin() {
     if (BY8X0116P::_serialBegan) return;
     BY8X0116P::_serialBegan = true;
 
-    _serial->begin(BY8X0116P_SERIAL_BAUD);
+    _serial->begin(getSerialBaud());
 }
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
 
 int BY8X0116P::getSerialInterfaceNumber() {
+#ifndef BY8X0116P_USE_SOFTWARE_SERIAL
 #if defined(HWSERIAL0) || defined(HAVE_HWSERIAL0)
     if (_serial == &Serial) return 0;
 #endif
@@ -971,6 +992,7 @@ int BY8X0116P::getSerialInterfaceNumber() {
 #if defined(HWSERIAL3) || defined(HAVE_HWSERIAL3)
     if (_serial == &Serial3) return 3;
 #endif
+#endif // /ifndef BY8X0116P_USE_SOFTWARE_SERIAL
     return -1;
 }
 
@@ -999,6 +1021,8 @@ void BY8X0116P::printModuleInfo() {
 
     Serial.println(""); Serial.println("Serial Instance:");
     Serial.println(textForSerialInterfaceNumber(getSerialInterfaceNumber()));
+    Serial.println("Serial Baud:");
+    Serial.print(getSerialBaud()); Serial.println("Hz");
 
     Serial.println(""); Serial.println("State:");
     Serial.print("  Standing By: ");
@@ -1106,4 +1130,4 @@ void BY8X0116P::printModuleInfo() {
     }
 }
 
-#endif // /BY8X0116P_ENABLE_DEBUG_OUTPUT
+#endif // /ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT

@@ -22,6 +22,9 @@ There are several defines inside of the library's main header file that allow fo
 
 In BY8X01-16P.h:
 ```Arduino
+// Uncomment this define to enable use of the SoftwareSerial library.
+//#define BY8X0116P_ENABLE_SOFTWARE_SERIAL
+
 // Uncomment this define to disable usage of the Scheduler library on SAM/SAMD architecures.
 //#define BY8X0116P_DISABLE_SCHEDULER             // https://github.com/arduino-libraries/Scheduler
 
@@ -40,17 +43,27 @@ There are several initialization mode settings exposed through this library that
 
 The library's class object must first be instantiated, commonly at the top of the sketch where pin setups are defined (or exposed through some other mechanism), which makes a call to the library's class constructor. The constructor allows one to set the busy pin, busy pin active-on mode, and Serial class instance. The default constructor values of the library, if left unspecified, is busy pin `DISABLED`, busy pin active-on mode `HIGH`, and Serial class instance `Serial1` @`9600`bps using mode `SERIAL_8N1`.
 
-From BY8X01-16P.h, in class BY8X0116P:
+From BY8X01-16P.h, in class BY8X0116P, when in hardware serial mode:
 ```Arduino
     // Library constructor. Typically called during class instantiation, before setup().
     // May skip usage of busy pin, but isBusy() will always respond false if so. May also
     // set usage of busy pin as being either active-high or active-low.
-    // May use any instance of Stream for serial communication, including SoftwareSerial,
-    // HardwareSerial, etc. The only supported baud rate is 9600bps using mode SERIAL_8N1.
-    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, Stream& serial = Serial1);
+    // Boards with more than one serial line may use a different Serial instance, such as
+    // Serial1 (which uses RX1/TX1 pins), Serial2 (RX2/TX2), etc.
+    // The only supported baud rate is 9600bps using mode SERIAL_8N1.
+    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, HardwareSerial& serial = Serial1);
 
     // Convenience constructor for custom Serial instance. See main constructor.
-    BY8X0116P(Stream& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
+    BY8X0116P(HardwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
+```
+
+From BY8X01-16P.h, in class BY8X0116P, when in sofware serial mode (see examples for sample usage):
+```Arduino
+    // Library constructor. Typically called during class instantiation, before setup().
+    // May skip usage of busy pin, but isBusy() will always respond false if so. May also
+    // set usage of busy pin as being either active-high or active-low.
+    // The only supported baud rate is 9600bps using mode SERIAL_8N1.
+    BY8X0116P(SofwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
 ```
 
 #### Device Initialization
@@ -178,11 +191,17 @@ void loop() {
 
 ### SoftwareSerial Example
 
-In this example, we use SoftwareSerial to replicate a hardware serial line.
+In this example, we utilize the software serial library for chips that do not have a hardware serial line. If one uncomments the line below inside the main header file (or defines it via custom build flag), software serial mode for the library will be enabled.
 
+In BY8X01-16P.h:
+```Arduino
+// Uncomment this define to enable use of the SoftwareSerial library.
+#define BY8X0116P_ENABLE_SOFTWARE_SERIAL
+```
+
+In main sketch:
 ```Arduino
 #include "BY8X01-16P.h"
-#include "SoftwareSerial.h"
 
 const byte rxPin = 2;
 const byte txPin = 3;
