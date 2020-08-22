@@ -70,9 +70,15 @@ BY8X0116P::BY8X0116P(Stream& serial, byte busyPin, byte busyActiveOn)
 void BY8X0116P::init() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::init busyPin: ");
-    Serial.print(_busyPin);
-    Serial.print(", busyActiveOn: ");
-    Serial.println(_busyActiveOn);
+    if (_busyPin != DISABLED) {
+        Serial.print(_busyPin);
+        Serial.print(_busyActiveOn ? " (active-high)" : " (active-low)");
+    }
+    else
+        Serial.print("<disabled>");
+    Serial.print(", Serial#: ");
+    Serial.print(getSerialInterfaceNumber())
+    Serial.println("");
 #endif
 
     Serial_begin();
@@ -952,6 +958,32 @@ void BY8X0116P::Serial_begin() {
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
 
+int BY8X0116P::getSerialInterfaceNumber() {
+#if defined(HWSERIAL0) || defined(HAVE_HWSERIAL0)
+    if (_serial == &Serial) return 0;
+#endif
+#if defined(HWSERIAL1) || defined(HAVE_HWSERIAL1)
+    if (_serial == &Serial1) return 1;
+#endif
+#if defined(HWSERIAL2) || defined(HAVE_HWSERIAL2)
+    if (_serial == &Serial2) return 2;
+#endif
+#if defined(HWSERIAL3) || defined(HAVE_HWSERIAL3)
+    if (_serial == &Serial3) return 3;
+#endif
+    return -1;
+}
+
+static const char *textForSerialInterfaceNumber(int serialNum) {
+    switch (serialNum) {
+        case 0: return "Serial";
+        case 1: return "Serial1";
+        case 2: return "Serial2";
+        case 3: return "Serial3";
+        default: return "<other>";
+    }
+}
+
 void BY8X0116P::printModuleInfo() {
     char buffer[16];
 
@@ -959,12 +991,14 @@ void BY8X0116P::printModuleInfo() {
 
     Serial.println(""); Serial.println("Busy Pin:");
     if (_busyPin != DISABLED) {
-        Serial.print("D");
-        Serial.print(_busyPin);
+        Serial.print("D"); Serial.print(_busyPin);
         Serial.println(_busyActiveOn ? " (active-high)" : " (active-low)");
     }
     else
-        Serial.println("Not configured");
+        Serial.println("<disabled>");
+
+    Serial.println(""); Serial.println("Serial Instance:");
+    Serial.println(textForSerialInterfaceNumber(getSerialInterfaceNumber()));
 
     Serial.println(""); Serial.println("State:");
     Serial.print("  Standing By: ");
@@ -1005,8 +1039,7 @@ void BY8X0116P::printModuleInfo() {
 
     Serial.println(""); Serial.println("Playback Status:");
     BY8X0116P_PlaybackStatus playbackStatus = getPlaybackStatus();
-    Serial.print(playbackStatus);
-    Serial.print(": ");
+    Serial.print(playbackStatus); Serial.print(": ");
     switch (playbackStatus) {
         case BY8X0116P_PlaybackStatus_Stopped:
             Serial.println("BY8X0116P_PlaybackStatus_Stopped"); break;
@@ -1024,8 +1057,7 @@ void BY8X0116P::printModuleInfo() {
 
     Serial.println(""); Serial.println("Loop Playback Mode:");
     BY8X0116P_LoopPlaybackMode playbackMode = getLoopPlaybackMode();
-    Serial.print(playbackMode);
-    Serial.print(": ");
+    Serial.print(playbackMode); Serial.print(": ");
     switch (playbackMode) {
         case BY8X0116P_LoopPlaybackMode_All:
             Serial.println("BY8X0116P_LoopPlaybackMode_All"); break;
@@ -1043,8 +1075,7 @@ void BY8X0116P::printModuleInfo() {
 
     Serial.println(""); Serial.println("Equalizer Profile:");
     BY8X0116P_EqualizerProfile eqProfile = getEqualizerProfile();
-    Serial.print(eqProfile);
-    Serial.print(": ");
+    Serial.print(eqProfile); Serial.print(": ");
     switch (eqProfile) {
         case BY8X0116P_EqualizerProfile_None:
             Serial.println("BY8X0116P_EqualizerProfile_None"); break;
@@ -1064,8 +1095,7 @@ void BY8X0116P::printModuleInfo() {
 
     Serial.println(""); Serial.println("Playback Device:");
     BY8X0116P_PlaybackDevice pbDevice = getPlaybackDevice();
-    Serial.print(pbDevice);
-    Serial.print(": ");
+    Serial.print(pbDevice); Serial.print(": ");
     switch (pbDevice) {
         case BY8X0116P_PlaybackDevice_USB:
             Serial.println("BY8X0116P_PlaybackDevice_USB"); break;
@@ -1076,4 +1106,4 @@ void BY8X0116P::printModuleInfo() {
     }
 }
 
-#endif
+#endif // /BY8X0116P_ENABLE_DEBUG_OUTPUT

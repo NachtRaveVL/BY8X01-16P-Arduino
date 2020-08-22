@@ -121,7 +121,7 @@ public:
     // May use any instance of Stream for serial communication, including SoftwareSerial,
     // HardwareSerial, etc. The only supported baud rate is 9600bps using mode SERIAL_8N1.
     BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, Stream& serial
-#ifdef HAVE_HWSERIAL1
+#if defined(HWSERIAL1) || defined(HAVE_HWSERIAL1)
         = Serial1
 #endif
     );
@@ -236,6 +236,7 @@ public:
     void cleanupRoutine();
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
+    int getSerialInterfaceNumber();
     void printModuleInfo();
 #endif
 
