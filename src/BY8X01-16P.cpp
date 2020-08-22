@@ -997,6 +997,7 @@ int BY8X0116P::getSerialInterfaceNumber() {
 }
 
 static const char *textForSerialInterfaceNumber(int serialNum) {
+#ifndef BY8X0116P_USE_SOFTWARE_SERIAL
     switch (serialNum) {
         case 0: return "Serial";
         case 1: return "Serial1";
@@ -1004,6 +1005,9 @@ static const char *textForSerialInterfaceNumber(int serialNum) {
         case 3: return "Serial3";
         default: return "<other>";
     }
+#else
+    return "SoftwareSerial";
+#endif // /ifndef BY8X0116P_USE_SOFTWARE_SERIAL
 }
 
 void BY8X0116P::printModuleInfo() {
