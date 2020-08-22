@@ -91,9 +91,9 @@ void BY8X0116P::init() {
     else
         Serial.print("<disabled>");
     Serial.print(", Serial#: ");
-    Serial.print(getSerialInterfaceNumber())
+    Serial.print(getSerialInterfaceNumber());
     Serial.print(", serialBaud: ");
-    Serial.print(getSerialBaud())
+    Serial.print(getSerialBaud());
     Serial.println("");
 #endif
 
