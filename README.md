@@ -10,7 +10,7 @@ Created by NachtRaveVL, August 1st, 2016.
 
 This library allows communication with boards running a BY8001-16P or BY8301-16P audio module. It supports the full feature set of the BY8X01-16P chipset such as queued combination playback, indexed folder/file playback, loop playback mode, equalizer profile, spot insertion play, etc.
 
-Dependencies include Scheduler if on a ARM/ARMD architecture (Due, Zero, etc.), but usage can be disabled via library setup header defines.
+Dependencies include Scheduler if on a ARM/ARMD architecture (e.g. Due/Zero/etc.), but usage can be disabled via library setup header defines or custom build flags.
 
 The datasheet for the IC is available from <https://forum.arduino.cc/index.php?action=dlattach;topic=306442.0;attach=129563>.
 
