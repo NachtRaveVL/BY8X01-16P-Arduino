@@ -46,15 +46,15 @@
 // Uncomment or -D this define to enable debug output.
 //#define BY8X0116P_ENABLE_DEBUG_OUTPUT
 
-// Hookup Callout: Serial UART
+// Hookup Callouts
 // -PLEASE READ-
-// Make sure to flip RX/TX lines when plugging into device from MCU. If running a 5v
-// Arduino board, put a 1k Ohm resistor between the MCU's TX and device's RX pin (not
-// required if on a 3.3v device). Also, remove A, B, and C resistors on device (factory
-// default is a resistor on A and C, while B is left open), which puts the device into
-// the recommended 1-1-1 mode used for MCU serial control. Busy pin is optional to
-// utilize but returns a 2.8v signal when playback is active (just enough for 5v boards
-// to register as logic level HIGH).
+// Make sure to flip RX/TX lines when plugging into module from microcontroller. If
+// running a 5v Arduino board, put a 1k ohm resistor on the line between the
+// microcontroller's TX and module's RX pins. Remove A, B, and C resistors on module
+// (factory default is a resistor on A and C, while B is left open). This puts the device
+// into the recommended 1-1-1 mode used for microcontroller serial control. Busy pin is
+// optional to utilize but returns a 2.8v signal when playback is active (just enough
+// for 5v boards to register as logic level HIGH).
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>
