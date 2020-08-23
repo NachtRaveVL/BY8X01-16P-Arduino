@@ -30,20 +30,20 @@
 
 // Library Setup
 
-// NOTE: It is recommended to avoid editing library files directly and instead use custom
-// build flags. While most custom build systems support such, the Arduino IDE does not.
-// Be aware that editing this file directly will affect all projects using this library.
+// NOTE: While editing the main header file isn't ideal, it is often the easiest given
+// the Arduino IDE's limited custom build flag support. Editing this header file directly
+// will affect all projects compiled on your system using these library files.
 
-// Uncomment this define to enable use of the SoftwareSerial library.
+// Uncomment or -D this define to enable use of the SoftwareSerial library.
 //#define BY8X0116P_ENABLE_SOFTWARE_SERIAL
 
-// Uncomment this define to disable usage of the Scheduler library on SAM/SAMD architecures.
+// Uncomment or -D this define to disable usage of the Scheduler library on SAM/SAMD architecures.
 //#define BY8X0116P_DISABLE_SCHEDULER             // https://github.com/arduino-libraries/Scheduler
 
-// Uncomment this define to enable debouncing of the input line on isBusy() calls.
+// Uncomment or -D this define to enable debouncing of the input line on isBusy() calls.
 //#define BY8X0116P_ENABLE_DEBOUNCING
 
-// Uncomment this define to enable debug output.
+// Uncomment or -D this define to enable debug output.
 //#define BY8X0116P_ENABLE_DEBUG_OUTPUT
 
 // Hookup Callout: Serial UART
@@ -72,6 +72,11 @@
 #else
 #include <SoftwareSerial.h>
 #define BY8X0116P_USE_SOFTWARE_SERIAL
+#endif
+
+#if defined(HWSERIAL1) || defined(HAVE_HWSERIAL1)
+// TODO: Expand this detection. -NR
+#define BY8X0116P_HAS_SERIAL1
 #endif
 
 #ifndef ENABLED
@@ -124,19 +129,18 @@ enum BY8X0116P_PlaybackDevice {
 class BY8X0116P {
 public:
 #ifndef BY8X0116P_USE_SOFTWARE_SERIAL
+#ifdef BY8X0116P_HAS_SERIAL1
     // Library constructor. Typically called during class instantiation, before setup().
     // May skip usage of busy pin, but isBusy() will always respond false if so. May also
     // set usage of busy pin as being either active-high or active-low.
-    // Boards with more than one serial line may use a different Serial instance, such as
-    // Serial1 (which uses RX1/TX1 pins), Serial2 (RX2/TX2), etc.
+    // Boards with more than one serial line (e.g. Due/Mega/etc.) can supply a different
+    // Serial instance, such as Serial1 (using RX1/TX1), Serial2 (using RX2/TX2), etc.
     // The only supported baud rate is 9600bps using mode SERIAL_8N1.
-    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, HardwareSerial& serial
-#if defined(HWSERIAL1) || defined(HAVE_HWSERIAL1)
-        = Serial1
+    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, HardwareSerial& serial = Serial1);
 #endif
-    );
 
     // Convenience constructor for custom Serial instance. See main constructor.
+    // Becomes standard library constuctor in case Serial1 isn't readily detected.
     BY8X0116P(HardwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
 #else
     // Library constructor. Typically called during class instantiation, before setup().
@@ -300,4 +304,4 @@ protected:
     void Serial_begin();
 };
 
-#endif
+#endif // /ifndef BY8X0116P_H

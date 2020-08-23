@@ -5,11 +5,16 @@
 // printModuleInfo() method will become available. Calling this method will display
 // information about the module itself, including initalized states, register values,
 // current settings, etc. Additionally, all library calls being made will display
-// internal debug information about the structure of the call itself.
+// internal debug information about the structure of the call itself. You may refer to
+// https://forum.arduino.cc/index.php?topic=602603.0 on how to define custom build flags
+// manually via modifying platform.[local.]txt.
 //
 // In BY8X01-16P.h:
-// // Uncomment this define to enable debug output.
+// // Uncomment or -D this define to enable debug output.
 // #define BY8X0116P_ENABLE_DEBUG_OUTPUT
+//
+// Alternatively, in platform.[local.]txt:
+// build.extra_flags=-DBY8X0116P_ENABLE_DEBUG_OUTPUT
 
 #include "BY8X01-16P.h"
 

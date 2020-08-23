@@ -16,22 +16,28 @@ The datasheet for the IC is available from <https://forum.arduino.cc/index.php?a
 
 ## Library Setup
 
+### Installation
+
+The easiest way to install this library is to utilize the Arduino IDE library manager, or through a package manager such as PlatformIO. Otherwise, simply download this library and extract its files into a `BY8X01-16P-Arduino` folder in your Arduino custom libraries folder, typically found in your `[My ]Documents\Arduino\libraries` folder (Windows), or `~/Documents/Arduino/libraries/` folder (Linux/OSX).
+
 ### Header Defines
 
-There are several defines inside of the library's main header file that allow for more fine-tuned control of the library. You may edit and uncomment these lines directly, or supply them as a compilation flag via custom build system. While editing the main header file isn't the most ideal, it is often the easiest way when using the Arduino IDE, as it doesn't support custom build flags. Be aware that editing this header file directly will affect all projects on your system using this library.
+There are several defines inside of the library's main header file that allow for more fine-tuned control of the library. You may edit and uncomment these lines directly, or supply them via custom build flags. While editing the main header file isn't ideal, it is often the easiest given the Arduino IDE's limited custom build flag support. Note that editing the library's main header file directly will affect all projects compiled on your system using those modified library files.
 
-In BY8X01-16P.h:
+Alternatively, you may also refer to <https://forum.arduino.cc/index.php?topic=602603.0> on how to define custom build flags manually via modifying the platform.[local.]txt file. Note that editing such directly will affect all other projects compiled on your system using those modified platform framework files.
+
+From BY8X01-16P.h:
 ```Arduino
-// Uncomment this define to enable use of the SoftwareSerial library.
+// Uncomment or -D this define to enable use of the SoftwareSerial library.
 //#define BY8X0116P_ENABLE_SOFTWARE_SERIAL
 
-// Uncomment this define to disable usage of the Scheduler library on SAM/SAMD architecures.
+// Uncomment or -D this define to disable usage of the Scheduler library on SAM/SAMD architecures.
 //#define BY8X0116P_DISABLE_SCHEDULER             // https://github.com/arduino-libraries/Scheduler
 
-// Uncomment this define to enable debouncing of the input line on isBusy() calls.
+// Uncomment or -D this define to enable debouncing of the input line on isBusy() calls.
 //#define BY8X0116P_ENABLE_DEBOUNCING
 
-// Uncomment this define to enable debug output.
+// Uncomment or -D this define to enable debug output.
 //#define BY8X0116P_ENABLE_DEBUG_OUTPUT
 ```
 
@@ -41,19 +47,20 @@ There are several initialization mode settings exposed through this library that
 
 #### Class Instantiation
 
-The library's class object must first be instantiated, commonly at the top of the sketch where pin setups are defined (or exposed through some other mechanism), which makes a call to the library's class constructor. The constructor allows one to set the busy pin, busy pin active-on mode, and Serial class instance. The default constructor values of the library, if left unspecified, is busy pin `DISABLED`, busy pin active-on mode `HIGH`, and Serial class instance `Serial1` @`9600`bps using mode `SERIAL_8N1`.
+The library's class object must first be instantiated, commonly at the top of the sketch where pin setups are defined (or exposed through some other mechanism), which makes a call to the library's class constructor. The constructor allows one to set the busy pin, busy pin active-on mode, and Serial class instance. The default constructor values of the library, if left unspecified, is busy pin `DISABLED`, busy pin active-on mode `HIGH`, and Serial class instance `Serial1` @`9600`bps using mode `SERIAL_8N1`. _In the case that Serial1 cannot be readily detected, then the Serial class instance must be explicitly provided._
 
 From BY8X01-16P.h, in class BY8X0116P, when in hardware serial mode:
 ```Arduino
     // Library constructor. Typically called during class instantiation, before setup().
     // May skip usage of busy pin, but isBusy() will always respond false if so. May also
     // set usage of busy pin as being either active-high or active-low.
-    // Boards with more than one serial line may use a different Serial instance, such as
-    // Serial1 (which uses RX1/TX1 pins), Serial2 (RX2/TX2), etc.
+    // Boards with more than one serial line (e.g. Due/Mega/etc.) can supply a different
+    // Serial instance, such as Serial1 (using RX1/TX1), Serial2 (using RX2/TX2), etc.
     // The only supported baud rate is 9600bps using mode SERIAL_8N1.
     BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, HardwareSerial& serial = Serial1);
 
     // Convenience constructor for custom Serial instance. See main constructor.
+    // Becomes standard library constuctor in case Serial1 isn't readily detected.
     BY8X0116P(HardwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
 ```
 
@@ -191,12 +198,18 @@ void loop() {
 
 ### SoftwareSerial Example
 
-In this example, we utilize the software serial library for chips that do not have a hardware serial line. If one uncomments the line below inside the main header file (or defines it via custom build flag), software serial mode for the library will be enabled.
+In this example, we utilize the software serial library for chips that do not have a hardware serial line.
+
+If one uncomments the line below inside the main header file (or defines it via custom build flag), software serial mode for the library will be enabled. Additionally, if this serial class instance is instantiated before `setup()` then you will have to manually set the pin modes for the RX and TX pins due to a library bug (in which it attempts to do so in its class constructor, before the Arduino system has initialized). Lastly note that, while in software serial mode, the baud rate returned by the library (via `getSerialBaud()`) is only an upper bound and may not represent the actual baud rate achieved.
 
 In BY8X01-16P.h:
 ```Arduino
-// Uncomment this define to enable use of the SoftwareSerial library.
+// Uncomment or -D this define to enable use of the SoftwareSerial library.
 #define BY8X0116P_ENABLE_SOFTWARE_SERIAL
+```  
+Alternatively, in platform.[local.]txt:
+```Arduino
+build.extra_flags=-DBY8X0116P_ENABLE_SOFTWARE_SERIAL
 ```
 
 In main sketch:
@@ -233,8 +246,12 @@ If one uncomments the line below inside the main header file (or defines it via 
 
 In BY8X01-16P.h:
 ```Arduino
-// Uncomment this define to enable debug output.
+// Uncomment or -D this define to enable debug output.
 #define BY8X0116P_ENABLE_DEBUG_OUTPUT
+```  
+Alternatively, in platform.[local.]txt:
+```Arduino
+build.extra_flags=-DBY8X0116P_ENABLE_DEBUG_OUTPUT
 ```
 
 In main sketch:

@@ -53,6 +53,8 @@ bool BY8X0116P::_serialBegan = false;
 
 #ifndef BY8X0116P_USE_SOFTWARE_SERIAL
 
+#ifdef BY8X0116P_HAS_SERIAL1
+
 BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, HardwareSerial& serial)
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
       _serial(&serial),
@@ -60,6 +62,8 @@ BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, HardwareSerial& serial)
       _isStandingBy(false), _isResetting(false), _isCardInserted(true),
       _lastReqTime(0), _lastClnTime(0)
  { }
+
+ #endif
 
 BY8X0116P::BY8X0116P(HardwareSerial& serial, byte busyPin, byte busyActiveOn)
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
