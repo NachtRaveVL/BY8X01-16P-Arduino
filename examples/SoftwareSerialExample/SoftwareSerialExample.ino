@@ -7,7 +7,7 @@
 //
 // In BY8X01-16P.h:
 // // Uncomment or -D this define to enable use of the SoftwareSerial library.
-// #define BY8X0116P_ENABLE_SOFTWARE_SERIAL
+// #define BY8X0116P_ENABLE_SOFTWARE_SERIAL        // https://www.arduino.cc/en/Reference/softwareSerial
 //
 // Alternatively, in platform.[local.]txt:
 // build.extra_flags=-DBY8X0116P_ENABLE_SOFTWARE_SERIAL

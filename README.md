@@ -31,7 +31,7 @@ Alternatively, you may also refer to <https://forum.arduino.cc/index.php?topic=6
 From BY8X01-16P.h:
 ```Arduino
 // Uncomment or -D this define to enable use of the SoftwareSerial library.
-//#define BY8X0116P_ENABLE_SOFTWARE_SERIAL
+//#define BY8X0116P_ENABLE_SOFTWARE_SERIAL        // https://www.arduino.cc/en/Reference/softwareSerial
 
 // Uncomment or -D this define to disable usage of the Scheduler library on SAM/SAMD architecures.
 //#define BY8X0116P_DISABLE_SCHEDULER             // https://github.com/arduino-libraries/Scheduler
@@ -211,7 +211,7 @@ If one uncomments the line below inside the main header file (or defines it via 
 In BY8X01-16P.h:
 ```Arduino
 // Uncomment or -D this define to enable use of the SoftwareSerial library.
-#define BY8X0116P_ENABLE_SOFTWARE_SERIAL
+#define BY8X0116P_ENABLE_SOFTWARE_SERIAL        // https://www.arduino.cc/en/Reference/softwareSerial
 ```  
 Alternatively, in platform.[local.]txt:
 ```Arduino
