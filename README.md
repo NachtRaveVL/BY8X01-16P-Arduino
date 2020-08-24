@@ -206,7 +206,7 @@ void loop() {
 
 In this example, we utilize the software serial library for chips that do not have a hardware serial line.
 
-If one uncomments the line below inside the main header file (or defines it via custom build flag), software serial mode for the library will be enabled. Additionally, if this serial class instance is instantiated before `setup()` then you will have to manually set the pin modes for the RX and TX pins due to a library bug (in which it attempts to do so in its class constructor, before the Arduino system has initialized). Lastly note that, while in software serial mode, the baud rate returned by the library (via `getSerialBaud()`) is only an upper bound and may not represent the actual baud rate achieved.
+If one uncomments the line below inside the main header file (or defines it via custom build flag), software serial mode for the library will be enabled. Additionally, if this serial class instance is instantiated before `setup()` then you will have to manually set the pin modes for the RX and TX pins due to a library bug (in which it attempts to do so in its class constructor, before the Arduino system has initialized). Lastly note that, while in software serial mode, the serial baud rate returned by the library (via `getSerialBaud()`) is only an upper bound and may not represent the actual serial baud rate achieved.
 
 In BY8X01-16P.h:
 ```Arduino
