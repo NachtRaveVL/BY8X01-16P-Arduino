@@ -49,7 +49,7 @@
 // Hookup Callouts
 // -PLEASE READ-
 // Make sure to flip RX/TX lines when plugging into module from microcontroller. If
-// running a 5v Arduino board, put a 1k ohm resistor on the line between the
+// running a 5v microcontroller, put a 1k ohm resistor on the line between the
 // microcontroller's TX and module's RX pins. Remove A, B, and C resistors on module
 // (factory default is a resistor on A and C, while B is left open). This puts the device
 // into the recommended 1-1-1 mode used for microcontroller serial control. Busy pin is
