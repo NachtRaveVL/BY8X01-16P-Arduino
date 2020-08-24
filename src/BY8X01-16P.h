@@ -149,12 +149,15 @@ public:
         byte serialRxPin = 16, byte serialTxPin = 17,
 #endif
         byte busyPin = DISABLED, byte busyActiveOn = HIGH);
+
 #else
+
     // Library constructor. Typically called during class instantiation, before setup().
     // May skip usage of busy pin, but isBusy() will always respond false if so. May also
     // set usage of busy pin as being either active-high or active-low.
     // The only supported baud rate is 9600bps using mode SERIAL_8N1.
     BY8X0116P(SofwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
+
 #endif // /ifndef BY8X0116P_USE_SOFTWARE_SERIAL
 
     // Initializes module, also begins Serial instance. Typically called in setup().
