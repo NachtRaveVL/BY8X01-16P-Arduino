@@ -74,8 +74,7 @@
 #define BY8X0116P_USE_SOFTWARE_SERIAL
 #endif
 
-#if defined(HWSERIAL1) || defined(HAVE_HWSERIAL1)
-// TODO: Expand this detection. -NR
+#if defined(HAVE_HWSERIAL1) || defined(PIN_SERIAL1_RX) || defined(SERIAL_PORT_HARDWARE1) || defined(UART1)
 #define BY8X0116P_HAS_SERIAL1
 #endif
 
@@ -136,12 +135,20 @@ public:
     // Boards with more than one serial line (e.g. Due/Mega/etc.) can supply a different
     // Serial instance, such as Serial1 (using RX1/TX1), Serial2 (using RX2/TX2), etc.
     // The only supported baud rate is 9600bps using mode SERIAL_8N1.
-    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, HardwareSerial& serial = Serial1);
+    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, HardwareSerial& serial = Serial1
+#ifdef ESP_PLATFORM
+        , byte serialRxPin = 16, byte serialTxPin = 17
 #endif
+    );
+#endif // /ifdef BY8X0116P_HAS_SERIAL1
 
     // Convenience constructor for custom Serial instance. See main constructor.
     // Becomes standard library constuctor in case Serial1 isn't readily detected.
-    BY8X0116P(HardwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
+    BY8X0116P(HardwareSerial& serial,
+#ifdef ESP_PLATFORM
+        byte serialRxPin = 16, byte serialTxPin = 17,
+#endif
+        byte busyPin = DISABLED, byte busyActiveOn = HIGH);
 #else
     // Library constructor. Typically called during class instantiation, before setup().
     // May skip usage of busy pin, but isBusy() will always respond false if so. May also
@@ -157,6 +164,11 @@ public:
     byte getBusyPin();
     byte getBusyActiveOn();
     uint32_t getSerialBaud();
+    uint16_t getSerialMode();
+#if defined(ESP_PLATFORM) && !defined(BY8X0116P_USE_SOFTWARE_SERIAL)
+    byte getSerialRxPin();
+    byte getSerialTxPin();
+#endif
 
     // Playback control
     void play();
@@ -268,6 +280,10 @@ protected:
     byte _busyActiveOn;                                     // Busy pin is active on HIGH or LOW (default: HIGH)
 #ifndef BY8X0116P_USE_SOFTWARE_SERIAL
     HardwareSerial* _serial;                                // Serial class instance (unowned) (default: Serial1)
+#ifdef ESP_PLATFORM
+    byte _serialRxPin;                                      // ESP Rx pin
+    byte _serialTxPin;                                      // ESP Tx pin
+#endif
 #else
     SoftwareSerial* _serial;                                // Serial class instance (unowned)
 #endif

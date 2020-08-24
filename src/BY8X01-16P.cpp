@@ -55,19 +55,33 @@ bool BY8X0116P::_serialBegan = false;
 
 #ifdef BY8X0116P_HAS_SERIAL1
 
-BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, HardwareSerial& serial)
+BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, HardwareSerial& serial
+#ifdef ESP_PLATFORM
+    , byte serialRxPin, byte serialTxPin
+#endif
+    )
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
       _serial(&serial),
+#ifdef ESP_PLATFORM
+      _serialRxPin(serialRxPin), _serialTxPin(serialTxPin),
+#endif
       _isBlockingRspLn(0), _isCleaningRspLn(false),
       _isStandingBy(false), _isResetting(false), _isCardInserted(true),
       _lastReqTime(0), _lastClnTime(0)
  { }
 
- #endif
+ #endif // /ifdef BY8X0116P_HAS_SERIAL1
 
-BY8X0116P::BY8X0116P(HardwareSerial& serial, byte busyPin, byte busyActiveOn)
+BY8X0116P::BY8X0116P(HardwareSerial& serial,
+#ifdef ESP_PLATFORM
+    byte serialRxPin, byte serialTxPin,
+#endif
+    byte busyPin, byte busyActiveOn)
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
       _serial(&serial),
+#ifdef ESP_PLATFORM
+      _serialRxPin(serialRxPin), _serialTxPin(serialTxPin),
+#endif
       _isBlockingRspLn(0), _isCleaningRspLn(false),
       _isStandingBy(false), _isResetting(false), _isCardInserted(true),
       _lastReqTime(0), _lastClnTime(0)
@@ -122,6 +136,22 @@ byte BY8X0116P::getBusyActiveOn() {
 uint32_t BY8X0116P::getSerialBaud() {
     return BY8X0116P_SERIAL_BAUD;
 }
+
+uint16_t BY8X0116P::getSerialMode() {
+    return SERIAL_8N1;
+}
+
+#if defined(ESP_PLATFORM) && !defined(BY8X0116P_USE_SOFTWARE_SERIAL)
+
+byte BY8X0116P::getSerialRxPin() {
+    return _serialRxPin;
+}
+
+byte BY8X0116P::getSerialTxPin() {
+    return _serialTxPin;
+}
+
+#endif // /ifdef ESP_PLATFORM
 
 void BY8X0116P::play() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
@@ -977,7 +1007,11 @@ void BY8X0116P::Serial_begin() {
     if (BY8X0116P::_serialBegan) return;
     BY8X0116P::_serialBegan = true;
 
-    _serial->begin(getSerialBaud());
+#if defined(ESP_PLATFORM) && !defined(BY8X0116P_USE_SOFTWARE_SERIAL)
+    _serial->begin(getSerialBaud(), getSerialMode(), getSerialRxPin(), getSerialTxPin());
+#else
+    _serial->begin(getSerialBaud(), getSerialMode());
+#endif
 }
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
