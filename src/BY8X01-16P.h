@@ -128,12 +128,14 @@ enum BY8X0116P_PlaybackDevice {
 class BY8X0116P {
 public:
 #ifndef BY8X0116P_USE_SOFTWARE_SERIAL
+
 #ifdef BY8X0116P_HAS_SERIAL1
     // Library constructor. Typically called during class instantiation, before setup().
     // May skip usage of busy pin, but isBusy() will always respond false if so. May also
     // set usage of busy pin as being either active-high or active-low.
     // Boards with more than one serial line (e.g. Due/Mega/etc.) can supply a different
     // Serial instance, such as Serial1 (using RX1/TX1), Serial2 (using RX2/TX2), etc.
+    // On Espressif, may supply serial RX pin and serial TX pin (for begin(...) call).
     // The only supported baud rate is 9600bps using mode SERIAL_8N1.
     BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, HardwareSerial& serial = Serial1
 #ifdef ESP_PLATFORM
@@ -166,12 +168,12 @@ public:
     // Mode accessors
     byte getBusyPin();
     byte getBusyActiveOn();
-    uint32_t getSerialBaud();
-    uint16_t getSerialMode();
 #if defined(ESP_PLATFORM) && !defined(BY8X0116P_USE_SOFTWARE_SERIAL)
     byte getSerialRxPin();
     byte getSerialTxPin();
 #endif
+    uint32_t getSerialBaud();
+    uint16_t getSerialMode();
 
     // Playback control
     void play();
@@ -284,8 +286,8 @@ protected:
 #ifndef BY8X0116P_USE_SOFTWARE_SERIAL
     HardwareSerial* _serial;                                // Serial class instance (unowned) (default: Serial1)
 #ifdef ESP_PLATFORM
-    byte _serialRxPin;                                      // ESP Rx pin
-    byte _serialTxPin;                                      // ESP Tx pin
+    byte _serialRxPin;                                      // ESP serial Rx pin (default: 16)
+    byte _serialTxPin;                                      // ESP serial Tx pin (default: 17)
 #endif
 #else
     SoftwareSerial* _serial;                                // Serial class instance (unowned)

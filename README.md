@@ -49,7 +49,7 @@ There are several initialization mode settings exposed through this library that
 
 #### Class Instantiation
 
-The library's class object must first be instantiated, commonly at the top of the sketch where pin setups are defined (or exposed through some other mechanism), which makes a call to the library's class constructor. The constructor allows one to set the busy pin, busy pin active-on mode, Serial class instance, and if on Espressif, serial Rx pin, and serial Tx pin. The default constructor values of the library, if left unspecified, is busy pin `DISABLED`, busy pin active-on mode `HIGH`, Serial class instance `Serial1` @`9600`bps using mode `SERIAL_8N1`, and if on Espressif, serial Rx pin `D16`, and serial Tx pin `D17` (ESP32[-S] defaults). _In the case that Serial1 cannot be readily detected, then the Serial class instance must be explicitly provided._
+The library's class object must first be instantiated, commonly at the top of the sketch where pin setups are defined (or exposed through some other mechanism), which makes a call to the library's class constructor. The constructor allows one to set the busy pin, busy pin active-on mode, Serial class instance, and if on Espressif then serial Rx pin and serial Tx pin. The default constructor values of the library, if left unspecified, is busy pin `DISABLED`, busy pin active-on mode `HIGH`, Serial class instance `Serial1` @`9600`bps using mode `SERIAL_8N1`, and if on Espressif then serial Rx pin `D16` and serial Tx pin `D17` (ESP32[-S] defaults). _In the case that Serial1 cannot be readily detected, then the Serial class instance must be explicitly provided._
 
 From BY8X01-16P.h, in class BY8X0116P, when in hardware serial mode:
 ```Arduino
@@ -58,6 +58,7 @@ From BY8X01-16P.h, in class BY8X0116P, when in hardware serial mode:
     // set usage of busy pin as being either active-high or active-low.
     // Boards with more than one serial line (e.g. Due/Mega/etc.) can supply a different
     // Serial instance, such as Serial1 (using RX1/TX1), Serial2 (using RX2/TX2), etc.
+    // On Espressif, must supply serialRxPin and serialTxPin for begin(...) call.
     // The only supported baud rate is 9600bps using mode SERIAL_8N1.
     BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, HardwareSerial& serial = Serial1
 #ifdef ESP_PLATFORM

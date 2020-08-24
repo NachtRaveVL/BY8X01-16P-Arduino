@@ -43,6 +43,7 @@
 #define BY8X0116P_QRY_NUM_TRACKS_FOLDER (byte)0x1F          // 0-65535
 
 #define BY8X0116P_SERIAL_BAUD           9600                // Serial baud rate
+#define BY8X0116P_SERIAL_MODE           SERIAL_8N1          // Serial mode
 #define BY8X0116P_READ_DELAY            130                 // Delay for receive operations, in ms
 #define BY8X0116P_CLEAN_DELAY           2500                // Delay between cleanup routine, in ms
 #define BY8X0116P_RESET_TIMEOUT         2800                // Timeout before another reset command made, in ms
@@ -110,8 +111,14 @@ void BY8X0116P::init() {
         Serial.print("<disabled>");
     Serial.print(", Serial#: ");
     Serial.print(getSerialInterfaceNumber());
+#if defined(ESP_PLATFORM) && !defined(PCA9685_USE_SOFTWARE_I2C)
+    Serial.print(", serialRxPin: ");
+    Serial.print(getSerialRxPin());
+    Serial.print(", serialTxPin: ");
+    Serial.print(getSerialTxPin());
+#endif
     Serial.print(", serialBaud: ");
-    Serial.print(getSerialBaud());
+    Serial.print(getSerialBaud()); Serial.print("bps");
     Serial.println("");
 #endif
 
@@ -133,14 +140,6 @@ byte BY8X0116P::getBusyActiveOn() {
     return _busyActiveOn;
 }
 
-uint32_t BY8X0116P::getSerialBaud() {
-    return BY8X0116P_SERIAL_BAUD;
-}
-
-uint16_t BY8X0116P::getSerialMode() {
-    return SERIAL_8N1;
-}
-
 #if defined(ESP_PLATFORM) && !defined(BY8X0116P_USE_SOFTWARE_SERIAL)
 
 byte BY8X0116P::getSerialRxPin() {
@@ -151,7 +150,15 @@ byte BY8X0116P::getSerialTxPin() {
     return _serialTxPin;
 }
 
-#endif // /ifdef ESP_PLATFORM
+#endif // /if defined(ESP_PLATFORM) && !defined(BY8X0116P_USE_SOFTWARE_SERIAL)
+
+uint32_t BY8X0116P::getSerialBaud() {
+    return BY8X0116P_SERIAL_BAUD;
+}
+
+uint16_t BY8X0116P::getSerialMode() {
+    return BY8X0116P_SERIAL_MODE;
+}
 
 void BY8X0116P::play() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
@@ -1063,6 +1070,12 @@ void BY8X0116P::printModuleInfo() {
 
     Serial.println(""); Serial.println("Serial Instance:");
     Serial.println(textForSerialInterfaceNumber(getSerialInterfaceNumber()));
+#if defined(ESP_PLATFORM) && !defined(PCA9685_USE_SOFTWARE_I2C)
+    Serial.println("Serial Rx Pin:");
+    Serial.print("D"); Serial.println(getSerialRxPin());
+    Serial.println("Serial Tx Pin:");
+    Serial.print("D"); Serial.println(getSerialTxPin());
+#endif
     Serial.println("Serial Baud:");
     Serial.print(getSerialBaud()); Serial.println("Hz");
 
