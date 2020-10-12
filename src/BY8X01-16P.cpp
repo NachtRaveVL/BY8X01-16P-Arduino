@@ -1,6 +1,5 @@
 /*  Arduino Library for the BY8001-16P/BY8301-16P Audio Module.
-    Copyright (C) 2016 NachtRaveVL      <nachtravevl@gmail.com>
-    Copyright (C) 2012 Kasper Skårhøj   <kasperskaarhoj@gmail.com>
+    Copyright (C) 2016-2020 NachtRaveVL     <nachtravevl@gmail.com>
     BY8X01-16P Main
 */
 
@@ -42,30 +41,21 @@
 #define BY8X0116P_QRY_CURR_FILENAME     (byte)0x1E          // YYYYYYYYZZZ
 #define BY8X0116P_QRY_NUM_TRACKS_FOLDER (byte)0x1F          // 0-65535
 
-#define BY8X0116P_SERIAL_BAUD           9600                // Serial baud rate
+#define BY8X0116P_SERIAL_BAUD           9600                // Serial baud rate, in bps
 #define BY8X0116P_SERIAL_MODE           SERIAL_8N1          // Serial mode
 #define BY8X0116P_READ_DELAY            130                 // Delay for receive operations, in ms
 #define BY8X0116P_CLEAN_DELAY           2500                // Delay between cleanup routine, in ms
 #define BY8X0116P_RESET_TIMEOUT         2800                // Timeout before another reset command made, in ms
-#define BY8X0116P_GEN_CMD_TIMEOUT       5000                // Timeout for commands to be processed
-#define BY8X0116P_BUSY_DEBOUNCE_TIME    20                  // Time to spend debouncing busy input line
-
-bool BY8X0116P::_serialBegan = false;
+#define BY8X0116P_GEN_CMD_TIMEOUT       5000                // Timeout for commands to be processed, in ms
+#define BY8X0116P_BUSY_DEBOUNCE_TIME    20                  // Time to spend debouncing busy input line, in ms
 
 #ifndef BY8X0116P_USE_SOFTWARE_SERIAL
 
 #ifdef BY8X0116P_HAS_SERIAL1
 
-BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, HardwareSerial& serial
-#ifdef ESP_PLATFORM
-    , byte serialRxPin, byte serialTxPin
-#endif
-    )
+BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, HardwareSerial& serial)
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
       _serial(&serial),
-#ifdef ESP_PLATFORM
-      _serialRxPin(serialRxPin), _serialTxPin(serialTxPin),
-#endif
       _isBlockingRspLn(0), _isCleaningRspLn(false),
       _isStandingBy(false), _isResetting(false), _isCardInserted(true),
       _lastReqTime(0), _lastClnTime(0)
@@ -73,16 +63,9 @@ BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, HardwareSerial& serial
 
  #endif // /ifdef BY8X0116P_HAS_SERIAL1
 
-BY8X0116P::BY8X0116P(HardwareSerial& serial,
-#ifdef ESP_PLATFORM
-    byte serialRxPin, byte serialTxPin,
-#endif
-    byte busyPin, byte busyActiveOn)
+BY8X0116P::BY8X0116P(HardwareSerial& serial, byte busyPin, byte busyActiveOn)
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
       _serial(&serial),
-#ifdef ESP_PLATFORM
-      _serialRxPin(serialRxPin), _serialTxPin(serialTxPin),
-#endif
       _isBlockingRspLn(0), _isCleaningRspLn(false),
       _isStandingBy(false), _isResetting(false), _isCardInserted(true),
       _lastReqTime(0), _lastClnTime(0)
@@ -109,20 +92,12 @@ void BY8X0116P::init() {
     }
     else
         Serial.print("<disabled>");
-    Serial.print(", Serial#: ");
+    Serial.print(", serial#: ");
     Serial.print(getSerialInterfaceNumber());
-#if defined(ESP_PLATFORM) && !defined(PCA9685_USE_SOFTWARE_I2C)
-    Serial.print(", serialRxPin: ");
-    Serial.print(getSerialRxPin());
-    Serial.print(", serialTxPin: ");
-    Serial.print(getSerialTxPin());
-#endif
     Serial.print(", serialBaud: ");
     Serial.print(getSerialBaud()); Serial.print("bps");
     Serial.println("");
 #endif
-
-    Serial_begin();
 
     if (_busyPin != DISABLED) {
         pinMode(_busyPin, INPUT);
@@ -139,18 +114,6 @@ byte BY8X0116P::getBusyPin() {
 byte BY8X0116P::getBusyActiveOn() {
     return _busyActiveOn;
 }
-
-#if defined(ESP_PLATFORM) && !defined(BY8X0116P_USE_SOFTWARE_SERIAL)
-
-byte BY8X0116P::getSerialRxPin() {
-    return _serialRxPin;
-}
-
-byte BY8X0116P::getSerialTxPin() {
-    return _serialTxPin;
-}
-
-#endif // /if defined(ESP_PLATFORM) && !defined(BY8X0116P_USE_SOFTWARE_SERIAL)
 
 uint32_t BY8X0116P::getSerialBaud() {
     return BY8X0116P_SERIAL_BAUD;
@@ -1010,17 +973,6 @@ void BY8X0116P::waitClean(int timeout) {
     while (!cleanResponse() && (timeout <= 0 || millis() < endTime));
 }
 
-void BY8X0116P::Serial_begin() {
-    if (BY8X0116P::_serialBegan) return;
-    BY8X0116P::_serialBegan = true;
-
-#if defined(ESP_PLATFORM) && !defined(BY8X0116P_USE_SOFTWARE_SERIAL)
-    _serial->begin(getSerialBaud(), getSerialMode(), getSerialRxPin(), getSerialTxPin());
-#else
-    _serial->begin(getSerialBaud(), getSerialMode());
-#endif
-}
-
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
 
 int BY8X0116P::getSerialInterfaceNumber() {
@@ -1070,12 +1022,6 @@ void BY8X0116P::printModuleInfo() {
 
     Serial.println(""); Serial.println("Serial Instance:");
     Serial.println(textForSerialInterfaceNumber(getSerialInterfaceNumber()));
-#if defined(ESP_PLATFORM) && !defined(PCA9685_USE_SOFTWARE_I2C)
-    Serial.println("Serial Rx Pin:");
-    Serial.print("D"); Serial.println(getSerialRxPin());
-    Serial.println("Serial Tx Pin:");
-    Serial.print("D"); Serial.println(getSerialTxPin());
-#endif
     Serial.println("Serial Baud:");
     Serial.print(getSerialBaud()); Serial.println("Hz");
 

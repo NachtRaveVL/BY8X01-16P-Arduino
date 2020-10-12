@@ -5,9 +5,11 @@
 BY8X0116P audioController;              // Library using default disabled busy pin hookup, and default Serial1 @9600bps
 
 void setup() {
-    // Library will begin Serial1, so we don't need to begin anything
+    Serial.begin(115200);               // Begin Serial and Serial1 interfaces
+    Serial1.begin(audioController.getSerialBaud(),
+                  audioController.getSerialMode());
 
-    audioController.init();             // Initializes module, also begins Serial1
+    audioController.init();             // Initializes module
 
     audioController.setVolume(20);      // Sets player volume to 20 (out of 30 max)
 

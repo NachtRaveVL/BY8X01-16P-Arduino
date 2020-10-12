@@ -11,9 +11,11 @@
 BY8X0116P audioController;              // Library using default disabled busy pin hookup, and default Serial1 @9600bps
 
 void setup() {
-    Serial.begin(115200);               // Library will begin Serial1, so we just need to begin Serial
+    Serial.begin(115200);               // Begin Serial and Serial1 interfaces
+    Serial1.begin(audioController.getSerialBaud(),
+                  audioController.getSerialMode());
 
-    audioController.init();             // Initializes module, also begins Serial1
+    audioController.init();             // Initializes module
 
     audioController.setEqualizerProfile(BY8X0116P_EqualizerProfile_Rock); // Sets player equalizer profile to Rock
 

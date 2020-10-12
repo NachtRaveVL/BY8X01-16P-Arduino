@@ -1,5 +1,5 @@
 /*  Arduino Library for the BY8001-16P/BY8301-16P Audio Module.
-    Copyright (c) 2016-2020 NachtRaveVL     <nachtravevl@gmail.com>
+    Copyright (C) 2016-2020 NachtRaveVL     <nachtravevl@gmail.com>
 
     Permission is hereby granted, free of charge, to any person
     obtaining a copy of this software and associated documentation
@@ -67,9 +67,7 @@
 #define BY8X0116P_USE_SCHEDULER
 #endif
 
-#ifndef BY8X0116P_ENABLE_SOFTWARE_SERIAL
-#include <UART.h>
-#else
+#ifdef BY8X0116P_ENABLE_SOFTWARE_SERIAL
 #include <SoftwareSerial.h>
 #define BY8X0116P_USE_SOFTWARE_SERIAL
 #endif
@@ -135,22 +133,13 @@ public:
     // set usage of busy pin as being either active-high or active-low.
     // Boards with more than one serial line (e.g. Due/Mega/etc.) can supply a different
     // Serial instance, such as Serial1 (using RX1/TX1), Serial2 (using RX2/TX2), etc.
-    // On Espressif, may supply serial RX pin and serial TX pin (for begin(...) call).
     // The only supported baud rate is 9600bps using mode SERIAL_8N1.
-    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, HardwareSerial& serial = Serial1
-#ifdef ESP_PLATFORM
-        , byte serialRxPin = 16, byte serialTxPin = 17
-#endif
-    );
+    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, HardwareSerial& serial = Serial1);
 #endif // /ifdef BY8X0116P_HAS_SERIAL1
 
     // Convenience constructor for custom Serial instance. See main constructor.
     // Becomes standard library constuctor in case Serial1 isn't readily detected.
-    BY8X0116P(HardwareSerial& serial,
-#ifdef ESP_PLATFORM
-        byte serialRxPin = 16, byte serialTxPin = 17,
-#endif
-        byte busyPin = DISABLED, byte busyActiveOn = HIGH);
+    BY8X0116P(HardwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
 
 #else
 
@@ -158,20 +147,16 @@ public:
     // May skip usage of busy pin, but isBusy() will always respond false if so. May also
     // set usage of busy pin as being either active-high or active-low.
     // The only supported baud rate is 9600bps using mode SERIAL_8N1.
-    BY8X0116P(SofwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
+    BY8X0116P(SoftwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
 
 #endif // /ifndef BY8X0116P_USE_SOFTWARE_SERIAL
 
-    // Initializes module, also begins Serial instance. Typically called in setup().
+    // Initializes module. Typically called in setup().
     void init();
 
     // Mode accessors
     byte getBusyPin();
     byte getBusyActiveOn();
-#if defined(ESP_PLATFORM) && !defined(BY8X0116P_USE_SOFTWARE_SERIAL)
-    byte getSerialRxPin();
-    byte getSerialTxPin();
-#endif
     uint32_t getSerialBaud();
     uint16_t getSerialMode();
 
@@ -285,10 +270,6 @@ protected:
     byte _busyActiveOn;                                     // Busy pin is active on HIGH or LOW (default: HIGH)
 #ifndef BY8X0116P_USE_SOFTWARE_SERIAL
     HardwareSerial* _serial;                                // Serial class instance (unowned) (default: Serial1)
-#ifdef ESP_PLATFORM
-    byte _serialRxPin;                                      // ESP serial Rx pin (default: 16)
-    byte _serialTxPin;                                      // ESP serial Tx pin (default: 17)
-#endif
 #else
     SoftwareSerial* _serial;                                // Serial class instance (unowned)
 #endif
@@ -321,8 +302,6 @@ protected:
 
     bool cleanResponse();
     void waitClean(int timeout = 0);
-
-    void Serial_begin();
 };
 
 #endif // /ifndef BY8X0116P_H

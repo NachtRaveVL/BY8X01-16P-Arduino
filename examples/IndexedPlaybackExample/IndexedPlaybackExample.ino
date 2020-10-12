@@ -13,13 +13,15 @@ const byte busyPin = 22;
 BY8X0116P audioController(busyPin);     // Library using busy pin input D22, and default Serial1 @9600bps
 
 void setup() {
-    Serial.begin(115200);               // Library will begin Serial1, so we just need to begin Serial
+    Serial.begin(115200);               // Begin Serial and Serial1 interfaces
+    Serial1.begin(audioController.getSerialBaud(),
+                  audioController.getSerialMode());
 
-    audioController.init();             // Initializes module, also begins Serial1
+    audioController.init();             // Initializes module
 
     audioController.playFolderFileIndex(0, 1); // Plays "00/001.mp3"
 
-    int numTracks = getNumberOfTracksInCurrentFolder(); // Gets number of tracks in current folder
+    int numTracks = audioController.getNumberOfTracksInCurrentFolder(); // Gets number of tracks in current folder
     Serial.println(numTracks);          // Should display number of tracks in the "00" folder
 
     char buffer[12];

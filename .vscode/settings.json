@@ -22,6 +22,8 @@
         "regex": "cpp",
         "valarray": "cpp",
         "associative_base": "cpp",
-        "serstream": "cpp"
+        "serstream": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp"
     }
 }

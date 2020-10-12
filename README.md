@@ -26,7 +26,7 @@ The easiest way to install this library is to utilize the Arduino IDE library ma
 
 There are several defines inside of the library's main header file that allow for more fine-tuned control of the library. You may edit and uncomment these lines directly, or supply them via custom build flags. While editing the main header file isn't ideal, it is often the easiest given the Arduino IDE's limited custom build flag support. Note that editing the library's main header file directly will affect all projects compiled on your system using those modified library files.
 
-Alternatively, you may also refer to <https://forum.arduino.cc/index.php?topic=602603.0> on how to define custom build flags manually via modifying the platform.[local.]txt file. Note that editing such directly will affect all other projects compiled on your system using those modified platform framework files.
+Alternatively, you may also refer to <https://forum.arduino.cc/index.php?topic=602603.0> on how to define custom build flags manually via modifying the platform[.local].txt file. Note that editing such directly will affect all other projects compiled on your system using those modified platform framework files.
 
 From BY8X01-16P.h:
 ```Arduino
@@ -49,7 +49,7 @@ There are several initialization mode settings exposed through this library that
 
 #### Class Instantiation
 
-The library's class object must first be instantiated, commonly at the top of the sketch where pin setups are defined (or exposed through some other mechanism), which makes a call to the library's class constructor. The constructor allows one to set the busy pin, busy pin active-on mode, Serial class instance, and if on Espressif then serial Rx pin and serial Tx pin. The default constructor values of the library, if left unspecified, is busy pin `DISABLED`, busy pin active-on mode `HIGH`, Serial class instance `Serial1` @`9600`bps using mode `SERIAL_8N1`, and if on Espressif then serial Rx pin `D16` and serial Tx pin `D17` (ESP32[-S] defaults). _In the case that Serial1 cannot be readily detected, then the Serial class instance must be explicitly provided._
+The library's class object must first be instantiated, commonly at the top of the sketch where pin setups are defined (or exposed through some other mechanism), which makes a call to the library's class constructor. The constructor allows one to set the busy pin, busy pin active-on mode, and Serial class instance. The default constructor values of the library, if left unspecified, is busy pin `DISABLED`, busy pin active-on mode `HIGH`, and Serial class instance `Serial1` @`9600`bps using mode `SERIAL_8N1`. _In the case that Serial1 cannot be readily detected, then the Serial class instance must be explicitly provided._
 
 From BY8X01-16P.h, in class BY8X0116P, when in hardware serial mode:
 ```Arduino
@@ -58,21 +58,12 @@ From BY8X01-16P.h, in class BY8X0116P, when in hardware serial mode:
     // set usage of busy pin as being either active-high or active-low.
     // Boards with more than one serial line (e.g. Due/Mega/etc.) can supply a different
     // Serial instance, such as Serial1 (using RX1/TX1), Serial2 (using RX2/TX2), etc.
-    // On Espressif, must supply serialRxPin and serialTxPin for begin(...) call.
     // The only supported baud rate is 9600bps using mode SERIAL_8N1.
-    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, HardwareSerial& serial = Serial1
-#ifdef ESP_PLATFORM
-        , byte serialRxPin = 16, byte serialTxPin = 17
-#endif
-    );
+    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, HardwareSerial& serial = Serial1);
 
     // Convenience constructor for custom Serial instance. See main constructor.
     // Becomes standard library constuctor in case Serial1 isn't readily detected.
-    BY8X0116P(HardwareSerial& serial,
-#ifdef ESP_PLATFORM
-        byte serialRxPin = 16, byte serialTxPin = 17,
-#endif
-        byte busyPin = DISABLED, byte busyActiveOn = HIGH);
+    BY8X0116P(HardwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
 ```
 
 From BY8X01-16P.h, in class BY8X0116P, when in sofware serial mode (see examples for sample usage):
@@ -81,16 +72,16 @@ From BY8X01-16P.h, in class BY8X0116P, when in sofware serial mode (see examples
     // May skip usage of busy pin, but isBusy() will always respond false if so. May also
     // set usage of busy pin as being either active-high or active-low.
     // The only supported baud rate is 9600bps using mode SERIAL_8N1.
-    BY8X0116P(SofwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
+    BY8X0116P(SoftwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
 ```
 
 #### Device Initialization
 
-Additionally, a call is expected to be provided to the library class object's `init()` method, commonly called inside of the sketch's `setup()` function. This method also begins the supplied Serial instance.
+Additionally, a call is expected to be provided to the library class object's `init()` method, commonly called inside of the sketch's `setup()` function.
 
 From BY8X01-16P.h, in class BY8X0116P:
 ```Arduino
-    // Initializes module, also begins Serial instance. Typically called in setup().
+    // Initializes module. Typically called in setup().
     void init();
 ```
 
@@ -116,9 +107,11 @@ Below are several examples of library usage.
 BY8X0116P audioController;              // Library using default disabled busy pin hookup, and default Serial1 @9600bps
 
 void setup() {
-    // Library will begin Serial1, so we don't need to begin anything
+    Serial.begin(115200);               // Begin Serial and Serial1 interfaces
+    Serial1.begin(audioController.getSerialBaud(),
+                  audioController.getSerialMode());
 
-    audioController.init();             // Initializes module, also begins Serial1
+    audioController.init();             // Initializes module
 
     audioController.setVolume(20);      // Sets player volume to 20 (out of 30 max)
 
@@ -142,9 +135,11 @@ Index is prescribed by the FAT file system, and is generally in the order that t
 BY8X0116P audioController;              // Library using default disabled busy pin hookup, and default Serial1 @9600bps
 
 void setup() {
-    Serial.begin(115200);               // Library will begin Serial1, so we just need to begin Serial
+    Serial.begin(115200);               // Begin Serial and Serial1 interfaces
+    Serial1.begin(audioController.getSerialBaud(),
+                  audioController.getSerialMode());
 
-    audioController.init();             // Initializes module, also begins Serial1
+    audioController.init();             // Initializes module
 
     audioController.setEqualizerProfile(BY8X0116P_EqualizerProfile_Rock); // Sets player equalizer profile to Rock
 
@@ -177,13 +172,15 @@ const byte busyPin = 22;
 BY8X0116P audioController(busyPin);     // Library using busy pin input D22, and default Serial1 @9600bps
 
 void setup() {
-    Serial.begin(115200);               // Library will begin Serial1, so we just need to begin Serial
+    Serial.begin(115200);               // Begin Serial and Serial1 interfaces
+    Serial1.begin(audioController.getSerialBaud(),
+                  audioController.getSerialMode());
 
-    audioController.init();             // Initializes module, also begins Serial1
+    audioController.init();             // Initializes module
 
     audioController.playFolderFileIndex(0, 1); // Plays "00/001.mp3"
 
-    int numTracks = getNumberOfTracksInCurrentFolder(); // Gets number of tracks in current folder
+    int numTracks = audioController.getNumberOfTracksInCurrentFolder(); // Gets number of tracks in current folder
     Serial.println(numTracks);          // Should display number of tracks in the "00" folder
 
     char buffer[12];
@@ -222,7 +219,7 @@ In BY8X01-16P.h:
 // Uncomment or -D this define to enable use of the SoftwareSerial library.
 #define BY8X0116P_ENABLE_SOFTWARE_SERIAL        // https://www.arduino.cc/en/Reference/softwareSerial
 ```  
-Alternatively, in platform.[local.]txt:
+Alternatively, in platform[.local].txt:
 ```Arduino
 build.extra_flags=-DBY8X0116P_ENABLE_SOFTWARE_SERIAL
 ```
@@ -238,12 +235,12 @@ SoftwareSerial swSerial(rxPin, txPin);  // SoftwareSerial using RX pin D2 and TX
 BY8X0116P audioController(swSerial);    // Library using SoftwareSerial @9600bps, and default disabled busy pin hookup
 
 void setup() {
-    // Library will begin SoftwareSerial, so we don't need to begin anything
+    swSerial.begin(audioController.getSerialBaud()); // Begin SoftwareSerial
 
     pinMode(rxPin, INPUT);              // Must manually set pin modes for RX/TX pins (SoftwareSerial bug)
     pinMode(txPin, OUTPUT);
 
-    audioController.init();             // Initializes module, also begins SoftwareSerial
+    audioController.init();             // Initializes module
 
     audioController.play();             // Starts playback of loaded tracks
 }
@@ -264,7 +261,7 @@ In BY8X01-16P.h:
 // Uncomment or -D this define to enable debug output.
 #define BY8X0116P_ENABLE_DEBUG_OUTPUT
 ```  
-Alternatively, in platform.[local.]txt:
+Alternatively, in platform[.local].txt:
 ```Arduino
 build.extra_flags=-DBY8X0116P_ENABLE_DEBUG_OUTPUT
 ```
@@ -276,9 +273,11 @@ In main sketch:
 BY8X0116P audioController;              // Library using default disabled busy pin hookup, and default Serial1 @9600bps
 
 void setup() {
-    Serial.begin(115200);               // Library will begin Serial1, so we just need to begin Serial
+    Serial.begin(115200);               // Begin Serial and Serial1 interfaces
+    Serial1.begin(audioController.getSerialBaud(),
+                  audioController.getSerialMode());
 
-    audioController.init();             // Initializes module, also begins Serial1
+    audioController.init();             // Initializes module
 
     audioController.printModuleInfo();  // Prints module diagnostic information
 }
@@ -290,6 +289,84 @@ void loop() {
 
 In serial monitor:
 ```
-// TODO: Reinclude this example output after modifications completed. -NR
+ ~~~ BY8X0116P Module Info ~~~
+
+Busy Pin:
+<disabled>
+
+Serial Instance:
+Serial1
+Serial Baud:
+9600Hz
+
+State:
+  Standing By: false, Resetting: false, Card Inserted: true
+
+Timers:
+  Current Time: 17 ms, Last Request: 0 ms, Last Clean: 0 ms
+
+Firmware Version:
+BY8X0116P::getFirmwareVersion
+  BY8X0116P::writeRequest Cmd: 0x14, Chk: 0x17
+  BY8X0116P::readResponse respData[2]: 20
+fw20
+
+Total Number Of Tracks:
+BY8X0116P::getTotalNumberOfTracks
+  BY8X0116P::writeRequest Cmd: 0x18, Chk: 0x1B
+  BY8X0116P::readResponse respData[4]: 00ff
+  BY8X0116P::writeRequest Cmd: 0x15, Chk: 0x16
+  BY8X0116P::readResponse respData[4]: 0000
+0
+
+Current Track File Index:
+BY8X0116P::getCurrentTrackFileIndex
+  BY8X0116P::writeRequest Cmd: 0x18, Chk: 0x1B
+  BY8X0116P::readResponse respData[4]: 00ff
+  BY8X0116P::writeRequest Cmd: 0x19, Chk: 0x1A
+  BY8X0116P::readResponse respData[4]: 0000
+0
+
+Current Track Filename:
+BY8X0116P::getCurrentTrackFilename
+  BY8X0116P::writeRequest Cmd: 0x1E, Chk: 0x1D
+  BY8X0116P::readResponse respData[0]: 
+
+
+Current Track Elapsed Time:
+BY8X0116P::getCurrentTrackElapsedTime
+  BY8X0116P::writeRequest Cmd: 0x1C, Chk: 0x1F
+  BY8X0116P::readResponse respData[4]: ffff
+65535
+
+Current Track Total Time:
+BY8X0116P::getCurrentTrackTotalTime
+  BY8X0116P::writeRequest Cmd: 0x1D, Chk: 0x1E
+  BY8X0116P::readResponse respData[4]: 0000
+0
+
+Playback Status:
+BY8X0116P::getPlaybackStatus
+  BY8X0116P::writeRequest Cmd: 0x10, Chk: 0x13
+  BY8X0116P::readResponse respData[4]: 0000
+0: BY8X0116P_PlaybackStatus_Stopped
+
+Loop Playback Mode:
+BY8X0116P::getLoopPlaybackMode
+  BY8X0116P::writeRequest Cmd: 0x13, Chk: 0x10
+  BY8X0116P::readResponse respData[4]: 0004
+4: BY8X0116P_LoopPlaybackMode_Disabled
+
+Equalizer Profile:
+BY8X0116P::getEqualizerProfile
+  BY8X0116P::writeRequest Cmd: 0x12, Chk: 0x11
+  BY8X0116P::readResponse respData[4]: 0000
+0: BY8X0116P_EqualizerProfile_None
+
+Playback Device:
+BY8X0116P::getPlaybackDevice
+  BY8X0116P::writeRequest Cmd: 0x18, Chk: 0x1B
+  BY8X0116P::readResponse respData[4]: 00ff
+255: 
 
 ```
