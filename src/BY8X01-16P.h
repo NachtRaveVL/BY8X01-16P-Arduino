@@ -49,7 +49,7 @@
 // Hookup Callouts
 // -PLEASE READ-
 // Make sure to flip RX/TX lines when plugging into module from microcontroller. If
-// running a 5v microcontroller, put a 1k ohm resistor on the line between the
+// running a 5v microcontroller, put a 1kΩ resistor on the line between the 
 // microcontroller's TX and module's RX pins. Remove A, B, and C resistors on module
 // (factory default is a resistor on A and C, while B is left open). This puts the device
 // into the recommended 1-1-1 mode used for microcontroller serial control. Busy pin is
@@ -91,7 +91,8 @@ enum BY8X0116P_PlaybackStatus {
     BY8X0116P_PlaybackStatus_FastForwarding,    // Playback status fast-forwarding
     BY8X0116P_PlaybackStatus_FastRewinding,     // Playback status fast-rewinding
 
-    BY8X0116P_PlaybackStatus_Count              // Internal use only
+    BY8X0116P_PlaybackStatus_Count,             // Internal use only
+    BY8X0116P_PlaybackStatus_Undefined = -1     // Internal use only
 };
 
 enum BY8X0116P_LoopPlaybackMode {
@@ -101,7 +102,8 @@ enum BY8X0116P_LoopPlaybackMode {
     BY8X0116P_LoopPlaybackMode_Random,          // Loop playback mode random
     BY8X0116P_LoopPlaybackMode_Disabled,        // Loop playback mode disabled
 
-    BY8X0116P_LoopPlaybackMode_Count            // Internal use only
+    BY8X0116P_LoopPlaybackMode_Count,           // Internal use only
+    BY8X0116P_LoopPlaybackMode_Undefined = -1   // Internal use only
 };
 
 enum BY8X0116P_EqualizerProfile {
@@ -112,14 +114,16 @@ enum BY8X0116P_EqualizerProfile {
     BY8X0116P_EqualizerProfile_Classic,         // Equalizer profile classic
     BY8X0116P_EqualizerProfile_Bass,            // Equalizer profile bass
 
-    BY8X0116P_EqualizerProfile_Count            // Internal use only
+    BY8X0116P_EqualizerProfile_Count,           // Internal use only
+    BY8X0116P_EqualizerProfile_Undefined = -1   // Internal use only
 };
 
 enum BY8X0116P_PlaybackDevice {
     BY8X0116P_PlaybackDevice_USB,               // Playback device USB
     BY8X0116P_PlaybackDevice_MicroSD,           // Playback device MicroSD
 
-    BY8X0116P_PlaybackDevice_Count              // Internal use only
+    BY8X0116P_PlaybackDevice_Count,             // Internal use only
+    BY8X0116P_PlaybackDevice_Undefined = -1     // Internal use only
 };
 
 

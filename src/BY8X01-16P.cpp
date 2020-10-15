@@ -88,11 +88,11 @@ void BY8X0116P::init() {
     Serial.print("BY8X0116P::init busyPin: ");
     if (_busyPin != DISABLED) {
         Serial.print(_busyPin);
-        Serial.print(_busyActiveOn ? " (active-high)" : " (active-low)");
+        Serial.print(_busyActiveOn ? " <active-high>" : " <active-low>");
     }
     else
         Serial.print("<disabled>");
-    Serial.print(", serial#: ");
+    Serial.print(", serialUART#: ");
     Serial.print(getSerialInterfaceNumber());
     Serial.print(", serialBaud: ");
     Serial.print(getSerialBaud()); Serial.print("bps");
@@ -1000,7 +1000,7 @@ static const char *textForSerialInterfaceNumber(int serialNum) {
         case 1: return "Serial1";
         case 2: return "Serial2";
         case 3: return "Serial3";
-        default: return "<other>";
+        default: return "<CustomSerial>";
     }
 #else
     return "SoftwareSerial";
@@ -1012,7 +1012,7 @@ void BY8X0116P::printModuleInfo() {
 
     Serial.println(""); Serial.println(" ~~~ BY8X0116P Module Info ~~~");
 
-    Serial.println(""); Serial.println("Busy Pin:");
+    Serial.println(""); Serial.print("Busy Pin: ");
     if (_busyPin != DISABLED) {
         Serial.print("D"); Serial.print(_busyPin);
         Serial.println(_busyActiveOn ? " (active-high)" : " (active-low)");
@@ -1020,9 +1020,10 @@ void BY8X0116P::printModuleInfo() {
     else
         Serial.println("<disabled>");
 
-    Serial.println(""); Serial.println("Serial Instance:");
+    Serial.println(""); Serial.print("Serial Instance: ");
+    Serial.print(getSerialInterfaceNumber()); Serial.print(": ");
     Serial.println(textForSerialInterfaceNumber(getSerialInterfaceNumber()));
-    Serial.println("Serial Baud:");
+    Serial.print("Serial Baud: ");
     Serial.print(getSerialBaud()); Serial.println("Hz");
 
     Serial.println(""); Serial.println("State:");
@@ -1076,7 +1077,8 @@ void BY8X0116P::printModuleInfo() {
             Serial.println("BY8X0116P_PlaybackStatus_FastForwarding"); break;
         case BY8X0116P_PlaybackStatus_FastRewinding:
             Serial.println("BY8X0116P_PlaybackStatus_FastRewinding"); break;
-        default:
+        case BY8X0116P_PlaybackStatus_Count:
+        case BY8X0116P_PlaybackStatus_Undefined:
             Serial.println(""); break;
     }
 
@@ -1094,7 +1096,8 @@ void BY8X0116P::printModuleInfo() {
             Serial.println("BY8X0116P_LoopPlaybackMode_Random"); break;
         case BY8X0116P_LoopPlaybackMode_Disabled:
             Serial.println("BY8X0116P_LoopPlaybackMode_Disabled"); break;
-        default:
+        case BY8X0116P_LoopPlaybackMode_Count:
+        case BY8X0116P_LoopPlaybackMode_Undefined:
             Serial.println(""); break;
     }
 
@@ -1114,7 +1117,8 @@ void BY8X0116P::printModuleInfo() {
             Serial.println("BY8X0116P_EqualizerProfile_Classic"); break;
         case BY8X0116P_EqualizerProfile_Bass:
             Serial.println("BY8X0116P_EqualizerProfile_Bass"); break;
-        default:
+        case BY8X0116P_EqualizerProfile_Count:
+        case BY8X0116P_EqualizerProfile_Undefined:
             Serial.println(""); break;
     }
 
@@ -1126,7 +1130,8 @@ void BY8X0116P::printModuleInfo() {
             Serial.println("BY8X0116P_PlaybackDevice_USB"); break;
         case BY8X0116P_PlaybackDevice_MicroSD:
             Serial.println("BY8X0116P_PlaybackDevice_MicroSD"); break;
-        default:
+        case BY8X0116P_PlaybackDevice_Count:
+        case BY8X0116P_PlaybackDevice_Undefined:
             Serial.println(""); break;
     }
 }

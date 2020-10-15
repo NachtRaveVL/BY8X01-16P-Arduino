@@ -90,7 +90,7 @@ From BY8X01-16P.h, in class BY8X0116P:
 ### Serial UART
 
 * Make sure to flip RX/TX lines when plugging into module from microcontroller.
-* If running a 5v microcontroller, put a 1k ohm resistor on the line between the microcontroller's TX and module's RX pins.
+* If running a 5v microcontroller, put a 1kΩ resistor on the line between the microcontroller's TX and module's RX pins.
 * Remove A, B, and C resistors on module (factory default is a resistor on A and C, while B is left open).
   * This puts the device into the recommended 1-1-1 mode used for microcontroller serial control.
 * Busy pin is optional to utilize but returns a 2.8v signal when playback is active (just enough for 5v boards to register as logic level HIGH).
@@ -291,13 +291,10 @@ In serial monitor:
 ```
  ~~~ BY8X0116P Module Info ~~~
 
-Busy Pin:
-<disabled>
+Busy Pin: <disabled>
 
-Serial Instance:
-Serial1
-Serial Baud:
-9600Hz
+Serial Instance: 1: Serial1
+Serial Baud: 9600Hz
 
 State:
   Standing By: false, Resetting: false, Card Inserted: true
