@@ -8,14 +8,14 @@
 
 #include "BY8X01-16P.h"
 
-BY8X0116P audioController;          // Library using default Serial1 UART and no busy pin hookup
+BY8X0116P audioController;              // Library using default disabled busy pin hookup, and default Serial1 @9600bps
 
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(115200);               // Begin Serial and Serial1 interfaces
+    Serial1.begin(audioController.getSerialBaud(),
+                  audioController.getSerialMode());
 
-    Serial1.begin(9600);            // Serial1 must be started first - only supported UART baud rate is 9600
-
-    audioController.init();         // Initializes module
+    audioController.init();             // Initializes module
 
     audioController.setEqualizerProfile(BY8X0116P_EqualizerProfile_Rock); // Sets player equalizer profile to Rock
 

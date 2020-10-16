@@ -10,26 +10,26 @@
 #include "BY8X01-16P.h"
 
 const byte busyPin = 22;
-BY8X0116P audioController(Serial1, busyPin); // Library using Serial1 UART and busy pin input D22
+BY8X0116P audioController(busyPin);     // Library using busy pin input D22, and default Serial1 @9600bps
 
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(115200);               // Begin Serial and Serial1 interfaces
+    Serial1.begin(audioController.getSerialBaud(),
+                  audioController.getSerialMode());
 
-    Serial1.begin(9600);            // Serial1 must be started first - only supported UART baud rate is 9600
+    audioController.init();             // Initializes module
 
-    audioController.init();         // Initializes module
+    audioController.playFolderFileIndex(0, 1); // Plays "00/001.mp3"
 
-    audioController.playFolderFileIndex(0, 1); // Plays "00\001.mp3"
-
-    int numTracks = getNumberOfTracksInCurrentFolder(); // Gets number of tracks in current folder
-    Serial.println(numTracks);      // Should display number of tracks in the "00" folder
+    int numTracks = audioController.getNumberOfTracksInCurrentFolder(); // Gets number of tracks in current folder
+    Serial.println(numTracks);          // Should display number of tracks in the "00" folder
 
     char buffer[12];
     audioController.getCurrentTrackFilename(buffer); // Gets current filename (in 8.3 format) and places it into buffer
 
-    Serial.println(buffer);         // Should display "001.mp3"
+    Serial.println(buffer);             // Should display "001.mp3"
 
-    audioController.waitBusy();     // Blocking call that waits until all songs have completed
+    audioController.waitBusy();         // Blocking call that waits until all songs have completed
 
     // Plays all the remaining songs in the entire folder, printing out their file name upon playback
     for (int i = 2; i <= numTracks; ++i) {
