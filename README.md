@@ -125,7 +125,7 @@ void loop() {
 
 ### Combination Playback Example
 
-In this example, files are loaded onto the MicroSD card and queued using the special playFileIndex method, which allows up to 10 songs to be queued for playback.
+In this example, files are loaded onto the MicroSD card and queued using the special `playFileIndex()` method, which allows up to 10 songs to be queued for playback.
 
 Index is prescribed by the FAT file system, and is generally in the order that the files were copied to the flash drive, but not guaranteed. Indexing runs across all files in every subfolder. A file sorter software program (such as "DriveSort" or "FAT32 Sorter") should be used if specific file index order for playback is required.
 
@@ -163,7 +163,7 @@ void loop() {
 
 In this example, we use an indexed naming strategy to play files in folders via integer indexes.
 
-Folders on the MicroSD card should be named "00" through "99" and audio files inside them named "001.mp3" (or .wav) through "255.mp3" (or .wav). The folder and file index passed into playFolderFileIndex will play that specific audio file. Note that combination play here is not supported so waiting between track plays is required. Having a busy pin connected here will allow for tighter timing control between file playbacks.
+Folders on the MicroSD card should be named "00" through "99" and audio files inside them named "001.mp3" (or .wav) through "255.mp3" (or .wav). The folder and file index passed into `playFolderFileIndex()` will play that specific audio file. Note that combination play here is not supported so waiting between track plays is required. Having a busy pin connected here will allow for tighter timing control between file playbacks.
 
 ```Arduino
 #include "BY8X01-16P.h"
@@ -254,7 +254,7 @@ void loop() {
 
 In this example, we enable debug output support to print out module diagnostic information.
 
-If one uncomments the line below inside the main header file (or defines it via custom build flag), debug output support will be enabled and the printModuleInfo() method will become available. Calling this method will display information about the module itself, including initalized states, register values, current settings, etc. Additionally, all library calls being made will display internal debug information about the structure of the call itself. An example of this output is shown below.
+If one uncomments the line below inside the main header file (or defines it via custom build flag), debug output support will be enabled and the `printModuleInfo()` method will become available. Calling this method will display information about the module itself, including initalized states, register values, current settings, etc. Additionally, all library calls being made will display internal debug information about the structure of the call itself. An example of this output is shown below.
 
 In BY8X01-16P.h:
 ```Arduino
