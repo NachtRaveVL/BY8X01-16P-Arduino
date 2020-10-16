@@ -269,7 +269,6 @@ public:
 #endif
 
 protected:
-    static bool _serialBegan;                               // Global Serial began flag
     byte _busyPin;                                          // Busy pin to use for playback tracking (default: DISABLED)
     byte _busyActiveOn;                                     // Busy pin is active on HIGH or LOW (default: HIGH)
 #ifndef BY8X0116P_USE_SOFTWARE_SERIAL
