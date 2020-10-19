@@ -49,6 +49,54 @@
 #define BY8X0116P_GEN_CMD_TIMEOUT       5000                // Timeout for commands to be processed, in ms
 #define BY8X0116P_BUSY_DEBOUNCE_TIME    20                  // Time to spend debouncing busy input line, in ms
 
+
+static void uDelayMillisFuncDef(unsigned int timeout) {
+#ifdef BY8X0116P_USE_SCHEDULER
+    if (timeout > 0) {
+        unsigned long currTime = millis();
+        unsigned long endTime = currTime + (unsigned long)timeout;
+        if (currTime < endTime) { // not overflowing
+            while (millis() < endTime)
+                Scheduler.yield();
+        } else { // overflowing
+            unsigned long begTime = currTime;
+            while (currTime >= begTime || currTime < endTime) {
+                Scheduler.yield();
+                currTime = millis();
+            }
+        }
+    } else
+        Scheduler.yield();
+#else
+    delay(timeout);
+#endif
+}
+
+static void uDelayMicrosFuncDef(unsigned int timeout) {
+#ifdef BY8X0116P_USE_SCHEDULER
+    if (timeout > 1000) {
+        unsigned long currTime = micros();
+        unsigned long endTime = currTime + (unsigned long)timeout;
+        if (currTime < endTime) { // not overflowing
+            while (micros() < endTime)
+                Scheduler.yield();
+        } else { // overflowing
+            unsigned long begTime = currTime;
+            while (currTime >= begTime || currTime < endTime) {
+                Scheduler.yield();
+                currTime = micros();
+            }
+        }
+    } else if (timeout > 0)
+        delayMicroseconds(timeout);
+    else
+        Scheduler.yield();
+#else
+    delayMicroseconds(timeout);
+#endif
+}
+
+
 #ifndef BY8X0116P_USE_SOFTWARE_SERIAL
 
 #ifdef BY8X0116P_HAS_SERIAL1
@@ -56,6 +104,7 @@
 BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, HardwareSerial& serial)
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
       _serial(&serial),
+      _uDelayMillisFunc(uDelayMillisFuncDef), _uDelayMicrosFunc(uDelayMicrosFuncDef),
       _isBlockingRspLn(0), _isCleaningRspLn(false),
       _isStandingBy(false), _isResetting(false), _isCardInserted(true),
       _lastReqTime(0), _lastClnTime(0)
@@ -66,6 +115,7 @@ BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, HardwareSerial& serial)
 BY8X0116P::BY8X0116P(HardwareSerial& serial, byte busyPin, byte busyActiveOn)
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
       _serial(&serial),
+      _uDelayMillisFunc(uDelayMillisFuncDef), _uDelayMicrosFunc(uDelayMicrosFuncDef),
       _isBlockingRspLn(0), _isCleaningRspLn(false),
       _isStandingBy(false), _isResetting(false), _isCardInserted(true),
       _lastReqTime(0), _lastClnTime(0)
@@ -76,6 +126,7 @@ BY8X0116P::BY8X0116P(HardwareSerial& serial, byte busyPin, byte busyActiveOn)
 BY8X0116P::BY8X0116P(SoftwareSerial& serial, byte busyPin, byte busyActiveOn)
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
       _serial(&serial),
+      _uDelayMillisFunc(uDelayMillisFuncDef), _uDelayMicrosFunc(uDelayMicrosFuncDef),
       _isBlockingRspLn(0), _isCleaningRspLn(false),
       _isStandingBy(false), _isResetting(false), _isCardInserted(true),
       _lastReqTime(0), _lastClnTime(0)
@@ -92,7 +143,7 @@ void BY8X0116P::init() {
     }
     else
         Serial.print("<disabled>");
-    Serial.print(", serialUART#: ");
+    Serial.print(", serialTTL#: ");
     Serial.print(getSerialInterfaceNumber());
     Serial.print(", serialBaud: ");
     Serial.print(getSerialBaud()); Serial.print("bps");
@@ -121,6 +172,11 @@ uint32_t BY8X0116P::getSerialBaud() {
 
 uint16_t BY8X0116P::getSerialMode() {
     return BY8X0116P_SERIAL_MODE;
+}
+
+void BY8X0116P::setUserDelayFuncs(UserDelayFunc delayMillisFunc, UserDelayFunc delayMicrosFunc) {
+    _uDelayMillisFunc = delayMillisFunc ? delayMillisFunc : uDelayMillisFuncDef;
+    _uDelayMicrosFunc = delayMicrosFunc ? delayMicrosFunc : uDelayMicrosFuncDef;
 }
 
 void BY8X0116P::play() {
@@ -513,7 +569,7 @@ static bool debouncedDigitalRead(byte pin, byte activeOn, int sampleTime, int sa
         else
             ++inactiveCount;
 
-        delayMicroseconds(sampleRate);
+        _uDelayMicrosFunc(sampleRate);
     }
 
     return activeCount >= inactiveCount;
@@ -555,11 +611,7 @@ bool BY8X0116P::_waitBusy(int timeout) {
     unsigned long endTime = millis() + (unsigned long)timeout;
 
     while (_isBusy() && (timeout <= 0 || millis() < endTime)) {
-#ifdef BY8X0116P_USE_SCHEDULER
-        Scheduler.yield();
-#else
-        delay(1);
-#endif
+        _uDelayMillisFunc(0);
     }
 
     return _isBusy();
@@ -592,11 +644,7 @@ bool BY8X0116P::_waitPlaybackFinished(int timeout) {
     unsigned long endTime = millis() + (unsigned long)timeout;
 
     while (_isPlaybackActive() && (timeout <= 0 || millis() < endTime)) {
-#ifdef BY8X0116P_USE_SCHEDULER
-        Scheduler.yield();
-#else
-        delay(1);
-#endif
+        _uDelayMillisFunc(0);
     }
 
     return _isPlaybackActive();
@@ -657,11 +705,7 @@ void BY8X0116P::reset(bool blocking) {
             unsigned long endTime = millis() + (unsigned long)BY8X0116P_RESET_TIMEOUT;
 
             while (_isResetting && millis() < endTime) {
-#ifdef BY8X0116P_USE_SCHEDULER
-                Scheduler.yield();
-#else
-                delay(1);
-#endif
+                _uDelayMillisFunc(0);
                 cleanResponse();
             }
         } while (_isResetting);
@@ -856,11 +900,7 @@ void BY8X0116P::waitRequest() {
     unsigned long endTime = _lastReqTime + BY8X0116P_READ_DELAY;
 
     while (millis() < endTime) {
-#ifdef BY8X0116P_USE_SCHEDULER
-        Scheduler.yield();
-#else
-        delay(1);
-#endif
+        _uDelayMillisFunc(0);
     }
 }
 
@@ -869,11 +909,7 @@ bool BY8X0116P::waitResponse() {
     unsigned long endTime = max(millis(), _lastReqTime + BY8X0116P_READ_DELAY) + BY8X0116P_READ_DELAY;
 
     while (millis() < endTime) {
-#ifdef BY8X0116P_USE_SCHEDULER
-        Scheduler.yield();
-#else
-        delay(1);
-#endif
+        _uDelayMillisFunc(0);
         if (available != _serial->available()) {
             available = _serial->available();
             endTime = max(millis(), _lastReqTime + BY8X0116P_READ_DELAY) + BY8X0116P_READ_DELAY;

@@ -22,7 +22,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
 
-    BY8X01-16P-Arduino - Version 1.0.8
+    BY8X01-16P-Arduino - Version 1.1.0
 */
 
 #ifndef BY8X0116P_H
@@ -77,10 +77,10 @@
 #endif
 
 #ifndef ENABLED
-#define ENABLED                         0x1                 // Enabled define (convenience)
+#define ENABLED                         0x1     // Enabled define (convenience)
 #endif
 #ifndef DISABLED
-#define DISABLED                        0x0                 // Disabled define (convenience)
+#define DISABLED                        0x0     // Disabled define (convenience)
 #endif
 
 
@@ -164,6 +164,15 @@ public:
     uint32_t getSerialBaud();
     uint16_t getSerialMode();
 
+    typedef void(*UserDelayFunc)(unsigned int);             // Passes delay timeout (where 0 indicates inside long blocking call / yield attempt suggested)
+    // Sets user delay functions to call when a delay has to occur for processing to
+    // continue. User functions here can customize what this means - typically it would
+    // mean to call into a thread barrier() or yield() mechanism. Default implementation
+    // simply calls standard delay() and delayMicroseconds(), unless on SAM/SAMD
+    // architectures where Scheduler is available, in which case when timeout > 1ms
+    // Scheduler.yield() is called until timeout expires.
+    void setUserDelayFuncs(UserDelayFunc delayMillisFunc, UserDelayFunc delayMicrosFunc);
+
     // Playback control
     void play();
     void pause();
@@ -175,7 +184,7 @@ public:
     // order that the files were copied to the flash drive, but not guaranteed. Indexing
     // runs across all files in every subfolder. A file sorter software program (such as
     // "DriveSort" or "FAT32 Sorter") should be used if specific file index order for
-    // playback is required.
+    // playback is desired.
     void playFileIndex(uint16_t fileIndex); // fileIndex 1-65535
 
     // playFolderFileIndex requires that folders be named "00" through "99" and the files
@@ -194,10 +203,10 @@ public:
     void previousFolder();
 
     // Volume control (volume range: 0-30, retains setting in eeprom)
-    void increaseVolume();      // +1
-    void decreaseVolume();      // -1
-    void setVolume(int volume);
-    int getVolume();
+    void increaseVolume();              // +1
+    void decreaseVolume();              // -1
+    void setVolume(int volume);         // 0-30
+    int getVolume();                    // 0-30
 
     // Playback status
     BY8X0116P_PlaybackStatus getPlaybackStatus();
@@ -276,6 +285,9 @@ protected:
 #else
     SoftwareSerial* _serial;                                // Serial class instance (unowned)
 #endif
+    UserDelayFunc _uDelayMillisFunc;                        // User millisecond delay function
+    UserDelayFunc _uDelayMicrosFunc;                        // User microsecond delay function
+
     int8_t _isBlockingRspLn;                                // Tracks if response line should be blocked by other routines
     bool _isCleaningRspLn;                                  // Tracks if code is already inside of clean response line routine
     bool _isStandingBy;                                     // Tracks if device is in standby mode

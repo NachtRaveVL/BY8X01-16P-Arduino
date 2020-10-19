@@ -1,7 +1,7 @@
 # BY8X01-16P-Arduino
 Arduino Library for the BY8001-16P/BY8301-16P Audio Module.
 
-**BY8X01-16P-Arduino v1.0.8**
+**BY8X01-16P-Arduino v1.1.0**
 
 Library to control a BY8001-16P or BY83001-16P audio module from an Arduino board.  
 Licensed under the non-restrictive MIT license.
@@ -10,7 +10,7 @@ Created by NachtRaveVL, August 1st, 2016.
 
 This library allows communication with boards running a BY8001-16P or BY8301-16P audio module. It supports the full feature set of the BY8X01-16P chipset such as queued combination playback, indexed folder/file playback, loop playback mode, equalizer profile, spot insertion play, etc.
 
-Made primarily for Arduino microcontrollers, but should work with PlatformIO, ESP32/8266, Teensy, and others - although one might want to ensure HAVE_HWSERIAL1 (or similar) is properly defined for any architecture used.
+Made primarily for Arduino microcontrollers, but should work with PlatformIO, ESP32/8266, Teensy, and others - although one might want to ensure `HAVE_HWSERIAL1` (or similar) is properly defined for any architecture used.
 
 Dependencies include Scheduler if on a ARM/ARMD architecture (e.g. Due/Zero/etc.), but usage can be disabled via library setup header defines or custom build flags.
 
