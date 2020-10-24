@@ -159,10 +159,14 @@ public:
     void init();
 
     // Mode accessors
-    byte getBusyPin();
-    byte getBusyActiveOn();
-    int getSerialBaud();
-    int getSerialMode();
+    byte getBusyPin();                                      // Busy pin
+    byte getBusyActiveOn();                                 // Busy AO polarity
+    int getSerialBaud();                                    // Serial baud (Bps)
+#ifdef ESP8266
+    SerialConfig getSerialMode();                           // Serial mode
+#else
+    int getSerialMode();                                    // Serial mode
+#endif
 
     typedef void(*UserDelayFunc)(unsigned int);             // Passes delay timeout (where 0 indicates inside long blocking call / yield attempt suggested)
     // Sets user delay functions to call when a delay has to occur for processing to

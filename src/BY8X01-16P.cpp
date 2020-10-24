@@ -170,9 +170,19 @@ int BY8X0116P::getSerialBaud() {
     return BY8X0116P_SERIAL_BAUD;
 }
 
+#ifdef ESP8266
+
+SerialConfig BY8X0116P::getSerialMode() {
+    return BY8X0116P_SERIAL_MODE;
+}
+
+#else
+
 int BY8X0116P::getSerialMode() {
     return BY8X0116P_SERIAL_MODE;
 }
+
+#endif // /ifdef ESP8266
 
 void BY8X0116P::setUserDelayFuncs(UserDelayFunc delayMillisFunc, UserDelayFunc delayMicrosFunc) {
     _uDelayMillisFunc = delayMillisFunc ? delayMillisFunc : uDelayMillisFuncDef;
@@ -602,7 +612,7 @@ bool BY8X0116P::waitBusy(int timeout) {
     Serial.println(timeout);
 #endif
 
-    return _waitBusy();
+    return _waitBusy(timeout);
 }
 
 bool BY8X0116P::_waitBusy(int timeout) {
