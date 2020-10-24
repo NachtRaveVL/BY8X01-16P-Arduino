@@ -166,11 +166,11 @@ byte BY8X0116P::getBusyActiveOn() {
     return _busyActiveOn;
 }
 
-uint32_t BY8X0116P::getSerialBaud() {
+int BY8X0116P::getSerialBaud() {
     return BY8X0116P_SERIAL_BAUD;
 }
 
-uint16_t BY8X0116P::getSerialMode() {
+int BY8X0116P::getSerialMode() {
     return BY8X0116P_SERIAL_MODE;
 }
 
@@ -220,7 +220,7 @@ void BY8X0116P::stop(bool blocking) {
 }
 
 void BY8X0116P::playFileIndex(uint16_t fileIndex) {
-    fileIndex = (uint16_t)min(max(fileIndex, 0x0001), 0xFFFF);
+    fileIndex = (uint16_t)min(max(fileIndex, (uint16_t)0x0001), (uint16_t)0xFFFF);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::playFileIndex fileIndex: ");
@@ -231,8 +231,8 @@ void BY8X0116P::playFileIndex(uint16_t fileIndex) {
 }
 
 void BY8X0116P::playFolderFileIndex(byte folderIndex, byte fileIndex) {
-    folderIndex = (byte)min(max(folderIndex, 0), 99);
-    fileIndex = (byte)min(max(fileIndex, 0x01), 0xFF);
+    folderIndex =(byte)min(max(folderIndex, (byte)0), (byte)99);
+    fileIndex = (byte)min(max(fileIndex, (byte)0x01), (byte)0xFF);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::playFolderFileIndex folderIndex: ");
@@ -475,7 +475,7 @@ BY8X0116P_PlaybackDevice BY8X0116P::getPlaybackDevice() {
 }
 
 void BY8X0116P::spotPlayFileIndex(uint16_t fileIndex) {
-    fileIndex = (uint16_t)min(max(fileIndex, 0x0001), 0xFFFF);
+    fileIndex = (uint16_t)min(max(fileIndex, (uint16_t)0x0001), (uint16_t)0xFFFF);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::spotPlayFileIndex fileIndex: ");
@@ -486,8 +486,8 @@ void BY8X0116P::spotPlayFileIndex(uint16_t fileIndex) {
 }
 
 void BY8X0116P::spotPlayFolderFileIndex(byte folderIndex, byte fileIndex) {
-    folderIndex = (byte)min(max(folderIndex, 0), 99);
-    fileIndex = (byte)min(max(fileIndex, 0x01), 0xFF);
+    folderIndex = (byte)min(max(folderIndex, (byte)0), (byte)99);
+    fileIndex = (byte)min(max(fileIndex, (byte)0x01), (byte)0xFF);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
     Serial.print("BY8X0116P::spotPlayFolderFileIndex folderIndex: ");

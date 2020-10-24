@@ -72,7 +72,7 @@
 #define BY8X0116P_USE_SOFTWARE_SERIAL
 #endif
 
-#if defined(HAVE_HWSERIAL1) || defined(PIN_SERIAL1_RX) || defined(SERIAL_PORT_HARDWARE1) || defined(UART1)
+#if defined(HAVE_HWSERIAL1) || defined(PIN_SERIAL1_RX) || defined(SERIAL_PORT_HARDWARE1) || defined(UART1) || defined(ESP_PLATFORM)
 #define BY8X0116P_HAS_SERIAL1
 #endif
 
@@ -161,8 +161,8 @@ public:
     // Mode accessors
     byte getBusyPin();
     byte getBusyActiveOn();
-    uint32_t getSerialBaud();
-    uint16_t getSerialMode();
+    int getSerialBaud();
+    int getSerialMode();
 
     typedef void(*UserDelayFunc)(unsigned int);             // Passes delay timeout (where 0 indicates inside long blocking call / yield attempt suggested)
     // Sets user delay functions to call when a delay has to occur for processing to
