@@ -1,0 +1,97 @@
+==================================
+CLASS
+==================================
+BY8X0116P	KEYWORD1
+
+==================================
+FUNCTIONS
+==================================
+init	KEYWORD2
+getBusyPin	KEYWORD2
+getBusyActiveOn	KEYWORD2
+getSerialBaud	KEYWORD2
+getSerialMode	KEYWORD2
+setUserDelayFuncs	KEYWORD2
+play	KEYWORD2
+pause	KEYWORD2
+stop	KEYWORD2
+playFileIndex	KEYWORD2
+playFolderFileIndex	KEYWORD2
+fastForward	KEYWORD2
+fastRewind	KEYWORD2
+nextTrack	KEYWORD2
+previousTrack	KEYWORD2
+nextFolder	KEYWORD2
+previousFolder	KEYWORD2
+increaseVolume	KEYWORD2
+decreaseVolume	KEYWORD2
+setVolume	KEYWORD2
+getVolume	KEYWORD2
+getPlaybackStatus	KEYWORD2
+setLoopPlaybackMode	KEYWORD2
+getLoopPlaybackMode	KEYWORD2
+setEqualizerProfile	KEYWORD2
+getEqualizerProfile	KEYWORD2
+getTotalNumberOfTracks	KEYWORD2
+getNumberOfTracksInCurrentFolder	KEYWORD2
+getCurrentTrackFileIndex	KEYWORD2
+getCurrentTrackElapsedTime	KEYWORD2
+getCurrentTrackTotalTime	KEYWORD2
+setPlaybackDevice	KEYWORD2
+getPlaybackDevice	KEYWORD2
+spotPlayFileIndex	KEYWORD2
+spotPlayFolderFileIndex	KEYWORD2
+getCurrentTrackFilename	KEYWORD2
+getFirmwareVersion	KEYWORD2
+isBusy	KEYWORD2
+waitBusy	KEYWORD2
+isPlaybackActive	KEYWORD2
+waitPlaybackFinished	KEYWORD2
+toggleStandBy	KEYWORD2
+isStandingBy	KEYWORD2
+reset	KEYWORD2
+isResetting	KEYWORD2
+isCardInserted	KEYWORD2
+cleanupRoutine	KEYWORD2
+getSerialInterfaceNumber	KEYWORD2
+printModuleInfo	KEYWORD2
+
+==================================
+CONSTANTS
+==================================
+ENABLED	LITERAL1
+DISABLED	LITERAL1
+BY8X0116P_PlaybackStatus_Stopped	LITERAL1
+BY8X0116P_PlaybackStatus_Playing	LITERAL1
+BY8X0116P_PlaybackStatus_Paused	LITERAL1
+BY8X0116P_PlaybackStatus_FastForwarding	LITERAL1
+BY8X0116P_PlaybackStatus_FastRewinding	LITERAL1
+BY8X0116P_PlaybackStatus_Count	LITERAL1
+BY8X0116P_PlaybackStatus_Undefined	LITERAL1
+BY8X0116P_LoopPlaybackMode_All	LITERAL1
+BY8X0116P_LoopPlaybackMode_Folder	LITERAL1
+BY8X0116P_LoopPlaybackMode_Single	LITERAL1
+BY8X0116P_LoopPlaybackMode_Random	LITERAL1
+BY8X0116P_LoopPlaybackMode_Disabled	LITERAL1
+BY8X0116P_LoopPlaybackMode_Count	LITERAL1
+BY8X0116P_LoopPlaybackMode_Undefined	LITERAL1
+BY8X0116P_EqualizerProfile_None	LITERAL1
+BY8X0116P_EqualizerProfile_Pop	LITERAL1
+BY8X0116P_EqualizerProfile_Rock	LITERAL1
+BY8X0116P_EqualizerProfile_Jazz	LITERAL1
+BY8X0116P_EqualizerProfile_Classic	LITERAL1
+BY8X0116P_EqualizerProfile_Bass	LITERAL1
+BY8X0116P_EqualizerProfile_Count	LITERAL1
+BY8X0116P_EqualizerProfile_Undefined	LITERAL1
+BY8X0116P_PlaybackDevice_USB	LITERAL1
+BY8X0116P_PlaybackDevice_MicroSD	LITERAL1
+BY8X0116P_PlaybackDevice_Count	LITERAL1
+BY8X0116P_PlaybackDevice_Undefined	LITERAL1
+
+==================================
+DATA TYPES
+==================================
+BY8X0116P_PlaybackStatus	KEYWORD1
+BY8X0116P_LoopPlaybackMode	KEYWORD1
+BY8X0116P_EqualizerProfile	KEYWORD1
+BY8X0116P_PlaybackDevice	KEYWORD1
