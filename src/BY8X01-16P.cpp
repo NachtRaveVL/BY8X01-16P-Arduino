@@ -51,46 +51,48 @@
 
 
 static void uDelayMillisFuncDef(unsigned int timeout) {
-#if defined(BY8X0116P_YIELD)
+#if defined(BY8X0116P_USE_SCHEDULER) || defined(BY8X0116P_USE_COOPTASK)
     if (timeout > 0) {
         unsigned long currTime = millis();
         unsigned long endTime = currTime + (unsigned long)timeout;
         if (currTime < endTime) { // not overflowing
             while (millis() < endTime)
-                BY8X0116P_YIELD();
+                yield();
         } else { // overflowing
             unsigned long begTime = currTime;
             while (currTime >= begTime || currTime < endTime) {
-                BY8X0116P_YIELD();
+                yield();
                 currTime = millis();
             }
         }
-    } else
-        BY8X0116P_YIELD();
+    } else {
+        yield();
+    }
 #else
     delay(timeout);
 #endif
 }
 
 static void uDelayMicrosFuncDef(unsigned int timeout) {
-#if defined(BY8X0116P_YIELD)
+#if defined(BY8X0116P_USE_SCHEDULER) || defined(BY8X0116P_USE_COOPTASK)
     if (timeout > 1000) {
         unsigned long currTime = micros();
         unsigned long endTime = currTime + (unsigned long)timeout;
         if (currTime < endTime) { // not overflowing
             while (micros() < endTime)
-                BY8X0116P_YIELD();
+                yield();
         } else { // overflowing
             unsigned long begTime = currTime;
             while (currTime >= begTime || currTime < endTime) {
-                BY8X0116P_YIELD();
+                yield();
                 currTime = micros();
             }
         }
-    } else if (timeout > 0)
+    } else if (timeout > 0) {
         delayMicroseconds(timeout);
-    else
-        BY8X0116P_YIELD();
+    } else {
+        yield();
+    }
 #else
     delayMicroseconds(timeout);
 #endif

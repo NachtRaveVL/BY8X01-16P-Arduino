@@ -73,12 +73,10 @@
 #if !defined(BY8X0116P_DISABLE_SCHEDULER) && (defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_SAMD))
 #include "Scheduler.h"
 #define BY8X0116P_USE_SCHEDULER
-#define BY8X0116P_YIELD()               Scheduler.yield()
 #endif
 #if !defined(BY8X0116P_DISABLE_COOPTASK) && !defined(BY8X0116P_USE_SCHEDULER)
 #include "CoopTask.h"
 #define BY8X0116P_USE_COOPTASK
-#define BY8X0116P_YIELD()               yield()
 #endif
 
 #if defined(HAVE_HWSERIAL1) || defined(PIN_SERIAL1_RX) || defined(SERIAL_PORT_HARDWARE1) || defined(UART1) || defined(ESP_PLATFORM)
@@ -181,9 +179,7 @@ public:
     // Sets user delay functions to call when a delay has to occur for processing to
     // continue. User functions here can customize what this means - typically it would
     // mean to call into a thread barrier() or yield() mechanism. Default implementation
-    // simply calls standard delay() and delayMicroseconds(), unless on SAM/SAMD
-    // architectures where Scheduler is available, in which case when timeout > 1ms
-    // Scheduler.yield() is called until timeout expires.
+    // is to call yield() when timeout >= 1ms, unless Scheduler and CoopTask are disabled.
     void setUserDelayFuncs(UserDelayFunc delayMillisFunc, UserDelayFunc delayMicrosFunc);
 
     // Playback control
