@@ -51,46 +51,46 @@
 
 
 static void uDelayMillisFuncDef(unsigned int timeout) {
-#ifdef BY8X0116P_USE_SCHEDULER
+#if defined(BY8X0116P_YIELD)
     if (timeout > 0) {
         unsigned long currTime = millis();
         unsigned long endTime = currTime + (unsigned long)timeout;
         if (currTime < endTime) { // not overflowing
             while (millis() < endTime)
-                Scheduler.yield();
+                BY8X0116P_YIELD();
         } else { // overflowing
             unsigned long begTime = currTime;
             while (currTime >= begTime || currTime < endTime) {
-                Scheduler.yield();
+                BY8X0116P_YIELD();
                 currTime = millis();
             }
         }
     } else
-        Scheduler.yield();
+        BY8X0116P_YIELD();
 #else
     delay(timeout);
 #endif
 }
 
 static void uDelayMicrosFuncDef(unsigned int timeout) {
-#ifdef BY8X0116P_USE_SCHEDULER
+#if defined(BY8X0116P_YIELD)
     if (timeout > 1000) {
         unsigned long currTime = micros();
         unsigned long endTime = currTime + (unsigned long)timeout;
         if (currTime < endTime) { // not overflowing
             while (micros() < endTime)
-                Scheduler.yield();
+                BY8X0116P_YIELD();
         } else { // overflowing
             unsigned long begTime = currTime;
             while (currTime >= begTime || currTime < endTime) {
-                Scheduler.yield();
+                BY8X0116P_YIELD();
                 currTime = micros();
             }
         }
     } else if (timeout > 0)
         delayMicroseconds(timeout);
     else
-        Scheduler.yield();
+        BY8X0116P_YIELD();
 #else
     delayMicroseconds(timeout);
 #endif

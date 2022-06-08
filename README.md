@@ -10,9 +10,9 @@ Created by NachtRaveVL, August 1st, 2016.
 
 This library allows communication with boards running a BY8001-16P or BY8301-16P audio module. It supports the full feature set of the BY8X01-16P chipset such as queued combination playback, indexed folder/file playback, loop playback mode, equalizer profile, spot insertion play, etc.
 
-Made primarily for Arduino microcontrollers, but should work with PlatformIO, ESP32/8266, Teensy, and others - although one might want to ensure `HAVE_HWSERIAL1` (or similar) is properly defined for any architecture used.
+Made primarily for Arduino microcontrollers, but should work with PlatformIO, ESP32/8266, Teensy, and others - although one might experience turbulence until the bug reports get ironed out. Unknown architectures must ensure `BUFFER_LENGTH` (or `I2C_BUFFER_LENGTH`) and `WIRE_INTERFACES_COUNT` are properly defined.
 
-Dependencies include Scheduler if on a ARM/ARMD architecture (e.g. Due/Zero/etc.), but usage can be disabled via library setup header defines or custom build flags.
+Dependencies include: CoopTask (alternate to Scheduler, disableable), and Scheduler (SAM/SAMD only, disableable).
 
 The datasheet for the IC is available at <https://forum.arduino.cc/index.php?action=dlattach;topic=306442.0;attach=129563>.
 
@@ -30,11 +30,14 @@ Alternatively, you may also refer to <https://forum.arduino.cc/index.php?topic=6
 
 From BY8X01-16P.h:
 ```Arduino
-// Uncomment or -D this define to enable use of the SoftwareSerial library.
-//#define BY8X0116P_ENABLE_SOFTWARE_SERIAL        // https://www.arduino.cc/en/Reference/softwareSerial
+// Uncomment or -D this define to enable usage of the SoftwareSerial Arduino library.
+//#define BY8X0116P_ENABLE_SOFTWARE_SERIAL          // https://www.arduino.cc/en/Reference/softwareSerial
 
 // Uncomment or -D this define to disable usage of the Scheduler library on SAM/SAMD architecures.
-//#define BY8X0116P_DISABLE_SCHEDULER             // https://github.com/arduino-libraries/Scheduler
+//#define BY8X0116P_DISABLE_SCHEDULER               // https://github.com/arduino-libraries/Scheduler
+
+// Uncomment or -D this define to disable usage of the CoopTask library when Scheduler library not used.
+//#define BY8X0116P_DISABLE_COOPTASK                // https://github.com/dok-net/CoopTask
 
 // Uncomment or -D this define to enable debouncing of the input line on isBusy() calls.
 //#define BY8X0116P_ENABLE_DEBOUNCING
@@ -216,7 +219,7 @@ If one uncomments the line below inside the main header file (or defines it via 
 
 In BY8X01-16P.h:
 ```Arduino
-// Uncomment or -D this define to enable use of the SoftwareSerial library.
+// Uncomment or -D this define to enable usage of the SoftwareSerial library.
 #define BY8X0116P_ENABLE_SOFTWARE_SERIAL        // https://www.arduino.cc/en/Reference/softwareSerial
 ```  
 Alternatively, in platform[.local].txt:

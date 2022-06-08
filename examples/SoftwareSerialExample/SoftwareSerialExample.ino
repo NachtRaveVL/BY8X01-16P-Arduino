@@ -6,7 +6,7 @@
 // custom build flags manually via modifying platform[.local].txt.
 //
 // In BY8X01-16P.h:
-// // Uncomment or -D this define to enable use of the SoftwareSerial library.
+// // Uncomment or -D this define to enable usage of the SoftwareSerial library.
 // #define BY8X0116P_ENABLE_SOFTWARE_SERIAL        // https://www.arduino.cc/en/Reference/softwareSerial
 //
 // Alternatively, in platform[.local].txt:

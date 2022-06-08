@@ -34,11 +34,14 @@
 // the Arduino IDE's limited custom build flag support. Editing this header file directly
 // will affect all projects compiled on your system using these library files.
 
-// Uncomment or -D this define to enable use of the SoftwareSerial library.
-//#define BY8X0116P_ENABLE_SOFTWARE_SERIAL        // https://www.arduino.cc/en/Reference/softwareSerial
+// Uncomment or -D this define to enable usage of the SoftwareSerial Arduino library.
+//#define BY8X0116P_ENABLE_SOFTWARE_SERIAL          // https://www.arduino.cc/en/Reference/softwareSerial
 
 // Uncomment or -D this define to disable usage of the Scheduler library on SAM/SAMD architecures.
-//#define BY8X0116P_DISABLE_SCHEDULER             // https://github.com/arduino-libraries/Scheduler
+//#define BY8X0116P_DISABLE_SCHEDULER               // https://github.com/arduino-libraries/Scheduler
+
+// Uncomment or -D this define to disable usage of the CoopTask library when Scheduler library not used.
+//#define BY8X0116P_DISABLE_COOPTASK                // https://github.com/dok-net/CoopTask
 
 // Uncomment or -D this define to enable debouncing of the input line on isBusy() calls.
 //#define BY8X0116P_ENABLE_DEBOUNCING
@@ -61,15 +64,21 @@
 #else
 #include <WProgram.h>
 #endif
+#include <assert.h>
+#ifdef BY8X0116P_ENABLE_SOFTWARE_SERIAL
+#include <SoftwareSerial.h>
+#define BY8X0116P_USE_SOFTWARE_SERIAL
+#endif
 
 #if !defined(BY8X0116P_DISABLE_SCHEDULER) && (defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_SAMD))
 #include "Scheduler.h"
 #define BY8X0116P_USE_SCHEDULER
+#define BY8X0116P_YIELD()               Scheduler.yield()
 #endif
-
-#ifdef BY8X0116P_ENABLE_SOFTWARE_SERIAL
-#include <SoftwareSerial.h>
-#define BY8X0116P_USE_SOFTWARE_SERIAL
+#if !defined(BY8X0116P_DISABLE_COOPTASK) && !defined(BY8X0116P_USE_SCHEDULER)
+#include "CoopTask.h"
+#define BY8X0116P_USE_COOPTASK
+#define BY8X0116P_YIELD()               yield()
 #endif
 
 #if defined(HAVE_HWSERIAL1) || defined(PIN_SERIAL1_RX) || defined(SERIAL_PORT_HARDWARE1) || defined(UART1) || defined(ESP_PLATFORM)
