@@ -12,7 +12,7 @@ This library allows communication with boards running a BY8001-16P or BY8301-16P
 
 Made primarily for Arduino microcontrollers, but should work with PlatformIO, ESP32/8266, Teensy, and others - although one might experience turbulence until the bug reports get ironed out. Unknown architectures must ensure `BUFFER_LENGTH` (or `I2C_BUFFER_LENGTH`) and `WIRE_INTERFACES_COUNT` are properly defined.
 
-Dependencies include: CoopTask (alternate to Scheduler, disableable), and Scheduler (SAM/SAMD only, disableable).
+Dependencies include: Scheduler (SAM/SAMD only, disableable), TaskScheduler (alternate to Scheduler, disableable), and CoopTask (alternate to TaskScheduler, optional).
 
 The datasheet for the IC is available at <https://forum.arduino.cc/index.php?action=dlattach;topic=306442.0;attach=129563>.
 
@@ -24,7 +24,7 @@ The easiest way to install this library is to utilize the Arduino IDE library ma
 
 ### Header Defines
 
-There are several defines inside of the library's main header file that allow for more fine-tuned control of the library. You may edit and uncomment these lines directly, or supply them via custom build flags. While editing the main header file isn't ideal, it is often the easiest given the Arduino IDE's limited custom build flag support. Note that editing the library's main header file directly will affect all projects compiled on your system using those modified library files.
+There are several defines inside of the library's main header file that allow for more fine-tuned control of the library. You may edit and uncomment these lines directly, or supply them via custom build flags. While editing the main header file isn't ideal, it is often easiest. Note that editing the library's main header file directly will affect all projects compiled on your system using those modified library files.
 
 Alternatively, you may also refer to <https://forum.arduino.cc/index.php?topic=602603.0> on how to define custom build flags manually via modifying the platform[.local].txt file. Note that editing such directly will affect all other projects compiled on your system using those modified platform framework files.
 
@@ -33,11 +33,17 @@ From BY8X01-16P.h:
 // Uncomment or -D this define to enable usage of the SoftwareSerial Arduino library.
 //#define BY8X0116P_ENABLE_SOFTWARE_SERIAL          // https://www.arduino.cc/en/Reference/softwareSerial
 
-// Uncomment or -D this define to disable usage of the Scheduler library on SAM/SAMD architecures.
+// Uncomment or -D this define to completely disable usage of any multitasking commands, such as yield().
+//#define BY8X0116P_DISABLE_MULTITASKING
+
+// Uncomment or -D this define to disable usage of the Scheduler library, for SAM/SAMD architechtures.
 //#define BY8X0116P_DISABLE_SCHEDULER               // https://github.com/arduino-libraries/Scheduler
 
-// Uncomment or -D this define to disable usage of the CoopTask library when Scheduler library not used.
-//#define BY8X0116P_DISABLE_COOPTASK                // https://github.com/dok-net/CoopTask
+// Uncomment or -D this define to disable usage of the TaskScheduler library, in place of Scheduler.
+//#define BY8X0116P_DISABLE_TASKSCHEDULER           // https://github.com/arkhipenko/TaskScheduler
+
+// Uncomment or -D this define to enable usage of the CoopTask library, in place of TaskScheduler and Scheduler.
+//#define BY8X0116P_ENABLE_COOPTASK                 // https://github.com/dok-net/CoopTask
 
 // Uncomment or -D this define to enable debouncing of the input line on isBusy() calls.
 //#define BY8X0116P_ENABLE_DEBOUNCING
@@ -92,8 +98,9 @@ From BY8X01-16P.h, in class BY8X0116P:
 
 ### Serial UART
 
-* Make sure to flip RX/TX lines when plugging into module from microcontroller.
-* If running a 5v microcontroller, put a 1kΩ resistor on the line between the microcontroller's TX and module's RX pins.
+* Make sure to flip RX/TX lines when hooking into module from microcontroller.
+* If running a 5v microcontroller, place a 1kΩ resistor between the microcontroller's TX pin and module's RX pin.
+  * Alternatively, instead use a bi-directional logic level converter from 5v to 3.3v.
 * Remove A, B, and C resistors on module (factory default is a resistor on A and C, while B is left open).
   * This puts the device into the recommended 1-1-1 mode used for microcontroller serial control.
 * Busy pin is optional to utilize but returns a 2.8v signal when playback is active (just enough for 5v boards to register as logic level HIGH).

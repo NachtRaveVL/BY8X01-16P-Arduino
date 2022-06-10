@@ -30,18 +30,22 @@
 
 // Library Setup
 
-// NOTE: While editing the main header file isn't ideal, it is often the easiest given
-// the Arduino IDE's limited custom build flag support. Editing this header file directly
-// will affect all projects compiled on your system using these library files.
+// NOTE: It is recommended to use custom build flags instead of editing this file directly.
 
 // Uncomment or -D this define to enable usage of the SoftwareSerial Arduino library.
 //#define BY8X0116P_ENABLE_SOFTWARE_SERIAL          // https://www.arduino.cc/en/Reference/softwareSerial
 
-// Uncomment or -D this define to disable usage of the Scheduler library on SAM/SAMD architecures.
+// Uncomment or -D this define to completely disable usage of any multitasking commands, such as yield().
+//#define BY8X0116P_DISABLE_MULTITASKING
+
+// Uncomment or -D this define to disable usage of the Scheduler library, for SAM/SAMD architechtures.
 //#define BY8X0116P_DISABLE_SCHEDULER               // https://github.com/arduino-libraries/Scheduler
 
-// Uncomment or -D this define to disable usage of the CoopTask library when Scheduler library not used.
-//#define BY8X0116P_DISABLE_COOPTASK                // https://github.com/dok-net/CoopTask
+// Uncomment or -D this define to disable usage of the TaskScheduler library, in place of Scheduler.
+//#define BY8X0116P_DISABLE_TASKSCHEDULER           // https://github.com/arkhipenko/TaskScheduler
+
+// Uncomment or -D this define to enable usage of the CoopTask library, in place of TaskScheduler and Scheduler.
+//#define BY8X0116P_ENABLE_COOPTASK                 // https://github.com/dok-net/CoopTask
 
 // Uncomment or -D this define to enable debouncing of the input line on isBusy() calls.
 //#define BY8X0116P_ENABLE_DEBOUNCING
@@ -51,13 +55,13 @@
 
 // Hookup Callouts
 // -PLEASE READ-
-// Make sure to flip RX/TX lines when plugging into module from microcontroller. If
-// running a 5v microcontroller, put a 1kΩ resistor on the line between the 
-// microcontroller's TX and module's RX pins. Remove A, B, and C resistors on module
-// (factory default is a resistor on A and C, while B is left open). This puts the device
-// into the recommended 1-1-1 mode used for microcontroller serial control. Busy pin is
-// optional to utilize but returns a 2.8v signal when playback is active (just enough
-// for 5v boards to register as logic level HIGH).
+// Make sure to flip RX/TX lines when hooking into module from microcontroller. If running
+// a 5v microcontroller, place a 1kΩ resistor between the microcontroller's TX pin and
+// module's RX pin (or use a bi-directional logic level converter). Remove A, B, and C
+// resistors on module (factory default is a resistor on A and C, while B is left open).
+// This puts the device into the recommended 1-1-1 mode used for microcontroller serial
+// control. Busy pin is optional to utilize but returns a 2.8v signal when playback is
+// active (just enough for 5v boards to register as logic level HIGH).
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>
@@ -72,13 +76,27 @@
 #define BY8X0116P_USE_SOFTWARE_SERIAL
 #endif
 
+#ifndef BY8X0116P_DISABLE_MULTITASKING
 #if !defined(BY8X0116P_DISABLE_SCHEDULER) && (defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_SAMD))
 #include "Scheduler.h"
 #define BY8X0116P_USE_SCHEDULER
 #endif
-#if !defined(BY8X0116P_DISABLE_COOPTASK) && !defined(BY8X0116P_USE_SCHEDULER)
+#if !defined(BY8X0116P_DISABLE_TASKSCHEDULER) && !defined(BY8X0116P_USE_SCHEDULER)
+#include "TaskSchedulerDeclarations.h"
+#define BY8X0116P_USE_TASKSCHEDULER
+#define BY8X0116P_ENDLOOP(scheduler)     (scheduler).execute()
+#endif
+#if defined(BY8X0116P_ENABLE_COOPTASK) && !defined(BY8X0116P_USE_SCHEDULER) && !defined(BY8X0116P_USE_TASKSCHEDULER)
 #include "CoopTask.h"
 #define BY8X0116P_USE_COOPTASK
+#define BY8X0116P_ENDLOOP()              runCoopTasks()
+#endif
+#endif // /ifndef BY8X0116P_DISABLE_MULTITASKING
+#ifndef BY8X0116P_YIELD
+#define BY8X0116P_YIELD()                yield()
+#endif
+#ifndef BY8X0116P_ENDLOOP
+#define BY8X0116P_ENDLOOP()              yield()
 #endif
 
 #if defined(HAVE_HWSERIAL1) || defined(PIN_SERIAL1_RX) || defined(SERIAL_PORT_HARDWARE1) || defined(UART1) || defined(ESP_PLATFORM)
@@ -181,7 +199,7 @@ public:
     // Sets user delay functions to call when a delay has to occur for processing to
     // continue. User functions here can customize what this means - typically it would
     // mean to call into a thread barrier() or yield() mechanism. Default implementation
-    // is to call yield() when timeout >= 1ms, unless Scheduler and CoopTask are disabled.
+    // is to call yield() when timeout >= 1ms, unless disabled.
     void setUserDelayFuncs(UserDelayFunc delayMillisFunc, UserDelayFunc delayMicrosFunc);
 
     // Playback control
