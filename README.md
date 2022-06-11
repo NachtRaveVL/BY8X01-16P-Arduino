@@ -10,9 +10,9 @@ Created by NachtRaveVL, August 1st, 2016.
 
 This library allows communication with boards running a BY8001-16P or BY8301-16P audio module. It supports the full feature set of the BY8X01-16P chipset such as queued combination playback, indexed folder/file playback, loop playback mode, equalizer profile, spot insertion play, etc.
 
-Made primarily for Arduino microcontrollers, but should work with PlatformIO, ESP32/8266, Teensy, and others - although one might experience turbulence until the bug reports get ironed out. Unknown architectures must ensure `BUFFER_LENGTH` (or `I2C_BUFFER_LENGTH`) and `WIRE_INTERFACES_COUNT` are properly defined.
+Made primarily for Arduino microcontrollers, but should work with PlatformIO, ESP32/8266, Teensy, and others - although one might experience turbulence until the bug reports get ironed out. All architectures must ensure `BUFFER_LENGTH` (or `I2C_BUFFER_LENGTH`) and `WIRE_INTERFACES_COUNT` are properly defined.
 
-Dependencies include: Scheduler (SAM/SAMD only, disableable), TaskScheduler (alternate to Scheduler, disableable), and CoopTask (alternate to TaskScheduler, optional).
+Dependencies include: None!
 
 The datasheet for the IC is available at <https://forum.arduino.cc/index.php?action=dlattach;topic=306442.0;attach=129563>.
 
@@ -35,15 +35,6 @@ From BY8X01-16P.h:
 
 // Uncomment or -D this define to completely disable usage of any multitasking commands, such as yield().
 //#define BY8X0116P_DISABLE_MULTITASKING
-
-// Uncomment or -D this define to disable usage of the Scheduler library, for SAM/SAMD architechtures.
-//#define BY8X0116P_DISABLE_SCHEDULER               // https://github.com/arduino-libraries/Scheduler
-
-// Uncomment or -D this define to disable usage of the TaskScheduler library, in place of Scheduler.
-//#define BY8X0116P_DISABLE_TASKSCHEDULER           // https://github.com/arkhipenko/TaskScheduler
-
-// Uncomment or -D this define to enable usage of the CoopTask library, in place of TaskScheduler and Scheduler.
-//#define BY8X0116P_ENABLE_COOPTASK                 // https://github.com/dok-net/CoopTask
 
 // Uncomment or -D this define to enable debouncing of the input line on isBusy() calls.
 //#define BY8X0116P_ENABLE_DEBOUNCING

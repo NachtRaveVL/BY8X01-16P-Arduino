@@ -38,15 +38,6 @@
 // Uncomment or -D this define to completely disable usage of any multitasking commands, such as yield().
 //#define BY8X0116P_DISABLE_MULTITASKING
 
-// Uncomment or -D this define to disable usage of the Scheduler library, for SAM/SAMD architechtures.
-//#define BY8X0116P_DISABLE_SCHEDULER               // https://github.com/arduino-libraries/Scheduler
-
-// Uncomment or -D this define to disable usage of the TaskScheduler library, in place of Scheduler.
-//#define BY8X0116P_DISABLE_TASKSCHEDULER           // https://github.com/arkhipenko/TaskScheduler
-
-// Uncomment or -D this define to enable usage of the CoopTask library, in place of TaskScheduler and Scheduler.
-//#define BY8X0116P_ENABLE_COOPTASK                 // https://github.com/dok-net/CoopTask
-
 // Uncomment or -D this define to enable debouncing of the input line on isBusy() calls.
 //#define BY8X0116P_ENABLE_DEBOUNCING
 
@@ -74,29 +65,6 @@
 #ifdef BY8X0116P_ENABLE_SOFTWARE_SERIAL
 #include <SoftwareSerial.h>
 #define BY8X0116P_USE_SOFTWARE_SERIAL
-#endif
-
-#ifndef BY8X0116P_DISABLE_MULTITASKING
-#if !defined(BY8X0116P_DISABLE_SCHEDULER) && (defined(ARDUINO_ARCH_SAM) || defined(ARDUINO_ARCH_SAMD))
-#include "Scheduler.h"
-#define BY8X0116P_USE_SCHEDULER
-#endif
-#if !defined(BY8X0116P_DISABLE_TASKSCHEDULER) && !defined(BY8X0116P_USE_SCHEDULER)
-#include "TaskSchedulerDeclarations.h"
-#define BY8X0116P_USE_TASKSCHEDULER
-#define BY8X0116P_ENDLOOP(scheduler)     (scheduler).execute()
-#endif
-#if defined(BY8X0116P_ENABLE_COOPTASK) && !defined(BY8X0116P_USE_SCHEDULER) && !defined(BY8X0116P_USE_TASKSCHEDULER)
-#include "CoopTask.h"
-#define BY8X0116P_USE_COOPTASK
-#define BY8X0116P_ENDLOOP()              runCoopTasks()
-#endif
-#endif // /ifndef BY8X0116P_DISABLE_MULTITASKING
-#ifndef BY8X0116P_YIELD
-#define BY8X0116P_YIELD()                yield()
-#endif
-#ifndef BY8X0116P_ENDLOOP
-#define BY8X0116P_ENDLOOP()              yield()
 #endif
 
 #if defined(HAVE_HWSERIAL1) || defined(PIN_SERIAL1_RX) || defined(SERIAL_PORT_HARDWARE1) || defined(UART1) || defined(ESP_PLATFORM)
@@ -199,7 +167,7 @@ public:
     // Sets user delay functions to call when a delay has to occur for processing to
     // continue. User functions here can customize what this means - typically it would
     // mean to call into a thread barrier() or yield() mechanism. Default implementation
-    // is to call yield() when timeout >= 1ms, unless disabled.
+    // is to call yield() when timeout >= 1ms, unless multitasking is disabled.
     void setUserDelayFuncs(UserDelayFunc delayMillisFunc, UserDelayFunc delayMicrosFunc);
 
     // Playback control
