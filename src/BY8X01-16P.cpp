@@ -138,17 +138,17 @@ BY8X0116P::BY8X0116P(SoftwareSerial& serial, byte busyPin, byte busyActiveOn)
 
 void BY8X0116P::init() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::init busyPin: ");
+    Serial.print(F("BY8X0116P::init busyPin: "));
     if (_busyPin != DISABLED) {
         Serial.print(_busyPin);
-        Serial.print(_busyActiveOn ? " <active-high>" : " <active-low>");
+        Serial.print(_busyActiveOn ? F(" <active-high>") : F(" <active-low>"));
     }
     else
-        Serial.print("<disabled>");
-    Serial.print(", serialTTL#: ");
+        Serial.print(F("<disabled>"));
+    Serial.print(F(", serialTTL#: "));
     Serial.print(getSerialInterfaceNumber());
-    Serial.print(", serialBaud: ");
-    Serial.print(getSerialBaud()); Serial.print("bps");
+    Serial.print(F(", serialBaud: "));
+    Serial.print(getSerialBaud()); Serial.print(F("bps"));
     Serial.println("");
 #endif
 
@@ -193,7 +193,7 @@ void BY8X0116P::setUserDelayFuncs(UserDelayFunc delayMillisFunc, UserDelayFunc d
 
 void BY8X0116P::play() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::play");
+    Serial.println(F("BY8X0116P::play"));
 #endif
 
     sendCommand(BY8X0116P_CMD_PLAY);
@@ -201,7 +201,7 @@ void BY8X0116P::play() {
 
 void BY8X0116P::pause() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::pause");
+    Serial.println(F("BY8X0116P::pause"));
 #endif
 
     sendCommand(BY8X0116P_CMD_PAUSE);
@@ -209,7 +209,7 @@ void BY8X0116P::pause() {
 
 void BY8X0116P::stop(bool blocking) {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::stop blocking: ");
+    Serial.print(F("BY8X0116P::stop blocking: "));
     Serial.println(blocking);
 #endif
 
@@ -235,7 +235,7 @@ void BY8X0116P::playFileIndex(uint16_t fileIndex) {
     fileIndex = (uint16_t)min(max(fileIndex, (uint16_t)0x0001), (uint16_t)0xFFFF);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::playFileIndex fileIndex: ");
+    Serial.print(F("BY8X0116P::playFileIndex fileIndex: "));
     Serial.println(fileIndex);
 #endif
 
@@ -247,9 +247,9 @@ void BY8X0116P::playFolderFileIndex(byte folderIndex, byte fileIndex) {
     fileIndex = (byte)min(max(fileIndex, (byte)0x01), (byte)0xFF);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::playFolderFileIndex folderIndex: ");
+    Serial.print(F("BY8X0116P::playFolderFileIndex folderIndex: "));
     Serial.print(folderIndex);
-    Serial.print(", fileIndex: ");
+    Serial.print(F(", fileIndex: "));
     Serial.println(fileIndex);
 #endif
 
@@ -258,7 +258,7 @@ void BY8X0116P::playFolderFileIndex(byte folderIndex, byte fileIndex) {
 
 void BY8X0116P::fastForward() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::fastForward");
+    Serial.println(F("BY8X0116P::fastForward"));
 #endif
 
     sendCommand(BY8X0116P_CMD_FAST_FORWARD);
@@ -266,7 +266,7 @@ void BY8X0116P::fastForward() {
 
 void BY8X0116P::fastRewind() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::fastRewind");
+    Serial.println(F("BY8X0116P::fastRewind"));
 #endif
 
     sendCommand(BY8X0116P_CMD_FAST_REWIND);
@@ -274,7 +274,7 @@ void BY8X0116P::fastRewind() {
 
 void BY8X0116P::nextTrack() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::nextTrack");
+    Serial.println(F("BY8X0116P::nextTrack"));
 #endif
 
     sendCommand(BY8X0116P_CMD_NEXT_TRACK);
@@ -282,7 +282,7 @@ void BY8X0116P::nextTrack() {
 
 void BY8X0116P::previousTrack() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::previousTrack");
+    Serial.println(F("BY8X0116P::previousTrack"));
 #endif
 
     sendCommand(BY8X0116P_CMD_PREV_TRACK);
@@ -290,7 +290,7 @@ void BY8X0116P::previousTrack() {
 
 void BY8X0116P::nextFolder() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::nextFolder");
+    Serial.println(F("BY8X0116P::nextFolder"));
 #endif
 
     sendCommand(BY8X0116P_CMD_SWITCH_FOLDER, (byte)0x01);
@@ -298,7 +298,7 @@ void BY8X0116P::nextFolder() {
 
 void BY8X0116P::previousFolder() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::previousFolder");
+    Serial.println(F("BY8X0116P::previousFolder"));
 #endif
 
     sendCommand(BY8X0116P_CMD_SWITCH_FOLDER, (byte)0x00);
@@ -306,7 +306,7 @@ void BY8X0116P::previousFolder() {
 
 void BY8X0116P::increaseVolume() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::increaseVolume");
+    Serial.println(F("BY8X0116P::increaseVolume"));
 #endif
 
     sendCommand(BY8X0116P_CMD_INC_VOLUME);
@@ -314,7 +314,7 @@ void BY8X0116P::increaseVolume() {
 
 void BY8X0116P::decreaseVolume() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::decreaseVolume");
+    Serial.println(F("BY8X0116P::decreaseVolume"));
 #endif
 
     sendCommand(BY8X0116P_CMD_DEC_VOLUME);
@@ -324,7 +324,7 @@ void BY8X0116P::setVolume(int volume) {
     volume = min(max(volume, 0), 30);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::setVolume volume: ");
+    Serial.print(F("BY8X0116P::setVolume volume: "));
     Serial.println(volume);
 #endif
 
@@ -333,7 +333,7 @@ void BY8X0116P::setVolume(int volume) {
 
 int BY8X0116P::getVolume() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::getVolume");
+    Serial.println(F("BY8X0116P::getVolume"));
 #endif
 
     return receiveCommand(BY8X0116P_QRY_VOLUME); // Returns "HHHH\r\nOK"
@@ -341,7 +341,7 @@ int BY8X0116P::getVolume() {
 
 BY8X0116P_PlaybackStatus BY8X0116P::getPlaybackStatus() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::getPlaybackStatus");
+    Serial.println(F("BY8X0116P::getPlaybackStatus"));
 #endif
 
     return (BY8X0116P_PlaybackStatus)receiveCommand(BY8X0116P_QRY_PB_STATUS); // Returns "HHHH\r\nOK"
@@ -351,7 +351,7 @@ void BY8X0116P::setLoopPlaybackMode(BY8X0116P_LoopPlaybackMode pbLoopMode) {
     pbLoopMode = (BY8X0116P_LoopPlaybackMode)min(max((int)pbLoopMode, 0), (int)BY8X0116P_LoopPlaybackMode_Count - 1);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::setLoopPlaybackMode pbLoopMode: ");
+    Serial.print(F("BY8X0116P::setLoopPlaybackMode pbLoopMode: "));
     Serial.println(pbLoopMode);
 #endif
 
@@ -360,7 +360,7 @@ void BY8X0116P::setLoopPlaybackMode(BY8X0116P_LoopPlaybackMode pbLoopMode) {
 
 BY8X0116P_LoopPlaybackMode BY8X0116P::getLoopPlaybackMode() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::getLoopPlaybackMode");
+    Serial.println(F("BY8X0116P::getLoopPlaybackMode"));
 #endif
 
     return (BY8X0116P_LoopPlaybackMode)receiveCommand(BY8X0116P_QRY_LOOP_MODE); // Returns "HHHH\r\nOK"
@@ -370,7 +370,7 @@ void BY8X0116P::setEqualizerProfile(BY8X0116P_EqualizerProfile eqProfile) {
     eqProfile = (BY8X0116P_EqualizerProfile)min(max((int)eqProfile, 0), (int)BY8X0116P_EqualizerProfile_Count - 1);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::setEqualizerProfile eqProfile: ");
+    Serial.print(F("BY8X0116P::setEqualizerProfile eqProfile: "));
     Serial.println(eqProfile);
 #endif
 
@@ -379,7 +379,7 @@ void BY8X0116P::setEqualizerProfile(BY8X0116P_EqualizerProfile eqProfile) {
 
 BY8X0116P_EqualizerProfile BY8X0116P::getEqualizerProfile() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::getEqualizerProfile");
+    Serial.println(F("BY8X0116P::getEqualizerProfile"));
 #endif
 
     return (BY8X0116P_EqualizerProfile)receiveCommand(BY8X0116P_QRY_EQ_PROFILE); // Returns "HHHH\r\nOK"
@@ -387,7 +387,7 @@ BY8X0116P_EqualizerProfile BY8X0116P::getEqualizerProfile() {
 
 uint16_t BY8X0116P::getTotalNumberOfTracks() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::getTotalNumberOfTracks");
+    Serial.println(F("BY8X0116P::getTotalNumberOfTracks"));
 #endif
 
     switch ((BY8X0116P_PlaybackDevice)receiveCommand(BY8X0116P_QRY_PLAYBACK_DEVICE)) {
@@ -402,7 +402,7 @@ uint16_t BY8X0116P::getTotalNumberOfTracks(BY8X0116P_PlaybackDevice device) {
     device = (BY8X0116P_PlaybackDevice)min(max((int)device, 0), (int)BY8X0116P_PlaybackDevice_Count - 1);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::getTotalNumberOfTracks device: ");
+    Serial.print(F("BY8X0116P::getTotalNumberOfTracks device: "));
     Serial.println(device);
 #endif
 
@@ -416,7 +416,7 @@ uint16_t BY8X0116P::getTotalNumberOfTracks(BY8X0116P_PlaybackDevice device) {
 
 uint16_t BY8X0116P::getNumberOfTracksInCurrentFolder() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::getNumberOfTracksInCurrentFolder");
+    Serial.println(F("BY8X0116P::getNumberOfTracksInCurrentFolder"));
 #endif
 
     return receiveCommand(BY8X0116P_QRY_NUM_TRACKS_FOLDER); // Returns "OKHHHH\r\n"
@@ -424,7 +424,7 @@ uint16_t BY8X0116P::getNumberOfTracksInCurrentFolder() {
 
 uint16_t BY8X0116P::getCurrentTrackFileIndex() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::getCurrentTrackFileIndex");
+    Serial.println(F("BY8X0116P::getCurrentTrackFileIndex"));
 #endif
 
     switch ((BY8X0116P_PlaybackDevice)receiveCommand(BY8X0116P_QRY_PLAYBACK_DEVICE)) {
@@ -439,7 +439,7 @@ uint16_t BY8X0116P::getCurrentTrackFileIndex(BY8X0116P_PlaybackDevice device) {
     device = (BY8X0116P_PlaybackDevice)min(max((int)device, 0), (int)BY8X0116P_PlaybackDevice_Count - 1);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::getCurrentTrackFileIndex device: ");
+    Serial.print(F("BY8X0116P::getCurrentTrackFileIndex device: "));
     Serial.println(device);
 #endif
 
@@ -453,7 +453,7 @@ uint16_t BY8X0116P::getCurrentTrackFileIndex(BY8X0116P_PlaybackDevice device) {
 
 uint16_t BY8X0116P::getCurrentTrackElapsedTime() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::getCurrentTrackElapsedTime");
+    Serial.println(F("BY8X0116P::getCurrentTrackElapsedTime"));
 #endif
 
     return receiveCommand(BY8X0116P_QRY_ELAPSED_PB_TIME); // Returns "OKHHHH\r\n"
@@ -461,7 +461,7 @@ uint16_t BY8X0116P::getCurrentTrackElapsedTime() {
 
 uint16_t BY8X0116P::getCurrentTrackTotalTime() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::getCurrentTrackTotalTime");
+    Serial.println(F("BY8X0116P::getCurrentTrackTotalTime"));
 #endif
 
     return receiveCommand(BY8X0116P_QRY_TOTAL_PB_TIME); // Returns "OKHHHH\r\n"
@@ -471,7 +471,7 @@ void BY8X0116P::setPlaybackDevice(BY8X0116P_PlaybackDevice device) {
     device = (BY8X0116P_PlaybackDevice)min(max((int)device, 0), (int)BY8X0116P_PlaybackDevice_Count - 1);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::setPlaybackDevice device: ");
+    Serial.print(F("BY8X0116P::setPlaybackDevice device: "));
     Serial.println(device);
 #endif
 
@@ -480,7 +480,7 @@ void BY8X0116P::setPlaybackDevice(BY8X0116P_PlaybackDevice device) {
 
 BY8X0116P_PlaybackDevice BY8X0116P::getPlaybackDevice() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::getPlaybackDevice");
+    Serial.println(F("BY8X0116P::getPlaybackDevice"));
 #endif
 
     return (BY8X0116P_PlaybackDevice)receiveCommand(BY8X0116P_QRY_PLAYBACK_DEVICE); // Returns "HHHH\r\nOK"
@@ -490,7 +490,7 @@ void BY8X0116P::spotPlayFileIndex(uint16_t fileIndex) {
     fileIndex = (uint16_t)min(max(fileIndex, (uint16_t)0x0001), (uint16_t)0xFFFF);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::spotPlayFileIndex fileIndex: ");
+    Serial.print(F("BY8X0116P::spotPlayFileIndex fileIndex: "));
     Serial.println(fileIndex);
 #endif
 
@@ -502,9 +502,9 @@ void BY8X0116P::spotPlayFolderFileIndex(byte folderIndex, byte fileIndex) {
     fileIndex = (byte)min(max(fileIndex, (byte)0x01), (byte)0xFF);
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::spotPlayFolderFileIndex folderIndex: ");
+    Serial.print(F("BY8X0116P::spotPlayFolderFileIndex folderIndex: "));
     Serial.print(folderIndex);
-    Serial.print(", fileIndex: ");
+    Serial.print(F(", fileIndex: "));
     Serial.println(fileIndex);
 #endif
 
@@ -515,7 +515,7 @@ void BY8X0116P::getCurrentTrackFilename(char *buffer, int maxLength) {
     if (!buffer || maxLength < 12) return;
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::getCurrentTrackFilename");
+    Serial.println(F("BY8X0116P::getCurrentTrackFilename"));
 #endif
 
     char innerBuffer[11];
@@ -540,7 +540,7 @@ void BY8X0116P::getFirmwareVersion(char *buffer, int maxLength) {
     if (!buffer || maxLength < 6) return;
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::getFirmwareVersion");
+    Serial.println(F("BY8X0116P::getFirmwareVersion"));
 #endif
 
     char innerBuffer[4];
@@ -560,7 +560,7 @@ void BY8X0116P::getFirmwareVersion(char *buffer, int maxLength) {
 
 bool BY8X0116P::isBusy() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::isBusy");
+    Serial.println(F("BY8X0116P::isBusy"));
 #endif
 
     return _isBusy();
@@ -610,7 +610,7 @@ bool BY8X0116P::_isBusy() {
 
 bool BY8X0116P::waitBusy(int timeout) {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::waitBusy timeout: ");
+    Serial.print(F("BY8X0116P::waitBusy timeout: "));
     Serial.println(timeout);
 #endif
 
@@ -631,7 +631,7 @@ bool BY8X0116P::_waitBusy(int timeout) {
 
 bool BY8X0116P::isPlaybackActive() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::isPlaybackActive");
+    Serial.println(F("BY8X0116P::isPlaybackActive"));
 #endif
 
     return _isPlaybackActive();
@@ -643,7 +643,7 @@ bool BY8X0116P::_isPlaybackActive() {
 
 bool BY8X0116P::waitPlaybackFinished(int timeout) {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::waitPlaybackFinished timeout: ");
+    Serial.print(F("BY8X0116P::waitPlaybackFinished timeout: "));
     Serial.println(timeout);
 #endif
 
@@ -664,7 +664,7 @@ bool BY8X0116P::_waitPlaybackFinished(int timeout) {
 
 void BY8X0116P::toggleStandBy(bool blocking) {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::toggleStandBy isStandingBy: ");
+    Serial.print(F("BY8X0116P::toggleStandBy isStandingBy: "));
     Serial.println(_isStandingBy);
 #endif
 
@@ -685,7 +685,7 @@ void BY8X0116P::toggleStandBy(bool blocking) {
 
 bool BY8X0116P::isStandingBy() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::isStandingBy");
+    Serial.println(F("BY8X0116P::isStandingBy"));
 #endif
 
     if (millis() < _lastReqTime + BY8X0116P_READ_DELAY + BY8X0116P_READ_DELAY || _serial->available() > 4)
@@ -698,7 +698,7 @@ void BY8X0116P::reset(bool blocking) {
     if (_isResetting) return;
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("BY8X0116P::reset blocking: ");
+    Serial.print(F("BY8X0116P::reset blocking: "));
     Serial.println(blocking);
 #endif
 
@@ -728,7 +728,7 @@ void BY8X0116P::reset(bool blocking) {
 
 bool BY8X0116P::isResetting() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::isResetting");
+    Serial.println(F("BY8X0116P::isResetting"));
 #endif
 
     if (_serial->available() > 2)
@@ -739,7 +739,7 @@ bool BY8X0116P::isResetting() {
 
 bool BY8X0116P::isCardInserted() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.println("BY8X0116P::isCardInserted");
+    Serial.println(F("BY8X0116P::isCardInserted"));
 #endif
 
     if (!_isCardInserted) {
@@ -766,7 +766,7 @@ bool BY8X0116P::isCardInserted() {
 void BY8X0116P::cleanupRoutine() {
     if (!_isBlockingRspLn && !_isCleaningRspLn && _serial->available() && millis() >= _lastClnTime + BY8X0116P_CLEAN_DELAY) {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-        Serial.println("BY8X0116P::cleanupRoutine");
+        Serial.println(F("BY8X0116P::cleanupRoutine"));
 #endif
 
         cleanResponse();
@@ -838,16 +838,16 @@ void BY8X0116P::writeRequest(byte *rqstData, bool cleanRspLn) {
         waitRequest();
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("  BY8X0116P::writeRequest Cmd: 0x");
+    Serial.print(F("  BY8X0116P::writeRequest Cmd: 0x"));
     Serial.print(rqstData[2], HEX);
     if (length - 3 > 0) {
-        Serial.print(", Prm: ");
+        Serial.print(F(", Prm: "));
         for (int i = 3; i < length; ++i) {
-            Serial.print(i > 3 ? "-0x" : "0x");
+            Serial.print(i > 3 ? F("-0x") : F("0x"));
             Serial.print(rqstData[i], HEX);
         }
     }
-    Serial.print(", Chk: 0x");
+    Serial.print(F(", Chk: 0x"));
     Serial.println(rqstData[length], HEX);
 #endif
 
@@ -891,14 +891,14 @@ int BY8X0116P::readResponse(char *respData, int respLength, int maxLength) {
         respData[bytesRead] = '\0';
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-    Serial.print("  BY8X0116P::readResponse respData[");
+    Serial.print(F("  BY8X0116P::readResponse respData["));
     Serial.print(bytesRead);
-    Serial.print("]: ");
+    Serial.print(F("]: "));
     for (int i = 0; i < bytesRead; ++i) {
         if (respData[i] >= ' ')
             Serial.print(respData[i]);
         else {
-            Serial.print("\\x");
+            Serial.print(F("\\x"));
             Serial.print(respData[i], HEX);
         }
     }
@@ -950,12 +950,12 @@ bool BY8X0116P::cleanResponse() {
             respLine[respLength] = '\0';
 
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
-            Serial.print("  BY8X0116P::cleanResponse Line: ");
+            Serial.print(F("  BY8X0116P::cleanResponse Line: "));
             for (int i = 0; i < respLength; ++i) {
                 if (respLine[i] >= ' ')
                     Serial.print(respLine[i]);
                 else {
-                    Serial.print("\\x");
+                    Serial.print(F("\\x"));
                     Serial.print(respLine[i], HEX);
                 }
             }
@@ -1062,126 +1062,126 @@ static const char *textForSerialInterfaceNumber(int serialNum) {
 void BY8X0116P::printModuleInfo() {
     char buffer[16];
 
-    Serial.println(""); Serial.println(" ~~~ BY8X0116P Module Info ~~~");
+    Serial.println(""); Serial.println(F(" ~~~ BY8X0116P Module Info ~~~"));
 
-    Serial.println(""); Serial.print("Busy Pin: ");
+    Serial.println(""); Serial.print(F("Busy Pin: "));
     if (_busyPin != DISABLED) {
-        Serial.print("D"); Serial.print(_busyPin);
-        Serial.println(_busyActiveOn ? " (active-high)" : " (active-low)");
+        Serial.print(F("D")); Serial.print(_busyPin);
+        Serial.println(_busyActiveOn ? F(" (active-high)") : F(" (active-low)"));
     }
     else
-        Serial.println("<disabled>");
+        Serial.println(F("<disabled>"));
 
-    Serial.println(""); Serial.print("Serial Instance: ");
-    Serial.print(getSerialInterfaceNumber()); Serial.print(": ");
+    Serial.println(""); Serial.print(F("Serial Instance: "));
+    Serial.print(getSerialInterfaceNumber()); Serial.print(F(": "));
     Serial.println(textForSerialInterfaceNumber(getSerialInterfaceNumber()));
-    Serial.print("Serial Baud: ");
-    Serial.print(getSerialBaud()); Serial.println("Hz");
+    Serial.print(F("Serial Baud: "));
+    Serial.print(getSerialBaud()); Serial.println(F("Hz"));
 
-    Serial.println(""); Serial.println("State:");
-    Serial.print("  Standing By: ");
-    Serial.print(_isStandingBy ? "true" : "false");
-    Serial.print(", Resetting: ");
-    Serial.print(_isResetting ? "true" : "false");
-    Serial.print(", Card Inserted: ");
-    Serial.println(_isCardInserted ? "true" : "false");
+    Serial.println(""); Serial.println(F("State:"));
+    Serial.print(F("  Standing By: "));
+    Serial.print(_isStandingBy ? F("true") : F("false"));
+    Serial.print(F(", Resetting: "));
+    Serial.print(_isResetting ? F("true") : F("false"));
+    Serial.print(F(", Card Inserted: "));
+    Serial.println(_isCardInserted ? F("true") : F("false"));
 
-    Serial.println(""); Serial.println("Timers:");
-    Serial.print("  Current Time: ");
+    Serial.println(""); Serial.println(F("Timers:"));
+    Serial.print(F("  Current Time: "));
     Serial.print(millis());
-    Serial.print(" ms, Last Request: ");
+    Serial.print(F(" ms, Last Request: "));
     Serial.print(_lastReqTime);
-    Serial.print(" ms, Last Clean: ");
+    Serial.print(F(" ms, Last Clean: "));
     Serial.print(_lastClnTime);
-    Serial.println(" ms");
+    Serial.println(F(" ms"));
 
-    Serial.println(""); Serial.println("Firmware Version:");
+    Serial.println(""); Serial.println(F("Firmware Version:"));
     getFirmwareVersion(buffer, 16);
     Serial.println(buffer);
 
-    Serial.println(""); Serial.println("Total Number Of Tracks:");
+    Serial.println(""); Serial.println(F("Total Number Of Tracks:"));
     Serial.println(getTotalNumberOfTracks());
 
-    Serial.println(""); Serial.println("Current Track File Index:");
+    Serial.println(""); Serial.println(F("Current Track File Index:"));
     Serial.println(getCurrentTrackFileIndex());
 
-    Serial.println(""); Serial.println("Current Track Filename:");
+    Serial.println(""); Serial.println(F("Current Track Filename:"));
     getCurrentTrackFilename(buffer, 16);
     Serial.println(buffer);
 
-    Serial.println(""); Serial.println("Current Track Elapsed Time:");
+    Serial.println(""); Serial.println(F("Current Track Elapsed Time:"));
     Serial.println(getCurrentTrackElapsedTime());
 
-    Serial.println(""); Serial.println("Current Track Total Time:");
+    Serial.println(""); Serial.println(F("Current Track Total Time:"));
     Serial.println(getCurrentTrackTotalTime());
 
-    Serial.println(""); Serial.println("Playback Status:");
+    Serial.println(""); Serial.println(F("Playback Status:"));
     BY8X0116P_PlaybackStatus playbackStatus = getPlaybackStatus();
-    Serial.print(playbackStatus); Serial.print(": ");
+    Serial.print(playbackStatus); Serial.print(F(": "));
     switch (playbackStatus) {
         case BY8X0116P_PlaybackStatus_Stopped:
-            Serial.println("BY8X0116P_PlaybackStatus_Stopped"); break;
+            Serial.println(F("BY8X0116P_PlaybackStatus_Stopped")); break;
         case BY8X0116P_PlaybackStatus_Playing:
-            Serial.println("BY8X0116P_PlaybackStatus_Playing"); break;
+            Serial.println(F("BY8X0116P_PlaybackStatus_Playing")); break;
         case BY8X0116P_PlaybackStatus_Paused:
-            Serial.println("BY8X0116P_PlaybackStatus_Paused"); break;
+            Serial.println(F("BY8X0116P_PlaybackStatus_Paused")); break;
         case BY8X0116P_PlaybackStatus_FastForwarding:
-            Serial.println("BY8X0116P_PlaybackStatus_FastForwarding"); break;
+            Serial.println(F("BY8X0116P_PlaybackStatus_FastForwarding")); break;
         case BY8X0116P_PlaybackStatus_FastRewinding:
-            Serial.println("BY8X0116P_PlaybackStatus_FastRewinding"); break;
+            Serial.println(F("BY8X0116P_PlaybackStatus_FastRewinding")); break;
         case BY8X0116P_PlaybackStatus_Count:
         case BY8X0116P_PlaybackStatus_Undefined:
             Serial.println(""); break;
     }
 
-    Serial.println(""); Serial.println("Loop Playback Mode:");
+    Serial.println(""); Serial.println(F("Loop Playback Mode:"));
     BY8X0116P_LoopPlaybackMode playbackMode = getLoopPlaybackMode();
-    Serial.print(playbackMode); Serial.print(": ");
+    Serial.print(playbackMode); Serial.print(F(": "));
     switch (playbackMode) {
         case BY8X0116P_LoopPlaybackMode_All:
-            Serial.println("BY8X0116P_LoopPlaybackMode_All"); break;
+            Serial.println(F("BY8X0116P_LoopPlaybackMode_All")); break;
         case BY8X0116P_LoopPlaybackMode_Folder:
-            Serial.println("BY8X0116P_LoopPlaybackMode_Folder"); break;
+            Serial.println(F("BY8X0116P_LoopPlaybackMode_Folder")); break;
         case BY8X0116P_LoopPlaybackMode_Single:
-            Serial.println("BY8X0116P_LoopPlaybackMode_Single"); break;
+            Serial.println(F("BY8X0116P_LoopPlaybackMode_Single")); break;
         case BY8X0116P_LoopPlaybackMode_Random:
-            Serial.println("BY8X0116P_LoopPlaybackMode_Random"); break;
+            Serial.println(F("BY8X0116P_LoopPlaybackMode_Random")); break;
         case BY8X0116P_LoopPlaybackMode_Disabled:
-            Serial.println("BY8X0116P_LoopPlaybackMode_Disabled"); break;
+            Serial.println(F("BY8X0116P_LoopPlaybackMode_Disabled")); break;
         case BY8X0116P_LoopPlaybackMode_Count:
         case BY8X0116P_LoopPlaybackMode_Undefined:
             Serial.println(""); break;
     }
 
-    Serial.println(""); Serial.println("Equalizer Profile:");
+    Serial.println(""); Serial.println(F("Equalizer Profile:"));
     BY8X0116P_EqualizerProfile eqProfile = getEqualizerProfile();
-    Serial.print(eqProfile); Serial.print(": ");
+    Serial.print(eqProfile); Serial.print(F(": "));
     switch (eqProfile) {
         case BY8X0116P_EqualizerProfile_None:
-            Serial.println("BY8X0116P_EqualizerProfile_None"); break;
+            Serial.println(F("BY8X0116P_EqualizerProfile_None")); break;
         case BY8X0116P_EqualizerProfile_Pop:
-            Serial.println("BY8X0116P_EqualizerProfile_Pop"); break;
+            Serial.println(F("BY8X0116P_EqualizerProfile_Pop")); break;
         case BY8X0116P_EqualizerProfile_Rock:
-            Serial.println("BY8X0116P_EqualizerProfile_Rock"); break;
+            Serial.println(F("BY8X0116P_EqualizerProfile_Rock")); break;
         case BY8X0116P_EqualizerProfile_Jazz:
-            Serial.println("BY8X0116P_EqualizerProfile_Jazz"); break;
+            Serial.println(F("BY8X0116P_EqualizerProfile_Jazz")); break;
         case BY8X0116P_EqualizerProfile_Classic:
-            Serial.println("BY8X0116P_EqualizerProfile_Classic"); break;
+            Serial.println(F("BY8X0116P_EqualizerProfile_Classic")); break;
         case BY8X0116P_EqualizerProfile_Bass:
-            Serial.println("BY8X0116P_EqualizerProfile_Bass"); break;
+            Serial.println(F("BY8X0116P_EqualizerProfile_Bass")); break;
         case BY8X0116P_EqualizerProfile_Count:
         case BY8X0116P_EqualizerProfile_Undefined:
             Serial.println(""); break;
     }
 
-    Serial.println(""); Serial.println("Playback Device:");
+    Serial.println(""); Serial.println(F("Playback Device:"));
     BY8X0116P_PlaybackDevice pbDevice = getPlaybackDevice();
-    Serial.print(pbDevice); Serial.print(": ");
+    Serial.print(pbDevice); Serial.print(F(": "));
     switch (pbDevice) {
         case BY8X0116P_PlaybackDevice_USB:
-            Serial.println("BY8X0116P_PlaybackDevice_USB"); break;
+            Serial.println(F("BY8X0116P_PlaybackDevice_USB")); break;
         case BY8X0116P_PlaybackDevice_MicroSD:
-            Serial.println("BY8X0116P_PlaybackDevice_MicroSD"); break;
+            Serial.println(F("BY8X0116P_PlaybackDevice_MicroSD")); break;
         case BY8X0116P_PlaybackDevice_Count:
         case BY8X0116P_PlaybackDevice_Undefined:
             Serial.println(""); break;
