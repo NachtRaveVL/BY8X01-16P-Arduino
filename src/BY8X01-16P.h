@@ -44,15 +44,6 @@
 // Uncomment or -D this define to enable debug output.
 //#define BY8X0116P_ENABLE_DEBUG_OUTPUT
 
-// Hookup Callouts
-// -PLEASE READ-
-// Make sure to flip RX/TX lines when hooking into module from microcontroller. If running
-// a 5v microcontroller, place a 1kΩ resistor between the microcontroller's TX pin and
-// module's RX pin (or use a bi-directional logic level converter). Remove A, B, and C
-// resistors on module (factory default is a resistor on A and C, while B is left open).
-// This puts the device into the recommended 1-1-1 mode used for microcontroller serial
-// control. Busy pin is optional to utilize but returns a 2.8v signal when playback is
-// active (just enough for 5v boards to register as logic level HIGH).
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>
