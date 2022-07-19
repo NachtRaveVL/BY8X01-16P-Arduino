@@ -16,6 +16,8 @@ Dependencies include: None!
 
 The datasheet for the IC is available at <https://forum.arduino.cc/index.php?action=dlattach;topic=306442.0;attach=129563>.
 
+*If you value the work that we do, our small team always appreciates a subscription to our [Patreon](www.patreon.com/nachtrave).*
+
 ## Library Setup
 
 ### Installation

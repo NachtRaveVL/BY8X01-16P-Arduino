@@ -58,6 +58,19 @@
 #define BY8X0116P_USE_SOFTWARE_SERIAL
 #endif
 
+#if defined(NDEBUG) && defined(BY8X0116P_ENABLE_DEBUG_OUTPUT)
+#undef BY8X0116P_ENABLE_DEBUG_OUTPUT
+#endif
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
+#define BY8X0116P_SOFT_ASSERT(cond,msg) BY8X0116P_softAssert((bool)(cond), String((msg)), __FILE__, __func__, __LINE__)
+#define BY8X0116P_HARD_ASSERT(cond,msg) BY8X0116P_hardAssert((bool)(cond), String((msg)), __FILE__, __func__, __LINE__)
+extern void BY8X0116P_softAssert(bool, String, const char *, const char *, int);
+extern void BY8X0116P_hardAssert(bool, String, const char *, const char *, int);
+#else
+#define BY8X0116P_SOFT_ASSERT(cond,msg) ((void)0)
+#define BY8X0116P_HARD_ASSERT(cond,msg) ((void)0)
+#endif
+
 #if defined(HAVE_HWSERIAL1) || defined(PIN_SERIAL1_RX) || defined(SERIAL_PORT_HARDWARE1) || defined(UART1) || defined(ESP_PLATFORM)
 #define BY8X0116P_HAS_SERIAL1
 #endif

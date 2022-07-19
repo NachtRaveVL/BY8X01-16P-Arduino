@@ -50,53 +50,35 @@
 #define BY8X0116P_BUSY_DEBOUNCE_TIME    20                  // Time to spend debouncing busy input line, in ms
 
 
-static void uDelayMillisFuncDef(unsigned int timeout) {
-#ifndef BY8X0116P_DISABLE_MULTITASKING
-    if (timeout > 0) {
-        unsigned long currTime = millis();
-        unsigned long endTime = currTime + (unsigned long)timeout;
-        if (currTime < endTime) { // not overflowing
-            while (millis() < endTime)
-                yield();
-        } else { // overflowing
-            unsigned long begTime = currTime;
-            while (currTime >= begTime || currTime < endTime) {
-                yield();
-                currTime = millis();
-            }
-        }
-    } else {
-        yield();
-    }
-#else
-    delay(timeout);
-#endif
+#ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
+
+static String BY8X0116P_makeAssertMsg(String msg, const char *file, const char *func, int line)
+{
+    return String(F("Assertion Failure: ")) + String(file) + String(':') + String(line) + String(F(" in ")) + String(func) + String(':') + String(' ') + msg;
 }
 
-static void uDelayMicrosFuncDef(unsigned int timeout) {
-#ifndef BY8X0116P_DISABLE_MULTITASKING
-    if (timeout > 1000) {
-        unsigned long currTime = micros();
-        unsigned long endTime = currTime + (unsigned long)timeout;
-        if (currTime < endTime) { // not overflowing
-            while (micros() < endTime)
-                yield();
-        } else { // overflowing
-            unsigned long begTime = currTime;
-            while (currTime >= begTime || currTime < endTime) {
-                yield();
-                currTime = micros();
-            }
-        }
-    } else if (timeout > 0) {
-        delayMicroseconds(timeout);
-    } else {
-        yield();
+void BY8X0116P_softAssert(bool cond, String msg, const char *file, const char *func, int line)
+{
+    if (!cond) {
+        String message = BY8X0116P_makeAssertMsg(msg, file, func, line);
+        if (Serial) { Serial.println(message); }
     }
-#else
-    delayMicroseconds(timeout);
-#endif
 }
+
+void BY8X0116P_hardAssert(bool cond, String msg, const char *file, const char *func, int line)
+{
+    if (!cond) {
+        String message = String(F("HARD ")) + BY8X0116P_makeAssertMsg(msg, file, func, line);
+        if (Serial) {
+            Serial.println(message);
+            Serial.flush();
+        }
+        yield(); delay(10);
+        abort();
+    }
+}
+
+#endif // /ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
 
 
 #ifndef BY8X0116P_USE_SOFTWARE_SERIAL
@@ -106,7 +88,6 @@ static void uDelayMicrosFuncDef(unsigned int timeout) {
 BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, HardwareSerial& serial)
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
       _serial(&serial),
-      _uDelayMillisFunc(uDelayMillisFuncDef), _uDelayMicrosFunc(uDelayMicrosFuncDef),
       _isBlockingRspLn(0), _isCleaningRspLn(false),
       _isStandingBy(false), _isResetting(false), _isCardInserted(true),
       _lastReqTime(0), _lastClnTime(0)
@@ -117,7 +98,6 @@ BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, HardwareSerial& serial)
 BY8X0116P::BY8X0116P(HardwareSerial& serial, byte busyPin, byte busyActiveOn)
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
       _serial(&serial),
-      _uDelayMillisFunc(uDelayMillisFuncDef), _uDelayMicrosFunc(uDelayMicrosFuncDef),
       _isBlockingRspLn(0), _isCleaningRspLn(false),
       _isStandingBy(false), _isResetting(false), _isCardInserted(true),
       _lastReqTime(0), _lastClnTime(0)
@@ -128,7 +108,6 @@ BY8X0116P::BY8X0116P(HardwareSerial& serial, byte busyPin, byte busyActiveOn)
 BY8X0116P::BY8X0116P(SoftwareSerial& serial, byte busyPin, byte busyActiveOn)
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
       _serial(&serial),
-      _uDelayMillisFunc(uDelayMillisFuncDef), _uDelayMicrosFunc(uDelayMicrosFuncDef),
       _isBlockingRspLn(0), _isCleaningRspLn(false),
       _isStandingBy(false), _isResetting(false), _isCardInserted(true),
       _lastReqTime(0), _lastClnTime(0)
@@ -185,11 +164,6 @@ int BY8X0116P::getSerialMode() {
 }
 
 #endif // /ifdef ESP8266
-
-void BY8X0116P::setUserDelayFuncs(UserDelayFunc delayMillisFunc, UserDelayFunc delayMicrosFunc) {
-    _uDelayMillisFunc = delayMillisFunc ? delayMillisFunc : uDelayMillisFuncDef;
-    _uDelayMicrosFunc = delayMicrosFunc ? delayMicrosFunc : uDelayMicrosFuncDef;
-}
 
 void BY8X0116P::play() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
@@ -581,7 +555,7 @@ static bool debouncedDigitalRead(byte pin, byte activeOn, int sampleTime, int sa
         else
             ++inactiveCount;
 
-        _uDelayMicrosFunc(sampleRate);
+        delayMicroseconds(sampleRate);
     }
 
     return activeCount >= inactiveCount;
@@ -623,7 +597,7 @@ bool BY8X0116P::_waitBusy(int timeout) {
     unsigned long endTime = millis() + (unsigned long)timeout;
 
     while (_isBusy() && (timeout <= 0 || millis() < endTime)) {
-        _uDelayMillisFunc(0);
+        yield();
     }
 
     return _isBusy();
@@ -656,7 +630,7 @@ bool BY8X0116P::_waitPlaybackFinished(int timeout) {
     unsigned long endTime = millis() + (unsigned long)timeout;
 
     while (_isPlaybackActive() && (timeout <= 0 || millis() < endTime)) {
-        _uDelayMillisFunc(0);
+        yield();
     }
 
     return _isPlaybackActive();
@@ -717,7 +691,7 @@ void BY8X0116P::reset(bool blocking) {
             unsigned long endTime = millis() + (unsigned long)BY8X0116P_RESET_TIMEOUT;
 
             while (_isResetting && millis() < endTime) {
-                _uDelayMillisFunc(0);
+                yield();
                 cleanResponse();
             }
         } while (_isResetting);
@@ -912,7 +886,7 @@ void BY8X0116P::waitRequest() {
     unsigned long endTime = _lastReqTime + BY8X0116P_READ_DELAY;
 
     while (millis() < endTime) {
-        _uDelayMillisFunc(0);
+        yield();
     }
 }
 
@@ -921,7 +895,7 @@ bool BY8X0116P::waitResponse() {
     unsigned long endTime = max(millis(), _lastReqTime + BY8X0116P_READ_DELAY) + BY8X0116P_READ_DELAY;
 
     while (millis() < endTime) {
-        _uDelayMillisFunc(0);
+        yield();
         if (available != _serial->available()) {
             available = _serial->available();
             endTime = max(millis(), _lastReqTime + BY8X0116P_READ_DELAY) + BY8X0116P_READ_DELAY;
