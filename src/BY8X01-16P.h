@@ -35,13 +35,10 @@
 // Uncomment or -D this define to enable usage of the SoftwareSerial Arduino library.
 //#define BY8X0116P_ENABLE_SOFTWARE_SERIAL          // https://www.arduino.cc/en/Reference/softwareSerial
 
-// Uncomment or -D this define to completely disable usage of any multitasking commands, such as yield().
-//#define BY8X0116P_DISABLE_MULTITASKING
-
 // Uncomment or -D this define to enable debouncing of the input line on isBusy() calls.
 //#define BY8X0116P_ENABLE_DEBOUNCING
 
-// Uncomment or -D this define to enable debug output.
+// Uncomment or -D this define to enable debug output (treats Serial as attached to serial monitor).
 //#define BY8X0116P_ENABLE_DEBUG_OUTPUT
 
 
