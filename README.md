@@ -10,7 +10,7 @@ Created by NachtRaveVL, August 1st, 2016.
 
 This library allows communication with boards running a BY8001-16P or BY8301-16P audio module. It supports the full feature set of the BY8X01-16P chipset such as queued combination playback, indexed folder/file playback, loop playback mode, equalizer profile, spot insertion play, etc.
 
-Made primarily for Arduino MCUs, but should work with PlatformIO, ESP32/8266, Teensy, and others - although one might experience turbulence until the bug reports get ironed out. All architectures must ensure `BUFFER_LENGTH` (or `I2C_BUFFER_LENGTH`) and `WIRE_INTERFACES_COUNT` are properly defined.
+Made primarily for Arduino microcontrollers, but should work with PlatformIO, ESP32/8266, Teensy, RasPi Pico, and others - although one might experience turbulence until the bug reports get ironed out. All architectures must ensure `BUFFER_LENGTH` (or `I2C_BUFFER_LENGTH`) and `WIRE_INTERFACES_COUNT` are properly defined.
 
 Dependencies include: None!
 
@@ -38,7 +38,7 @@ From BY8X01-16P.h:
 // Uncomment or -D this define to enable debouncing of the input line on isBusy() calls.
 //#define BY8X0116P_ENABLE_DEBOUNCING
 
-// Uncomment or -D this define to enable debug output (treats Serial as attached to serial monitor).
+// Uncomment or -D this define to enable debug output (treats Serial output as attached to serial monitor).
 //#define BY8X0116P_ENABLE_DEBUG_OUTPUT
 ```
 
