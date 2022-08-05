@@ -38,18 +38,15 @@
 // Uncomment or -D this define to enable debouncing of the input line on isBusy() calls.
 //#define BY8X0116P_ENABLE_DEBOUNCING
 
-// Uncomment or -D this define to enable debug output (treats Serial as attached to serial monitor).
+// Uncomment or -D this define to enable debug output (treats Serial output as attached to serial monitor).
 //#define BY8X0116P_ENABLE_DEBUG_OUTPUT
 
 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include <Arduino.h>
-#elif defined(__MBED__)
-#include <mbed.h>
 #else
 #include <WProgram.h>
 #endif
-#include <assert.h>
 #ifdef BY8X0116P_ENABLE_SOFTWARE_SERIAL
 #include <SoftwareSerial.h>
 #define BY8X0116P_USE_SOFTWARE_SERIAL
