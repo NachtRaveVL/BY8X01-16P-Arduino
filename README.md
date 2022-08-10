@@ -10,7 +10,7 @@ Created by NachtRaveVL, August 1st, 2016.
 
 This library allows communication with boards running a BY8001-16P or BY8301-16P audio module. It supports the full feature set of the BY8X01-16P chipset such as queued combination playback, indexed folder/file playback, loop playback mode, equalizer profile, spot insertion play, etc.
 
-Made primarily for Arduino microcontrollers, but should work with PlatformIO, ESP32/8266, Teensy, RasPi Pico, and others - although one might experience turbulence until the bug reports get ironed out. All architectures must ensure `BUFFER_LENGTH` (or `I2C_BUFFER_LENGTH`) and `WIRE_INTERFACES_COUNT` are properly defined.
+Made primarily for Arduino microcontrollers, but should work with PlatformIO, Espressif, Teensy, STM32, Pico, and others - although one might experience turbulence until the bug reports get ironed out.
 
 Dependencies include: None!
 
@@ -86,17 +86,18 @@ From BY8X01-16P.h, in class BY8X0116P:
 
 ## Hookup Callouts
 
+* Remove A, B, and C resistors on module (factory default is a resistor on A and C, while B is left open).
+  * This puts the device into the recommended 1-1-1 mode used for MCU serial control.
+* Busy pin is optional to utilize but returns a 2.8v signal when playback is active (just enough for 5v boards to register as logic level HIGH).
+
 ### Serial UART
 
 Serial UART uses individual communication lines for each device, with the receive `RX` pin of one being the transmit `TX` pin of the other - thus having to "flip wires" when connecting. However, devices can always be active and never have to share their access. UART runs at low to mid kHz speeds and is useful for simple device control, albeit somewhat clumsy at times.
 
 * Make sure to flip `RX`/`TX` lines when hooking into module from MCU.
 * This module is 3.3v *ONLY*, and as such is not 5v tolerant. If running a 5v MCU, you must:
-  * 1) use a bi-directional logic level converter/shifter between MCU and device
-  * or 2) hack a 1kΩ resistor between the MCU's TX pin and module's RX pin
-* Remove A, B, and C resistors on module (factory default is a resistor on A and C, while B is left open).
-  * This puts the device into the recommended 1-1-1 mode used for MCU serial control.
-* Busy pin is optional to utilize but returns a 2.8v signal when playback is active (just enough for 5v boards to register as logic level HIGH).
+  * 1) use a bi-directional logic level converter between MCU and device
+  * or 2) hack a 10kΩ voltage dividing resistor between the MCU's TX pin and module's RX pin
 
 ## Example Usage
 
