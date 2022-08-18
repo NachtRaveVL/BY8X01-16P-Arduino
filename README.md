@@ -97,7 +97,8 @@ Serial UART uses individual communication lines for each device, with the receiv
 * Make sure to flip `RX`/`TX` lines when hooking into module from MCU.
 * This module is 3.3v *ONLY*, and as such is not 5v tolerant. If running a 5v MCU, you must:
   * 1) use a bi-directional logic level converter between MCU and device
-  * or 2) hack a 10kΩ voltage dividing resistor between the MCU's TX pin and module's RX pin
+  * 2) use a 1kΩ resistor and a 2kΩ resistor (or any size with a 1:2 ratio) in a [simple voltage divider circuit](https://randomnerdtutorials.com/how-to-level-shift-5v-to-3-3v/)
+  * or 3) hack a 10kΩ resistor between the MCU's TX pin and module's RX pin
 
 ## Example Usage
 
