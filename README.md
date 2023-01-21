@@ -94,11 +94,9 @@ From BY8X01-16P.h, in class BY8X0116P:
 
 Serial UART uses individual communication lines for each device, with the receive `RX` pin of one being the transmit `TX` pin of the other - thus having to "flip wires" when connecting. However, devices can always be active and never have to share their access. UART runs at low to mid kHz speeds and is useful for simple device control, albeit somewhat clumsy at times.
 
-* Make sure to flip `RX`/`TX` lines when hooking into module from MCU.
-* This module is 3.3v *ONLY*, and as such is not 5v tolerant. If running a 5v MCU, you must:
-  * 1) use a bi-directional logic level converter between MCU and device
-  * 2) use a 1kΩ resistor and a 2kΩ resistor (or any size with a 1:2 ratio) in a [simple voltage divider circuit](https://randomnerdtutorials.com/how-to-level-shift-5v-to-3-3v/)
-  * or 3) hack a 10kΩ resistor between the MCU's TX pin and module's RX pin
+* When wiring up modules that use Serial UART, make sure to flip `RX`/`TX` lines.
+  * 5v devices interacting with 3.3v devices that are not 5v tolerant (such as the BY8X01-16P) will require a bi-directional logic level converter/shifter to utilize.
+    * Alternatively, hack a single 10kΩ resistor ([but preferably two of any 1:2 ratio](https://randomnerdtutorials.com/how-to-level-shift-5v-to-3-3v/)) between the 5v module's TX pin and 3.3v module's RX pin.
 
 ## Example Usage
 
