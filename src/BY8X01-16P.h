@@ -32,9 +32,6 @@
 
 // NOTE: It is recommended to use custom build flags instead of editing this file directly.
 
-// Uncomment or -D this define to enable usage of the SoftwareSerial Arduino library.
-//#define BY8X0116P_ENABLE_SOFTWARE_SERIAL          // https://www.arduino.cc/en/Reference/softwareSerial
-
 // Uncomment or -D this define to enable debouncing of the input line on isBusy() calls.
 //#define BY8X0116P_ENABLE_DEBOUNCING
 
@@ -47,9 +44,18 @@
 #else
 #include <WProgram.h>
 #endif
-#ifdef BY8X0116P_ENABLE_SOFTWARE_SERIAL
-#include <SoftwareSerial.h>
+
+#if !defined(USE_SW_SERIAL)
+typedef HardwareSerial SerialClass;
+#else
+#include <SoftwareSerial.h>             // https://www.arduino.cc/en/Reference/softwareSerial
 #define BY8X0116P_USE_SOFTWARE_SERIAL
+typedef SoftwareSerial SerialClass;
+#endif
+#ifdef ESP8266
+typedef SerialConfig uartmode_t;
+#else
+typedef int uartmode_t;
 #endif
 
 #if defined(NDEBUG) && defined(BY8X0116P_ENABLE_DEBUG_OUTPUT)
@@ -122,7 +128,6 @@ enum BY8X0116P_PlaybackDevice {
 
 class BY8X0116P {
 public:
-#ifndef BY8X0116P_USE_SOFTWARE_SERIAL
 
 #ifdef BY8X0116P_HAS_SERIAL1
     // Library constructor. Typically called during class instantiation, before setup().
@@ -131,42 +136,21 @@ public:
     // Boards with more than one serial line (e.g. Due/Mega/etc.) can supply a different
     // Serial instance, such as Serial1 (using RX1/TX1), Serial2 (using RX2/TX2), etc.
     // The only supported baud rate is 9600bps using mode SERIAL_8N1.
-    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, HardwareSerial& serial = Serial1);
-#endif // /ifdef BY8X0116P_HAS_SERIAL1
+    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, SerialClass& serial = Serial1);
+#endif
 
     // Convenience constructor for custom Serial instance. See main constructor.
     // Becomes standard library constuctor in case Serial1 isn't readily detected.
-    BY8X0116P(HardwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
-
-#else
-
-    // Library constructor. Typically called during class instantiation, before setup().
-    // May skip usage of busy pin, but isBusy() will always respond false if so. May also
-    // set usage of busy pin as being either active-high or active-low.
-    // The only supported baud rate is 9600bps using mode SERIAL_8N1.
-    BY8X0116P(SoftwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
-
-#endif // /ifndef BY8X0116P_USE_SOFTWARE_SERIAL
+    BY8X0116P(SerialClass& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
 
     // Initializes module. Typically called in setup().
     void init();
 
     // Mode accessors
-    byte getBusyPin();                                      // Busy pin
-    byte getBusyActiveOn();                                 // Busy AO polarity
-    int getSerialBaud();                                    // Serial baud (Bps)
-#ifdef ESP8266
-    SerialConfig getSerialMode();                           // Serial mode
-#else
-    int getSerialMode();                                    // Serial mode
-#endif
-
-    typedef void(*UserDelayFunc)(unsigned int);             // Passes delay timeout (where 0 indicates inside long blocking call / yield attempt suggested)
-    // Sets user delay functions to call when a delay has to occur for processing to
-    // continue. User functions here can customize what this means - typically it would
-    // mean to call into a thread barrier() or yield() mechanism. Default implementation
-    // is to call yield() when timeout >= 1ms, unless multitasking is disabled.
-    void setUserDelayFuncs(UserDelayFunc delayMillisFunc, UserDelayFunc delayMicrosFunc);
+    byte getBusyPin();                  // Busy pin
+    byte getBusyActiveOn();             // Busy AO polarity
+    int getSerialBaud();                // Serial baud (Bps)
+    uartmode_t getSerialMode();         // Serial mode
 
     // Playback control
     void play();
@@ -275,13 +259,7 @@ public:
 protected:
     byte _busyPin;                                          // Busy pin to use for playback tracking (default: DISABLED)
     byte _busyActiveOn;                                     // Busy pin is active on HIGH or LOW (default: HIGH)
-#ifndef BY8X0116P_USE_SOFTWARE_SERIAL
-    HardwareSerial* _serial;                                // Serial class instance (unowned) (default: Serial1)
-#else
-    SoftwareSerial* _serial;                                // Serial class instance (unowned)
-#endif
-    UserDelayFunc _uDelayMillisFunc;                        // User millisecond delay function
-    UserDelayFunc _uDelayMicrosFunc;                        // User microsecond delay function
+    SerialClass* _serial;                                   // Serial class instance (unowned) (default: Serial1)
 
     int8_t _isBlockingRspLn;                                // Tracks if response line should be blocked by other routines
     bool _isCleaningRspLn;                                  // Tracks if code is already inside of clean response line routine

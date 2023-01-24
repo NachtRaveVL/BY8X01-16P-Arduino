@@ -32,9 +32,6 @@ Alternatively, you may also refer to <https://forum.arduino.cc/index.php?topic=6
 
 From BY8X01-16P.h:
 ```Arduino
-// Uncomment or -D this define to enable usage of the SoftwareSerial Arduino library.
-//#define BY8X0116P_ENABLE_SOFTWARE_SERIAL          // https://www.arduino.cc/en/Reference/softwareSerial
-
 // Uncomment or -D this define to enable debouncing of the input line on isBusy() calls.
 //#define BY8X0116P_ENABLE_DEBOUNCING
 
@@ -50,28 +47,21 @@ There are several initialization mode settings exposed through this library that
 
 The library's class object must first be instantiated, commonly at the top of the sketch where pin setups are defined (or exposed through some other mechanism), which makes a call to the library's class constructor. The constructor allows one to set the busy pin, busy pin active-on mode, and Serial class instance. The default constructor values of the library, if left unspecified, is busy pin `DISABLED`, busy pin active-on mode `HIGH`, and Serial class instance `Serial1` @`9600`bps using mode `SERIAL_8N1`. _In the case that Serial1 cannot be readily detected, then the Serial class instance must be explicitly provided._
 
-From BY8X01-16P.h, in class BY8X0116P, when in hardware serial mode:
+From BY8X01-16P.h, in class BY8X0116P:
 ```Arduino
+#ifdef BY8X0116P_HAS_SERIAL1
     // Library constructor. Typically called during class instantiation, before setup().
     // May skip usage of busy pin, but isBusy() will always respond false if so. May also
     // set usage of busy pin as being either active-high or active-low.
     // Boards with more than one serial line (e.g. Due/Mega/etc.) can supply a different
     // Serial instance, such as Serial1 (using RX1/TX1), Serial2 (using RX2/TX2), etc.
     // The only supported baud rate is 9600bps using mode SERIAL_8N1.
-    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, HardwareSerial& serial = Serial1);
+    BY8X0116P(byte busyPin = DISABLED, byte busyActiveOn = HIGH, SerialClass& serial = Serial1);
+#endif
 
     // Convenience constructor for custom Serial instance. See main constructor.
     // Becomes standard library constuctor in case Serial1 isn't readily detected.
-    BY8X0116P(HardwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
-```
-
-From BY8X01-16P.h, in class BY8X0116P, when in sofware serial mode (see examples for sample usage):
-```Arduino
-    // Library constructor. Typically called during class instantiation, before setup().
-    // May skip usage of busy pin, but isBusy() will always respond false if so. May also
-    // set usage of busy pin as being either active-high or active-low.
-    // The only supported baud rate is 9600bps using mode SERIAL_8N1.
-    BY8X0116P(SoftwareSerial& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
+    BY8X0116P(SerialClass& serial, byte busyPin = DISABLED, byte busyActiveOn = HIGH);
 ```
 
 #### Device Initialization
@@ -215,16 +205,11 @@ void loop() {
 
 In this example, we utilize the software serial library for chips that do not have a hardware serial line.
 
-If one uncomments the line below inside the main header file (or defines it via custom build flag), software serial mode for the library will be enabled. Additionally, if this serial class instance is instantiated before `setup()` then you will have to manually set the pin modes for the RX and TX pins due to a library bug (in which it attempts to do so in its class constructor, before the Arduino system has initialized). Lastly note that, while in software serial mode, the serial baud rate returned by the library (via `getSerialBaud()`) is only an upper bound and may not represent the actual serial baud rate achieved.
+If one defines `USE_SW_SERIAL` globally, software serial mode for the library will be enabled. Additionally, if this serial class instance is instantiated before `setup()` then you will have to manually set the pin modes for the RX and TX pins due to a library bug (in which it attempts to do so in its class constructor, before the Arduino system has initialized). Lastly note that, while in software serial mode, the serial baud rate returned by the library (via `getSerialBaud()`) is only an upper bound and may not represent the actual serial baud rate achieved.
 
-In BY8X01-16P.h:
+In platform[.local].txt:
 ```Arduino
-// Uncomment or -D this define to enable usage of the SoftwareSerial library.
-#define BY8X0116P_ENABLE_SOFTWARE_SERIAL        // https://www.arduino.cc/en/Reference/softwareSerial
-```  
-Alternatively, in platform[.local].txt:
-```Arduino
-build.extra_flags=-DBY8X0116P_ENABLE_SOFTWARE_SERIAL
+build.extra_flags=-DUSE_SW_SERIAL
 ```
 
 In main sketch:

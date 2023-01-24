@@ -80,12 +80,9 @@ void BY8X0116P_hardAssert(bool cond, String msg, const char *file, const char *f
 
 #endif // /ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
 
-
-#ifndef BY8X0116P_USE_SOFTWARE_SERIAL
-
 #ifdef BY8X0116P_HAS_SERIAL1
 
-BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, HardwareSerial& serial)
+BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, SerialClass& serial)
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
       _serial(&serial),
       _isBlockingRspLn(0), _isCleaningRspLn(false),
@@ -95,25 +92,13 @@ BY8X0116P::BY8X0116P(byte busyPin, byte busyActiveOn, HardwareSerial& serial)
 
  #endif // /ifdef BY8X0116P_HAS_SERIAL1
 
-BY8X0116P::BY8X0116P(HardwareSerial& serial, byte busyPin, byte busyActiveOn)
+BY8X0116P::BY8X0116P(SerialClass& serial, byte busyPin, byte busyActiveOn)
     : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
       _serial(&serial),
       _isBlockingRspLn(0), _isCleaningRspLn(false),
       _isStandingBy(false), _isResetting(false), _isCardInserted(true),
       _lastReqTime(0), _lastClnTime(0)
 { }
-
-#else
-
-BY8X0116P::BY8X0116P(SoftwareSerial& serial, byte busyPin, byte busyActiveOn)
-    : _busyPin(busyPin), _busyActiveOn(busyActiveOn),
-      _serial(&serial),
-      _isBlockingRspLn(0), _isCleaningRspLn(false),
-      _isStandingBy(false), _isResetting(false), _isCardInserted(true),
-      _lastReqTime(0), _lastClnTime(0)
-{ }
-
-#endif // /ifndef BY8X0116P_USE_SOFTWARE_SERIAL
 
 void BY8X0116P::init() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
@@ -124,7 +109,7 @@ void BY8X0116P::init() {
     }
     else
         Serial.print(F("<disabled>"));
-    Serial.print(F(", serialTTL#: "));
+    Serial.print(F(", serialUART: "));
     Serial.print(getSerialInterfaceNumber());
     Serial.print(F(", serialBaud: "));
     Serial.print(getSerialBaud()); Serial.print(F("bps"));
@@ -151,19 +136,9 @@ int BY8X0116P::getSerialBaud() {
     return BY8X0116P_SERIAL_BAUD;
 }
 
-#ifdef ESP8266
-
-SerialConfig BY8X0116P::getSerialMode() {
+uartmode_t BY8X0116P::getSerialMode() {
     return BY8X0116P_SERIAL_MODE;
 }
-
-#else
-
-int BY8X0116P::getSerialMode() {
-    return BY8X0116P_SERIAL_MODE;
-}
-
-#endif // /ifdef ESP8266
 
 void BY8X0116P::play() {
 #ifdef BY8X0116P_ENABLE_DEBUG_OUTPUT
@@ -1003,16 +978,16 @@ void BY8X0116P::waitClean(int timeout) {
 
 int BY8X0116P::getSerialInterfaceNumber() {
 #ifndef BY8X0116P_USE_SOFTWARE_SERIAL
-#if defined(HWSERIAL0) || defined(HAVE_HWSERIAL0)
+#if defined(HWSERIAL0) || defined(HAVE_HWSERIAL0) || defined(PIN_SERIAL_RX) || defined(SERIAL1_RX) || defined(Serial)
     if (_serial == &Serial) return 0;
 #endif
-#if defined(HWSERIAL1) || defined(HAVE_HWSERIAL1)
+#if defined(HWSERIAL1) || defined(HAVE_HWSERIAL1) || defined(PIN_SERIAL1_RX) || defined(SERIAL2_RX) || defined(Serial1)
     if (_serial == &Serial1) return 1;
 #endif
-#if defined(HWSERIAL2) || defined(HAVE_HWSERIAL2)
+#if defined(HWSERIAL2) || defined(HAVE_HWSERIAL2) || defined(PIN_SERIAL2_RX) || defined(SERIAL3_RX) || defined(Serial2)
     if (_serial == &Serial2) return 2;
 #endif
-#if defined(HWSERIAL3) || defined(HAVE_HWSERIAL3)
+#if defined(HWSERIAL3) || defined(HAVE_HWSERIAL3) || defined(PIN_SERIAL3_RX) || defined(SERIAL4_RX) || defined(Serial3)
     if (_serial == &Serial3) return 3;
 #endif
 #endif // /ifndef BY8X0116P_USE_SOFTWARE_SERIAL
